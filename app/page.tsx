@@ -1,65 +1,113 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import { SAMPLES } from "@/lib/samples";
+import type { Sample, ScoreResult } from "@/lib/types";
+import { Header } from "@/components/Header";
+import { Hero } from "@/components/Hero";
+import { InstrumentPitch } from "@/components/InstrumentPitch";
+import { DemoGuide } from "@/components/DemoGuide";
+import { SampleSwitcher } from "@/components/SampleSwitcher";
+import { TextExcerpt } from "@/components/TextExcerpt";
+import { ScoreCard } from "@/components/ScoreCard";
+import { RadarProfile } from "@/components/RadarProfile";
+import { ScoreBreakdown } from "@/components/ScoreBreakdown";
+import { JustificationQuotes } from "@/components/JustificationQuotes";
+import { LiveAnalyzer } from "@/components/LiveAnalyzer";
+import { Footer } from "@/components/Footer";
+
+// Adapt a pre-scored Sample to the shared ScoreResult shape the result
+// components consume. The big Enactment Score shown is the expert pre-score
+// (the ground truth in docs/SAMPLES.md), which may differ from the formula
+// applied to the dimension scores — ScoreBreakdown surfaces that gap.
+function sampleToScoreResult(sample: Sample): ScoreResult {
+  return {
+    genreTag: sample.genreTag,
+    wordCount: sample.excerpt.trim().split(/\s+/).length,
+    dimensions: sample.expertScores,
+    enactmentScore: sample.expectedEnactmentScore,
+    paradigmName: sample.paradigmName,
+    eachOrientation: sample.expectedEACHOrientation,
+    wordCountWarnings: [],
+    confidenceFlags: [],
+  };
+}
 
 export default function Home() {
+  const [selectedId, setSelectedId] = useState<string>(SAMPLES[0].id);
+  // The Enactment Score counts up on first paint, but not when the user
+  // switches between samples afterward — those just cross-fade.
+  const [hasSwitched, setHasSwitched] = useState(false);
+  const sample = SAMPLES.find((s) => s.id === selectedId) ?? SAMPLES[0];
+  const result = sampleToScoreResult(sample);
+
+  function handleSelectSample(id: string) {
+    setSelectedId(id);
+    setHasSwitched(true);
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <>
+      <Header />
+
+      <main className="mx-auto max-w-6xl px-6 pb-4">
+        <Hero />
+        <InstrumentPitch />
+        <DemoGuide />
+
+        <section>
+          <SampleSwitcher
+            samples={SAMPLES}
+            selectedId={selectedId}
+            onSelect={handleSelectSample}
+          />
+
+          {/* key forces a remount on switch → 200ms opacity fade + the radar
+              replays its entry animation. */}
+          <div key={sample.id} className="animate-fade-in">
+            <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-12">
+              <div>
+                <TextExcerpt sample={sample} />
+              </div>
+              <div className="space-y-8">
+                <ScoreCard
+                  result={result}
+                  accentColor={sample.accentColor}
+                  animateScore={!hasSwitched}
+                />
+                <RadarProfile result={result} accentColor={sample.accentColor} />
+                <ScoreBreakdown result={result} accentColor={sample.accentColor} />
+              </div>
+            </div>
+            <div className="mt-8">
+              <JustificationQuotes result={result} accentColor={sample.accentColor} />
+            </div>
+          </div>
+        </section>
+
+        {/* Thick accent divider between the samples and the live analyzer. */}
+        <div
+          role="separator"
+          aria-hidden="true"
+          className="my-16 h-[3px] w-full bg-accent"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+
+        <section>
+          <h2 className="font-display text-2xl font-normal leading-tight text-ink sm:text-3xl">
+            Try the <span className="font-light italic">instrument</span> on your
+            own text
+          </h2>
+          <p className="mt-2 max-w-prose font-sans text-sm leading-relaxed text-muted">
+            Your text is sent to a server-side endpoint that scores it with
+            Claude. The API key never reaches the browser.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+          <div className="mt-8">
+            <LiveAnalyzer />
+          </div>
+        </section>
       </main>
-    </div>
+
+      <Footer />
+    </>
   );
 }

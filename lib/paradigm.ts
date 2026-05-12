@@ -1,0 +1,195 @@
+/**
+ * Paradigm constants and scoring math (docs/SCORING_MODEL.md,
+ * docs/SYSTEM_PROMPT.md). Pure functions only — no I/O, no React.
+ */
+import type {
+  DimensionKey,
+  DimensionScore,
+  GenreTag,
+  ParadigmName,
+} from "@/lib/types";
+
+type DimensionMeta = {
+  key: DimensionKey;
+  fullName: string;
+  shortName: string;
+  defaultWeight: number;
+  color: string;
+  oneLineDescription: string;
+};
+
+/** The five dimensions, in order D1→D5. */
+export const DIMENSIONS: DimensionMeta[] = [
+  {
+    key: "D1",
+    fullName: "Agency & Contribution",
+    shortName: "Agency",
+    defaultWeight: 0.25,
+    color: "#C44536",
+    oneLineDescription:
+      "Does the text enact a world where every person — including and especially young people — is capable of contributing to the common good? Or does it reserve agency for adults, experts, and institutions?",
+  },
+  {
+    key: "D2",
+    fullName: "Systemic & Architectural Framing",
+    shortName: "Systemic Framing",
+    defaultWeight: 0.25,
+    color: "#2A4F4F",
+    oneLineDescription:
+      "Does the text locate change at the level of rules, structures, and social architectures — or at the level of individuals and programs?",
+  },
+  {
+    key: "D3",
+    fullName: "Empathy Quality",
+    shortName: "Empathy",
+    defaultWeight: 0.2,
+    color: "#7A6B3E",
+    oneLineDescription:
+      "Does the text demonstrate conscious empathy — recognizing others' perspectives AND using that understanding to identify systemic patterns and orient action toward the common good? Or does it stop at emotional solidarity?",
+  },
+  {
+    key: "D4",
+    fullName: "Collaboration & Leadership Model",
+    shortName: "Collaboration",
+    defaultWeight: 0.2,
+    color: "#3D5A6C",
+    oneLineDescription:
+      "Does the text enact distributed, fluid leadership that shares power and knowledge across hierarchies — including across generations?",
+  },
+  {
+    key: "D5",
+    fullName: "Identity Embodiment",
+    shortName: "Identity",
+    defaultWeight: 0.1,
+    color: "#2A5A3E",
+    oneLineDescription:
+      "Does the narrator position themselves as a changemaker through the structure of their language — or do they merely claim the label? Is the identity enacted consistently across time and context, or only when the frame is activated?",
+  },
+];
+
+type ParadigmMeta = {
+  /** 0–4 */
+  level: number;
+  name: ParadigmName;
+  descriptor: string;
+  scoreRange: [number, number];
+};
+
+/** Paradigm names by Enactment Score band, level 0→4. */
+export const PARADIGM_NAMES: ParadigmMeta[] = [
+  {
+    level: 0,
+    name: "Spectator",
+    descriptor: "Change happens elsewhere, authored by others.",
+    scoreRange: [0, 19],
+  },
+  {
+    level: 1,
+    name: "Sympathizer",
+    descriptor:
+      "Change is recognized and valued, but still understood as someone else's job.",
+    scoreRange: [20, 39],
+  },
+  {
+    level: 2,
+    name: "Contributor",
+    descriptor:
+      "Agency enters the picture. The narrator sees themselves as a contributor, though the framing remains partial.",
+    scoreRange: [40, 59],
+  },
+  {
+    level: 3,
+    name: "Changemaker",
+    descriptor:
+      "I am creating change. Change is owned, built, and driven from within.",
+    scoreRange: [60, 79],
+  },
+  {
+    level: 4,
+    name: "System Architect",
+    descriptor:
+      "We are rewriting the rules. Agency is distributed, structures are named and challenged.",
+    scoreRange: [80, 100],
+  },
+];
+
+/**
+ * Genre-adjusted weights [w1, w2, w3, w4, w5], one tuple per genre tag
+ * (docs/SYSTEM_PROMPT.md). Each tuple sums to 1.0.
+ */
+export const GENRE_WEIGHTS: Record<
+  GenreTag,
+  [number, number, number, number, number]
+> = {
+  "free-form-interview": [0.25, 0.2, 0.2, 0.2, 0.15],
+  "structured-profile": [0.25, 0.25, 0.2, 0.2, 0.1],
+  "social-media-post": [0.3, 0.2, 0.3, 0.1, 0.1],
+  "institutional-report": [0.2, 0.3, 0.2, 0.2, 0.1],
+  "speech-public-address": [0.25, 0.25, 0.2, 0.2, 0.1],
+  "fundraising-copy": [0.2, 0.3, 0.25, 0.15, 0.1],
+};
+
+/**
+ * Enactment Score = (D1·w1 + D2·w2 + D3·w3 + D4·w4 + D5·w5) × 25,
+ * rounded to the nearest integer in [0, 100].
+ */
+export function calculateEnactmentScore(
+  dims: Record<DimensionKey, DimensionScore>,
+  genre: GenreTag,
+): number {
+  const [w1, w2, w3, w4, w5] = GENRE_WEIGHTS[genre];
+  const weighted =
+    dims.D1.score * w1 +
+    dims.D2.score * w2 +
+    dims.D3.score * w3 +
+    dims.D4.score * w4 +
+    dims.D5.score * w5;
+  return Math.min(100, Math.max(0, Math.round(weighted * 25)));
+}
+
+/** Maps an Enactment Score (0–100) to its paradigm name. */
+export function resolveParadigmName(score: number): ParadigmName {
+  if (score <= 19) return "Spectator";
+  if (score <= 39) return "Sympathizer";
+  if (score <= 59) return "Contributor";
+  if (score <= 79) return "Changemaker";
+  return "System Architect";
+}
+
+const ORDERED_KEYS: DimensionKey[] = ["D1", "D2", "D3", "D4", "D5"];
+
+/**
+ * Derives the EACH Orientation from the dimensional profile, following the
+ * logic in docs/SYSTEM_PROMPT.md. When two pair-orientations tie (the
+ * documented overlap case), returns both joined by " / ". When the top of the
+ * profile is flat across more than two dimensions, there is no dominant pair,
+ * so a fully high profile reads as "Full EACH Alignment".
+ */
+export function resolveEACHOrientation(
+  dims: Record<DimensionKey, DimensionScore>,
+): string {
+  const scoreOf = (k: DimensionKey): number => dims[k].score;
+
+  // A pair {a, b} is "the top two dimensions" when both score >= 3 and neither
+  // scores below any dimension outside the pair (ties at the top allowed).
+  const isTopPair = (a: DimensionKey, b: DimensionKey): boolean => {
+    if (scoreOf(a) < 3 || scoreOf(b) < 3) return false;
+    const maxRest = Math.max(
+      ...ORDERED_KEYS.filter((k) => k !== a && k !== b).map(scoreOf),
+    );
+    return Math.min(scoreOf(a), scoreOf(b)) >= maxRest;
+  };
+
+  const matched: string[] = [];
+  if (isTopPair("D1", "D5")) matched.push("Youth in Charge");
+  if (isTopPair("D2", "D4")) matched.push("Interconnected Teams");
+  if (isTopPair("D3", "D1")) matched.push("Empathy-based Societies");
+
+  if (matched.length === 1) return matched[0];
+  if (matched.length === 2) return matched.join(" / ");
+
+  // matched.length is 0, or >= 3 (only when the top of the profile is flat
+  // across enough dimensions that no single pair dominates).
+  const allHigh = ORDERED_KEYS.every((k) => scoreOf(k) >= 3);
+  return allHigh ? "Full EACH Alignment" : "Emerging";
+}
