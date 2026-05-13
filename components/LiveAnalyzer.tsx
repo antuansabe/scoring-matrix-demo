@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { ScoreResult } from "@/lib/types";
 import { ScoreCard } from "@/components/ScoreCard";
 import { RadarProfile } from "@/components/RadarProfile";
@@ -8,7 +8,7 @@ import { ScoreBreakdown } from "@/components/ScoreBreakdown";
 import { JustificationQuotes } from "@/components/JustificationQuotes";
 
 const MIN_WORDS = 50;
-const MAX_WORDS = 5000;
+const MAX_WORDS = 7000;
 
 function countWords(text: string): number {
   const trimmed = text.trim();
@@ -43,10 +43,12 @@ export function LiveAnalyzer() {
   const [status, setStatus] = useState<Status>("idle");
   const [result, setResult] = useState<ScoreResult | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const words = countWords(text);
   const outOfRange = words < MIN_WORDS || words > MAX_WORDS;
   const canSubmit = !outOfRange && status !== "loading";
+  const showInput = !(status === "done" && result);
 
   let wordCountLabel: string;
   if (words === 0) {
@@ -92,38 +94,59 @@ export function LiveAnalyzer() {
     }
   }
 
+  function reset() {
+    setText("");
+    setResult(null);
+    setErrorMsg(null);
+    setStatus("idle");
+    // Wait one frame so the textarea is mounted again before we scroll/focus.
+    requestAnimationFrame(() => {
+      textareaRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      // Focus after the smooth scroll has had time to settle.
+      window.setTimeout(() => textareaRef.current?.focus(), 300);
+    });
+  }
+
   return (
     <div>
-      <label htmlFor="analyzer-text" className="sr-only">
-        Text to analyze
-      </label>
-      <textarea
-        id="analyzer-text"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="Paste any text to analyze (minimum 50 words, maximum 5000). The instrument works in English and Spanish."
-        rows={10}
-        spellCheck={false}
-        className="block min-h-[15rem] w-full resize-y border border-border bg-surface p-4 font-sans text-base leading-relaxed text-ink placeholder:text-muted focus:border-accent"
-      />
+      {showInput && (
+        <>
+          <label htmlFor="analyzer-text" className="sr-only">
+            Text to analyze
+          </label>
+          <textarea
+            id="analyzer-text"
+            ref={textareaRef}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Paste any text to analyze (minimum 50 words, maximum 7000). The instrument works in English and Spanish."
+            rows={10}
+            spellCheck={false}
+            className="block min-h-[15rem] w-full resize-y border border-border bg-surface p-4 font-sans text-base leading-relaxed text-ink placeholder:text-muted focus:border-accent"
+          />
 
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-        <span
-          className={`font-mono text-xs uppercase tracking-widest ${
-            wordCountIsWarning ? "font-medium text-ink" : "text-muted"
-          }`}
-        >
-          {wordCountLabel}
-        </span>
-        <button
-          type="button"
-          onClick={analyze}
-          disabled={!canSubmit}
-          className="bg-accent px-6 py-2.5 font-mono text-sm uppercase tracking-widest text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          {status === "loading" ? "Analyzing…" : "Analyze"}
-        </button>
-      </div>
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+            <span
+              className={`font-mono text-xs uppercase tracking-widest ${
+                wordCountIsWarning ? "font-medium text-ink" : "text-muted"
+              }`}
+            >
+              {wordCountLabel}
+            </span>
+            <button
+              type="button"
+              onClick={analyze}
+              disabled={!canSubmit}
+              className="bg-accent px-6 py-2.5 font-mono text-sm uppercase tracking-widest text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              {status === "loading" ? "Analyzing…" : "Analyze"}
+            </button>
+          </div>
+        </>
+      )}
 
       {status === "loading" && (
         <>
@@ -154,11 +177,26 @@ export function LiveAnalyzer() {
       )}
 
       {status === "done" && result && (
-        <div className="mt-10 space-y-8">
+        <div className="space-y-8">
           <ScoreCard result={result} />
           <RadarProfile result={result} />
           <ScoreBreakdown result={result} />
           <JustificationQuotes result={result} />
+
+          {/* Reset affordance — the only way back to the textarea once a result
+              is showing. Editorial mono link, no border, no fill. */}
+          <div className="mt-12 flex justify-center border-t border-border pt-8">
+            <button
+              type="button"
+              onClick={reset}
+              className="cursor-pointer px-6 py-3 font-mono text-sm uppercase tracking-widest text-muted transition-colors duration-150 hover:text-accent"
+            >
+              <span className="mr-2" aria-hidden="true">
+                ↻
+              </span>
+              Try another text
+            </button>
+          </div>
         </div>
       )}
     </div>

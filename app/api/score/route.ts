@@ -19,7 +19,7 @@ export const runtime = "nodejs";
 export const maxDuration = 30;
 
 const MIN_WORDS = 50;
-const MAX_WORDS = 5000;
+const MAX_WORDS = 7000;
 
 const DIMENSION_KEYS: DimensionKey[] = ["D1", "D2", "D3", "D4", "D5"];
 const VALID_GENRE_TAGS: GenreTag[] = [
@@ -116,7 +116,7 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
-  // --- length validation (50–5000 words after trimming) ---
+  // --- length validation (50–7000 words after trimming) ---
   const words = countWords(text);
   if (words < MIN_WORDS) {
     return NextResponse.json(
@@ -153,7 +153,7 @@ export async function POST(request: Request): Promise<Response> {
   try {
     const response = await client.messages.create({
       model: "claude-sonnet-4-6",
-      max_tokens: 2000,
+      max_tokens: 3000,
       temperature: 0,
       system: SYSTEM_PROMPT,
       messages: [{ role: "user", content: text }],

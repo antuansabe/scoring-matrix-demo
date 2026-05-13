@@ -9,8 +9,8 @@ import type { Sample } from "@/lib/types";
 export const SAMPLES: Sample[] = [
   {
     id: "a-spectator",
-    title: "Direct Aid",
-    subtitle: "Classic direct-service model",
+    title: "Spectator",
+    subtitle: "",
     paradigmLevel: 0,
     paradigmName: "Spectator",
     genreTag: "fundraising-copy",
@@ -63,8 +63,8 @@ Este año, gracias a la generosidad de nuestros donantes, logramos impactar a 1,
   },
   {
     id: "b-sympathizer",
-    title: "Empty Rhetoric",
-    subtitle: "Changemaker vocabulary without enactment",
+    title: "Sympathizer",
+    subtitle: "",
     paradigmLevel: 1,
     paradigmName: "Sympathizer",
     genreTag: "institutional-report",
@@ -123,8 +123,8 @@ En los últimos cinco años hemos impulsado más de cuarenta proyectos transform
   },
   {
     id: "c-changemaker",
-    title: "Enacted Changemaker",
-    subtitle: "Field practice with reflexivity",
+    title: "Changemaker",
+    subtitle: "",
     paradigmLevel: 3,
     paradigmName: "Changemaker",
     genreTag: "free-form-interview",
@@ -185,7 +185,7 @@ Sigo aprendiendo a soltar. Mi formación previa me había enseñado a llegar con
   {
     id: "d-system-architect",
     title: "System Architect",
-    subtitle: "Institutional architecture under tension",
+    subtitle: "",
     paradigmLevel: 4,
     paradigmName: "System Architect",
     genreTag: "free-form-interview",

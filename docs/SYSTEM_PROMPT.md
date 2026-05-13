@@ -6,7 +6,7 @@ The prompt must be stored in `lib/prompt.ts` as a single exported constant `SYST
 
 **Model recommendation:** `claude-sonnet-4-6` for production demo, `claude-haiku-4-5-20251001` for cheaper iteration during development. Both handle JSON output well.
 
-**Max tokens:** 2000. Temperature: 0 (we want deterministic structured output).
+**Max tokens:** 3000. Temperature: 0 (we want deterministic structured output).
 
 ---
 
@@ -189,7 +189,7 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 const response = await client.messages.create({
   model: "claude-sonnet-4-6",
-  max_tokens: 2000,
+  max_tokens: 3000,
   temperature: 0,
   system: SYSTEM_PROMPT,
   messages: [{ role: "user", content: userText }],
@@ -200,7 +200,7 @@ const response = await client.messages.create({
 ```
 
 The route should:
-1. Validate input (max 5000 words, min 50 words).
+1. Validate input (max 7000 words, min 50 words).
 2. Call Claude with the system prompt.
 3. Strip any code fences if present (defensive).
 4. Parse JSON.

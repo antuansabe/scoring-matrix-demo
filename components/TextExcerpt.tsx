@@ -16,9 +16,11 @@ export function TextExcerpt({ sample }: { sample: Sample }) {
       <h2 className="mt-3 font-display text-2xl font-normal leading-tight text-ink sm:text-3xl">
         {sample.title}
       </h2>
-      <p className="mt-1 font-sans text-sm italic text-muted">
-        {sample.subtitle}
-      </p>
+      {sample.subtitle && (
+        <p className="mt-1 font-sans text-sm italic text-muted">
+          {sample.subtitle}
+        </p>
+      )}
 
       <div
         className="mt-5 space-y-4 border border-border bg-surface p-5 sm:p-6"

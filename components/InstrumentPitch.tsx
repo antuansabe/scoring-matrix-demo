@@ -13,7 +13,7 @@ const BLOCKS = [
   },
   {
     header: "Why it matters",
-    body: "For nearly a decade, Ashoka has lacked a defensible measurement of changemaker density across geographies and organizations. This instrument is the foundation for that — and for a diagnostic Ashoka can eventually offer partner organizations to identify the gap between their stated and their enacted paradigm.",
+    body: "Beyond helping people reflect and grow on their embodiment of changemaking, this tool can allow Ashoka to measure changemaker density within organizations and metro areas. This instrument is the foundation for that diagnostic, so we can offer partners avenues to close the gap between their stated and enacted paradigms.",
   },
 ];
 
