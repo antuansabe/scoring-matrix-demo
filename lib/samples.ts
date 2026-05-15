@@ -9,7 +9,7 @@ import type { Sample } from "@/lib/types";
 export const SAMPLES: Sample[] = [
   {
     id: "a-spectator",
-    title: "Spectator",
+    title: "Holiday campaign copy",
     subtitle: "",
     paradigmLevel: 0,
     paradigmName: "Spectator",
@@ -63,7 +63,7 @@ Este año, gracias a la generosidad de nuestros donantes, logramos impactar a 1,
   },
   {
     id: "b-sympathizer",
-    title: "Sympathizer",
+    title: "Institutional self-description",
     subtitle: "",
     paradigmLevel: 1,
     paradigmName: "Sympathizer",
@@ -123,7 +123,7 @@ En los últimos cinco años hemos impulsado más de cuarenta proyectos transform
   },
   {
     id: "c-changemaker",
-    title: "Changemaker",
+    title: "Community organizer interview",
     subtitle: "",
     paradigmLevel: 3,
     paradigmName: "Changemaker",
@@ -184,7 +184,7 @@ Sigo aprendiendo a soltar. Mi formación previa me había enseñado a llegar con
   },
   {
     id: "d-system-architect",
-    title: "System Architect",
+    title: "Education reform interview",
     subtitle: "",
     paradigmLevel: 4,
     paradigmName: "System Architect",

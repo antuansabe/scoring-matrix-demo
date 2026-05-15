@@ -70,13 +70,13 @@ export default function Home() {
                 <TextExcerpt sample={sample} />
               </div>
               <div className="space-y-8">
+                <ScoreBreakdown result={result} accentColor={sample.accentColor} />
                 <ScoreCard
                   result={result}
                   accentColor={sample.accentColor}
                   animateScore={!hasSwitched}
                 />
                 <RadarProfile result={result} accentColor={sample.accentColor} />
-                <ScoreBreakdown result={result} accentColor={sample.accentColor} />
               </div>
             </div>
             <div className="mt-8">
@@ -98,8 +98,8 @@ export default function Home() {
             own text
           </h2>
           <p className="mt-2 max-w-prose font-sans text-sm leading-relaxed text-muted">
-            Your text is sent to a server-side endpoint that scores it with
-            Claude. The API key never reaches the browser.
+            Your text is processed securely. We do not store or share what you
+            submit.
           </p>
           <div className="mt-8">
             <LiveAnalyzer />

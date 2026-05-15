@@ -178,9 +178,9 @@ export function LiveAnalyzer() {
 
       {status === "done" && result && (
         <div className="space-y-8">
+          <ScoreBreakdown result={result} />
           <ScoreCard result={result} />
           <RadarProfile result={result} />
-          <ScoreBreakdown result={result} />
           <JustificationQuotes result={result} />
 
           {/* Reset affordance — the only way back to the textarea once a result

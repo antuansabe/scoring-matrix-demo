@@ -6,15 +6,28 @@ export function Hero() {
         An instrument from Ashoka · Framework Change
       </p>
       <h1 className="mt-4 max-w-4xl font-display text-3xl font-normal leading-[1.1] text-ink sm:text-4xl lg:text-5xl">
-        Reading the <span className="font-light italic">architecture</span> of a
-        text — not its <span className="font-light italic">sentiment</span>.
+        Changemaker Narrative Measurement Tool
       </h1>
-      <p className="mt-5 max-w-[65ch] font-sans text-lg leading-relaxed text-ink">
-        A measurement instrument for the discursive enactment of changemaker
-        identity. Five dimensions, anchored in critical discourse analysis and
-        Ashoka&apos;s framework. Built to read what changemaker language does —
-        not what it claims.
-      </p>
+      <div className="mt-5 max-w-[65ch] space-y-5">
+        <p className="font-display text-[1.375rem] font-light italic leading-snug text-ink">
+          Discover how your language reflects your conviction to change the
+          world.
+        </p>
+        <p className="font-sans text-[1.0625rem] leading-[1.6] text-ink">
+          This tool measures the architecture of language and what is behind the
+          words you choose. It is anchored in critical discourse analysis and
+          Ashoka&apos;s framework with the intention to help you notice the
+          framing, grammar, and narrative positioning of what you say, in five
+          dimensions:
+        </p>
+        <ol className="list-decimal pl-5 font-sans text-base leading-[1.6] text-ink">
+          <li>Agency &amp; Contribution</li>
+          <li>Systemic &amp; Architectural Framing</li>
+          <li>Empathy Quality</li>
+          <li>Collaboration &amp; Leadership Model</li>
+          <li>Identity Embodiment</li>
+        </ol>
+      </div>
     </section>
   );
 }
