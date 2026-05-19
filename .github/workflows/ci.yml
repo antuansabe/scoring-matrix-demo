@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  pull_request:
+
+jobs:
+  ci:
+    name: Typecheck & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Build
+        run: npm run build
+        env:
+          # Build-time stub — API routes are not executed during next build.
+          ANTHROPIC_API_KEY: ci-build-stub

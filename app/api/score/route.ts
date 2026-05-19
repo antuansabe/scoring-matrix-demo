@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
-import { SYSTEM_PROMPT } from "@/lib/prompt";
+import { callClaudeWithCachedSystem, AnthropicConfigError } from "@/lib/anthropic";
+import { SCORER_SYSTEM_PROMPT } from "@/lib/prompts/scorer";
 import {
   calculateEnactmentScore,
   resolveEACHOrientation,
@@ -34,13 +34,6 @@ const VALID_GENRE_TAGS: GenreTag[] = [
 function countWords(text: string): number {
   const trimmed = text.trim();
   return trimmed.length === 0 ? 0 : trimmed.split(/\s+/).length;
-}
-
-/** Defensive: strip a surrounding ```json ... ``` (or plain ``` ... ```) fence. */
-function stripCodeFences(raw: string): string {
-  const s = raw.trim();
-  const match = s.match(/^```[a-zA-Z]*\s*\n?([\s\S]*?)\n?```$/);
-  return match ? match[1].trim() : s;
 }
 
 function isDimensionScore(value: unknown): value is DimensionScore {
@@ -137,33 +130,25 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
-  // --- API key ---
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    console.error("[api/score] ANTHROPIC_API_KEY is not configured.");
-    return NextResponse.json(
-      { error: "The analysis service is not available right now." },
-      { status: 500 },
-    );
-  }
-
   // --- call Claude ---
-  const client = new Anthropic({ apiKey });
-  let rawText: string;
+  let rawJson: string;
   try {
-    const response = await client.messages.create({
+    const result = await callClaudeWithCachedSystem({
       model: "claude-sonnet-4-6",
-      max_tokens: 3000,
+      systemPrompt: SCORER_SYSTEM_PROMPT,
+      userMessage: text,
+      maxTokens: 3000,
       temperature: 0,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: text }],
     });
-    const first = response.content[0];
-    if (!first || first.type !== "text") {
-      throw new Error("The model response contains no text.");
-    }
-    rawText = first.text;
+    rawJson = result.text;
   } catch (err) {
+    if (err instanceof AnthropicConfigError) {
+      console.error("[api/score] ANTHROPIC_API_KEY is not configured.");
+      return NextResponse.json(
+        { error: "The analysis service is not available right now." },
+        { status: 500 },
+      );
+    }
     console.error("[api/score] Error calling Anthropic:", err);
     return NextResponse.json(
       { error: "Could not complete the analysis. Please try again." },
@@ -171,14 +156,14 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
-  // --- parse the JSON the scorer returned ---
+  // --- parse the JSON the scorer returned (code fences already stripped) ---
   let parsed: unknown;
   try {
-    parsed = JSON.parse(stripCodeFences(rawText));
+    parsed = JSON.parse(rawJson);
   } catch {
     console.error(
       "[api/score] Could not parse the scorer's JSON:",
-      rawText.slice(0, 500),
+      rawJson.slice(0, 500),
     );
     return NextResponse.json(
       { error: "The scorer returned an unexpected response." },

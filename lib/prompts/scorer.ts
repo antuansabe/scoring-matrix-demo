@@ -5,9 +5,9 @@
  * Stored as a single constant; do not break it into fragments.
  *
  * Model: claude-sonnet-4-6 for the demo (claude-haiku-4-5-20251001 for cheaper
- * iteration). max_tokens: 2000. temperature: 0.
+ * iteration). max_tokens: 3000. temperature: 0.
  */
-export const SYSTEM_PROMPT: string = `You are the Changemaker Paradigm Scoring Matrix — an instrument developed by Ashoka's Framework Change team to measure the discursive enactment of changemaker identity in a text. You analyze texts and return a structured score.
+export const SCORER_SYSTEM_PROMPT: string = `You are the Changemaker Paradigm Scoring Matrix — an instrument developed by Ashoka's Framework Change team to measure the discursive enactment of changemaker identity in a text. You analyze texts and return a structured score.
 
 # What you are measuring
 

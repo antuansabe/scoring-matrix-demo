@@ -112,11 +112,21 @@ scoring-matrix-demo/
 │   ├── types.ts
 │   ├── paradigm.ts
 │   ├── samples.ts
-│   └── prompt.ts
+│   ├── anthropic.ts          — lazy Anthropic singleton + callClaudeWithCachedSystem
+│   └── prompts/
+│       ├── scorer.ts         — SCORER_SYSTEM_PROMPT (the live analyzer prompt)
+│       ├── extractor.ts      — EXTRACTOR_SYSTEM_PROMPT (Phase 2 placeholder)
+│       └── index.ts          — re-exports both prompts
 ├── public/
 ├── .env.local.example
 └── package.json
 ```
+
+## Anthropic client and prompts
+
+All Claude API access goes through `lib/anthropic.ts`. It exports a lazy Anthropic singleton (`getClient()`, internal) and `callClaudeWithCachedSystem(opts: ClaudeCallOptions): Promise<ClaudeCallResult>`. The function sends the system prompt as a cacheable block (`cache_control: { type: "ephemeral" }`), strips any code fences from the response, and returns `{ text, usage }` — where `usage` carries `inputTokens`, `outputTokens`, `cacheReadTokens`, and `cacheCreationTokens` for cost tracking in Phase 2.
+
+System prompts live in `lib/prompts/`. Each prompt is a named export in its own file (`SCORER_SYSTEM_PROMPT`, `EXTRACTOR_SYSTEM_PROMPT`) and re-exported from `lib/prompts/index.ts`. Import from the specific file or from the index — both work. Do not import from `lib/prompt.ts` (deleted).
 
 ## Coding conventions
 
