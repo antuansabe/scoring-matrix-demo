@@ -12,6 +12,7 @@ import type {
   GenreTag,
   ScoreResult,
 } from "@/lib/types";
+import { countWords } from "@/lib/text";
 
 // The Anthropic SDK needs the Node.js runtime. maxDuration gives the Sonnet
 // call room on Vercel.
@@ -30,11 +31,6 @@ const VALID_GENRE_TAGS: GenreTag[] = [
   "speech-public-address",
   "fundraising-copy",
 ];
-
-function countWords(text: string): number {
-  const trimmed = text.trim();
-  return trimmed.length === 0 ? 0 : trimmed.split(/\s+/).length;
-}
 
 function isDimensionScore(value: unknown): value is DimensionScore {
   if (typeof value !== "object" || value === null) return false;

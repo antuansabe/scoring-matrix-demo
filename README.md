@@ -32,6 +32,20 @@ Open http://localhost:3000.
 
 Next.js 16 · TypeScript · Tailwind CSS · Recharts · @anthropic-ai/sdk · deployed on Vercel.
 
+## Pipeline
+
+A batch CLI for scoring text files at scale. Drop `.txt` files into `pipeline/input/`, then run:
+
+```bash
+npx tsx pipeline/cli.ts ingest \
+  --input ./pipeline/input \
+  --output ./pipeline/output
+```
+
+Each file gets validated (50–7,000 words), assigned a slug, and written to `pipeline/output/{slug}/source.json`. Re-running without `--force` is idempotent — existing files are skipped.
+
+See `docs/PIPELINE.md` for the full workflow, all commands, and the JSON schema for each artifact.
+
 ## License
 
 Internal Ashoka research artifact. Not for public redistribution at this stage.

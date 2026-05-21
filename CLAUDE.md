@@ -112,15 +112,44 @@ scoring-matrix-demo/
 │   ├── types.ts
 │   ├── paradigm.ts
 │   ├── samples.ts
+│   ├── text.ts               — countWords (shared by API route and pipeline)
 │   ├── anthropic.ts          — lazy Anthropic singleton + callClaudeWithCachedSystem
 │   └── prompts/
 │       ├── scorer.ts         — SCORER_SYSTEM_PROMPT (the live analyzer prompt)
 │       ├── extractor.ts      — EXTRACTOR_SYSTEM_PROMPT (Phase 2 placeholder)
 │       └── index.ts          — re-exports both prompts
+├── pipeline/
+│   ├── cli.ts                — commander entry point
+│   ├── commands/
+│   │   └── ingest.ts         — reads .txt files, writes source.json per slug
+│   ├── lib/
+│   │   ├── io.ts             — readTextFiles, writeJson, readJson, ensureDir, fileExists
+│   │   ├── logger.ts         — log.info / warn / error / success (picocolors)
+│   │   └── slugify.ts        — slugify, uniqueSlugify (accent-safe, collision-resistant)
+│   ├── input/                — drop .txt source files here (gitignored)
+│   └── output/               — generated artifacts (gitignored)
 ├── public/
 ├── .env.local.example
 └── package.json
 ```
+
+## Pipeline CLI
+
+The batch pipeline lives in `pipeline/`. It uses Node.js directly via `tsx` (no Next.js involved).
+
+CLI dependencies (all in the root `package.json`):
+- **commander** — command parsing (runtime dep)
+- **picocolors** — terminal color output (runtime dep)
+- **p-limit** — concurrency control for batch file processing (runtime dep)
+- **tsx** — TypeScript execution for the CLI scripts (devDependency)
+
+`lib/text.ts` is a shared utility used by both `app/api/score/route.ts` and `pipeline/commands/ingest.ts`. It exports `countWords(text: string): number`. This is the single source of truth for word counting — do not duplicate this logic elsewhere. The function explicitly returns 0 for empty or whitespace-only strings.
+
+Each JSON artifact the pipeline writes (starting with `source.json`) carries a `"schemaVersion": 1` field. Increment this when the shape changes in a breaking way.
+
+Pipeline data directories (`pipeline/input/`, `pipeline/output/`) are gitignored. Their `.gitkeep` stubs are tracked.
+
+See `docs/PIPELINE.md` for full workflow documentation.
 
 ## Anthropic client and prompts
 

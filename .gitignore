@@ -41,3 +41,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# pipeline data (keep directory stubs)
+pipeline/input/*
+!pipeline/input/.gitkeep
+pipeline/output/*
+!pipeline/output/.gitkeep
+
+# MCP tooling
+.playwright-mcp/
