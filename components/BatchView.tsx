@@ -85,13 +85,21 @@ function AnalyzingMessage({ messages = ANALYZING_MESSAGES }: { messages?: string
 
 type BatchItem = {
   id: string;                    // crypto.randomUUID()
-  name: string;                  // given by user
+  journalistName: string;
+  articleTitle: string;
   text: string;                  // pasted article text
   wordCount: number;             // computed using countWords
   status: 'pending' | 'analyzing' | 'done' | 'failed';
   result?: AnalysisResult;       // consolidated analyzer output
   error?: string;
 };
+
+function getItemName(item: { journalistName: string; articleTitle: string }): string {
+  if (item.journalistName && item.articleTitle) {
+    return `${item.journalistName} · ${item.articleTitle}`;
+  }
+  return item.journalistName || item.articleTitle || "";
+}
 
 type BatchState = {
   phase: 'idle' | 'adding' | 'processing' | 'done';
@@ -256,7 +264,8 @@ export function BatchView() {
     batchNameInput: "",
   });
 
-  const [name, setName] = useState("");
+  const [journalistName, setJournalistName] = useState("");
+  const [articleTitle, setArticleTitle] = useState("");
   const [text, setText] = useState("");
   const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({});
   const [reportBlobUrl, setReportBlobUrl] = useState<string | null>(null);
@@ -265,7 +274,7 @@ export function BatchView() {
 
   const wordCount = countWords(text);
   const isWordCountOutOfRange = wordCount > 0 && (wordCount < 50 || wordCount > 7000);
-  const isAddDisabled = !name.trim() || !text.trim() || wordCount < 50 || wordCount > 7000;
+  const isAddDisabled = !journalistName.trim() || !text.trim() || wordCount < 50 || wordCount > 7000;
 
   const handleAddItem = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -273,7 +282,8 @@ export function BatchView() {
 
     const newItem: BatchItem = {
       id: crypto.randomUUID(),
-      name: name.trim(),
+      journalistName: journalistName.trim(),
+      articleTitle: articleTitle.trim(),
       text: text.trim(),
       wordCount,
       status: 'pending',
@@ -281,7 +291,8 @@ export function BatchView() {
 
     dispatch({ type: 'ADD_ITEM', item: newItem });
 
-    setName("");
+    setJournalistName("");
+    setArticleTitle("");
     setText("");
 
     setTimeout(() => {
@@ -387,7 +398,7 @@ export function BatchView() {
     const articles = doneItems.map((item) => {
       const res = item.result!;
       return {
-        name: item.name,
+        name: getItemName(item),
         wordCount: item.wordCount,
         enactmentScore: res.score.enactmentScore,
         paradigmName: res.score.paradigmName,
@@ -486,7 +497,7 @@ export function BatchView() {
       if (item.status === 'failed') {
         rows.push(
           [
-            escapeCSV(item.name),
+            escapeCSV(getItemName(item)),
             "failed",
             "",
             "",
@@ -509,7 +520,7 @@ export function BatchView() {
         const res = item.result;
         rows.push(
           [
-            escapeCSV(item.name),
+            escapeCSV(getItemName(item)),
             escapeCSV(res.score.enactmentScore),
             escapeCSV(res.score.paradigmName),
             escapeCSV(res.score.eachOrientation),
@@ -570,7 +581,7 @@ export function BatchView() {
         body: JSON.stringify({
           articles: state.items
             .filter((i) => i.status === 'done' && i.result)
-            .map((i) => ({ ...i.result, name: i.name })),
+            .map((i) => ({ ...i.result, name: getItemName(i) })),
           batchName: state.batchNameInput || undefined,
           exportedAt: new Date().toISOString(),
         }),
@@ -656,16 +667,31 @@ export function BatchView() {
 
           <form onSubmit={handleAddItem} className="border border-border bg-surface p-6 lg:p-8 rounded-sm">
             <div>
-              <label className="block font-mono text-xs uppercase tracking-widest text-muted mb-2">
-                Article or journalist name
+              <label htmlFor="journalist-name-input" className="block font-mono text-xs uppercase tracking-widest text-muted mb-2">
+                JOURNALIST NAME
               </label>
               <input
+                id="journalist-name-input"
                 type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={journalistName}
+                onChange={(e) => setJournalistName(e.target.value)}
                 ref={nameInputRef}
                 className="w-full bg-transparent border-b border-border pb-1 text-ink font-sans focus:outline-none focus:border-accent text-sm"
-                placeholder="e.g. Lucía Torres · March piece"
+                placeholder="e.g. Lucía Torres"
+              />
+            </div>
+
+            <div className="mt-6">
+              <label htmlFor="article-title-input" className="block font-mono text-xs uppercase tracking-widest text-muted mb-2">
+                ARTICLE TITLE
+              </label>
+              <input
+                id="article-title-input"
+                type="text"
+                value={articleTitle}
+                onChange={(e) => setArticleTitle(e.target.value)}
+                className="w-full bg-transparent border-b border-border pb-1 text-ink font-sans focus:outline-none focus:border-accent text-sm"
+                placeholder="e.g. March piece"
               />
             </div>
 
@@ -731,7 +757,7 @@ export function BatchView() {
                     <div className="flex flex-col min-w-0">
                       <div className="flex items-baseline gap-2 min-w-0 flex-wrap">
                         <span className="font-display font-medium text-lg text-ink truncate">
-                          {item.name}
+                          {getItemName(item)}
                         </span>
                         <span className="font-mono text-xs text-muted shrink-0">
                           ({item.wordCount} words)
@@ -841,7 +867,7 @@ export function BatchView() {
                     <div className="flex flex-col min-w-0">
                       <div className="flex items-baseline gap-2 min-w-0 flex-wrap">
                         <span className="font-display font-medium text-lg text-ink truncate">
-                          {item.name}
+                          {getItemName(item)}
                         </span>
                         <span className="font-mono text-xs text-muted shrink-0">
                           ({item.wordCount} words)
@@ -958,7 +984,7 @@ export function BatchView() {
                       >
                         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                           <span className="font-display text-xl font-medium text-ink">
-                            {item.name}
+                            {getItemName(item)}
                           </span>
                           <span className="font-mono text-sm text-muted">
                             · {res.score.enactmentScore}/100
@@ -995,7 +1021,7 @@ export function BatchView() {
                         <div className="flex items-center gap-3">
                           <div className="w-3 h-3 rounded-full bg-[#C44536]" />
                           <span className="font-display font-medium text-lg text-ink">
-                            {item.name}
+                            {getItemName(item)}
                           </span>
                         </div>
                         {item.error && (
