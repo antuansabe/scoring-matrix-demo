@@ -50,3 +50,4 @@ pipeline/output/*
 
 # MCP tooling
 .playwright-mcp/
+scratch/

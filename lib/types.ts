@@ -121,3 +121,48 @@ export type AnalysisResult = {
   };
 };
 
+/** Results returned by the narrative report synthesis engine. */
+export type SynthesisResult = {
+  executiveSummary: string;
+  communityProfile: {
+    narrativeSummary: string;
+    dominantParadigm: string;
+    averageScore: number;
+    keyStrengths: string[];
+    keyGaps: string[];
+  };
+  dimensionInsights: {
+    dimension: DimensionKey;
+    dimensionName: string;
+    communityAverage: number;
+    insight: string;
+    representativeQuote: string;
+  }[];
+  helloWorldShifts: {
+    shiftId: keyof HelloWorldShifts;
+    shiftLabel: string;
+    frequency: "High" | "Medium" | "Low" | "Absent";
+    insight: string;
+    exampleQuote: string | null;
+  }[];
+  narrativePatterns: {
+    pattern: string;
+    description: string;
+    frequency: string;
+    exampleQuote: string;
+  }[];
+  geographicCoverage: {
+    summary: string;
+    mainLocations: string[];
+    gaps: string;
+  };
+  standoutVoices: {
+    articleName: string;
+    score: number;
+    paradigm: string;
+    whatMakesItDifferent: string;
+  }[];
+  opportunities: string[];
+};
+
+

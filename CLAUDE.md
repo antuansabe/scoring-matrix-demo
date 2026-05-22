@@ -100,8 +100,10 @@ scoring-matrix-demo/
 │   └── api/
 │       ├── score/
 │       │   └── route.ts      — Scorer API route
-│       └── analyze/
-│           └── route.ts      — Combined Scorer + Extractor API route
+│       ├── analyze/
+│       │   └── route.ts      — Combined Scorer + Extractor API route
+│       └── generate-report/
+│           └── route.ts      — Narrative Word synthesis report API route
 ├── components/
 │   ├── Header.tsx            — Top bar + Sub-navigation tabs wrapper
 │   ├── NavLinks.tsx          — Client-side sub-navigation component (usePathname)
@@ -120,10 +122,12 @@ scoring-matrix-demo/
 │   ├── samples.ts
 │   ├── text.ts               — countWords (shared by API route and pipeline)
 │   ├── anthropic.ts          — lazy Anthropic singleton + callClaudeWithCachedSystem
+│   ├── report-generator.ts   — Word .docx report generator using docx package
 │   └── prompts/
 │       ├── scorer.ts         — SCORER_SYSTEM_PROMPT (the live analyzer prompt)
 │       ├── extractor.ts      — EXTRACTOR_SYSTEM_PROMPT (Phase 2 placeholder)
-│       └── index.ts          — re-exports both prompts
+│       ├── synthesis.ts      — SYNTHESIS_SYSTEM_PROMPT (Narrative report synthesis prompt)
+│       └── index.ts          — re-exports prompts
 ├── pipeline/
 │   ├── cli.ts                — commander entry point
 │   ├── commands/

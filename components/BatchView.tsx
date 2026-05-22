@@ -23,7 +23,19 @@ const ANALYZING_MESSAGES = [
   "Finalizing analysis...",
 ];
 
-function AnalyzingMessage() {
+const SYNTHESIS_MESSAGES = [
+  "Reading all articles...",
+  "Identifying community narrative patterns...",
+  "Analyzing Hello World shifts across the corpus...",
+  "Mapping paradigm distribution...",
+  "Finding standout voices...",
+  "Identifying geographic coverage...",
+  "Writing executive summary...",
+  "Generating narrative insights...",
+  "Compiling the report...",
+];
+
+function AnalyzingMessage({ messages = ANALYZING_MESSAGES }: { messages?: string[] }) {
   const [index, setIndex] = useState(0);
   const [reduceMotion, setReduceMotion] = useState(false);
 
@@ -42,14 +54,14 @@ function AnalyzingMessage() {
     }
 
     const interval = setInterval(() => {
-      setIndex((prevIndex) => (prevIndex + 1) % ANALYZING_MESSAGES.length);
+      setIndex((prevIndex) => (prevIndex + 1) % messages.length);
     }, 2500);
 
     return () => {
       clearInterval(interval);
       mediaQuery.removeEventListener("change", handleChange);
     };
-  }, []);
+  }, [messages.length]);
 
   if (reduceMotion) {
     return (
@@ -62,7 +74,7 @@ function AnalyzingMessage() {
   return (
     <span className="font-mono text-xs text-muted italic inline-flex items-center">
       <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse inline-block mr-2 shrink-0" />
-      {ANALYZING_MESSAGES[index]}
+      {messages[index]}
     </span>
   );
 }
@@ -85,6 +97,9 @@ type BatchState = {
   phase: 'idle' | 'adding' | 'processing' | 'done';
   items: BatchItem[];
   processedCount: number;
+  reportPhase: 'idle' | 'generating' | 'ready' | 'error';
+  batchNameInput: string;
+  reportError?: string;
 };
 
 type BatchAction =
@@ -96,7 +111,10 @@ type BatchAction =
   | { type: 'SET_FAILED'; id: string; error: string }
   | { type: 'FINISH_PROCESSING' }
   | { type: 'RESET' }
-  | { type: 'RETRY_ITEM'; id: string };
+  | { type: 'RETRY_ITEM'; id: string }
+  | { type: 'SET_REPORT_PHASE'; phase: 'idle' | 'generating' | 'ready' | 'error' }
+  | { type: 'SET_BATCH_NAME'; name: string }
+  | { type: 'SET_REPORT_ERROR'; error: string };
 
 // ---------------------------------------------------------------------------
 // State Reducer
@@ -109,6 +127,9 @@ function batchReducer(state: BatchState, action: BatchAction): BatchState {
         phase: 'idle',
         items: [],
         processedCount: 0,
+        reportPhase: 'idle',
+        batchNameInput: "",
+        reportError: undefined,
       };
 
     case 'ADD_ITEM': {
@@ -185,6 +206,24 @@ function batchReducer(state: BatchState, action: BatchAction): BatchState {
       };
     }
 
+    case 'SET_REPORT_PHASE':
+      return {
+        ...state,
+        reportPhase: action.phase,
+      };
+
+    case 'SET_BATCH_NAME':
+      return {
+        ...state,
+        batchNameInput: action.name,
+      };
+
+    case 'SET_REPORT_ERROR':
+      return {
+        ...state,
+        reportError: action.error,
+      };
+
     default:
       return state;
   }
@@ -213,11 +252,14 @@ export function BatchView() {
     phase: 'idle',
     items: [],
     processedCount: 0,
+    reportPhase: 'idle',
+    batchNameInput: "",
   });
 
   const [name, setName] = useState("");
   const [text, setText] = useState("");
   const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({});
+  const [reportBlobUrl, setReportBlobUrl] = useState<string | null>(null);
 
   const nameInputRef = useRef<HTMLInputElement>(null);
 
@@ -490,6 +532,79 @@ export function BatchView() {
     link.download = `analysis-summary-${dateStr}.csv`;
     link.click();
     URL.revokeObjectURL(url);
+  };
+
+  // ---------------------------------------------------------------------------
+  // Narrative Report Generation
+  // ---------------------------------------------------------------------------
+
+  const handleDownloadCachedReport = () => {
+    if (!reportBlobUrl) return;
+    const link = document.createElement("a");
+    link.href = reportBlobUrl;
+    const dateStr = new Date().toISOString().split("T")[0];
+    link.download = `narrative-report-${dateStr}.docx`;
+    link.click();
+  };
+
+  const handleGenerateReport = async () => {
+    dispatch({ type: 'SET_REPORT_PHASE', phase: 'generating' });
+    dispatch({ type: 'SET_REPORT_ERROR', error: "" });
+
+    // Clean up old report blob URL if any
+    if (reportBlobUrl) {
+      URL.revokeObjectURL(reportBlobUrl);
+      setReportBlobUrl(null);
+    }
+
+    try {
+      const response = await fetch('/api/generate-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          articles: state.items
+            .filter((i) => i.status === 'done' && i.result)
+            .map((i) => ({ ...i.result, name: i.name })),
+          batchName: state.batchNameInput || undefined,
+          exportedAt: new Date().toISOString(),
+        }),
+      });
+
+      if (!response.ok) {
+        const errText = await response.text();
+        let parsedErr = "Failed to generate report";
+        try {
+          const json = JSON.parse(errText);
+          if (json.error) parsedErr = json.error;
+        } catch {
+          parsedErr = errText || `HTTP ${response.status}`;
+        }
+        throw new Error(parsedErr);
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      setReportBlobUrl(url);
+
+      const link = document.createElement("a");
+      link.href = url;
+      const dateStr = new Date().toISOString().split("T")[0];
+      link.download = `narrative-report-${dateStr}.docx`;
+      link.click();
+
+      dispatch({ type: 'SET_REPORT_PHASE', phase: 'ready' });
+    } catch (err: any) {
+      dispatch({ type: 'SET_REPORT_PHASE', phase: 'error' });
+      dispatch({ type: 'SET_REPORT_ERROR', error: err.message || "An unexpected error occurred during synthesis." });
+    }
+  };
+
+  const handleReset = () => {
+    if (reportBlobUrl) {
+      URL.revokeObjectURL(reportBlobUrl);
+      setReportBlobUrl(null);
+    }
+    dispatch({ type: 'RESET' });
   };
 
   // ---------------------------------------------------------------------------
@@ -884,9 +999,94 @@ export function BatchView() {
             </div>
           </div>
 
+          {/* ── SECCIÓN "GENERATE REPORT" ── */}
+          {nAnalyzed > 0 && (
+            <div className="mt-12 pt-10 border-t border-border animate-fade-in">
+              <p className="font-mono text-xs uppercase tracking-widest text-muted mb-6">
+                NARRATIVE REPORT
+              </p>
+
+              <div className="bg-surface border border-border p-6 rounded-sm">
+                {state.reportPhase === 'idle' && (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block font-mono text-xs uppercase tracking-widest text-muted mb-2">
+                        Batch or client name (optional)
+                      </label>
+                      <input
+                        type="text"
+                        value={state.batchNameInput}
+                        onChange={(e) => dispatch({ type: 'SET_BATCH_NAME', name: e.target.value })}
+                        className="w-full bg-transparent border-b border-border pb-1 text-ink font-sans focus:outline-none focus:border-accent text-sm"
+                        placeholder="e.g. Hola América · May 2026"
+                      />
+                    </div>
+                    
+                    <p className="font-mono text-xs text-muted leading-relaxed">
+                      Claude will synthesize all {nAnalyzed} analyzed texts into a structured Word document ready to share.
+                    </p>
+                    
+                    <button
+                      onClick={handleGenerateReport}
+                      className="font-display bg-accent text-white w-full py-4 text-lg hover:bg-opacity-95 transition-colors cursor-pointer font-medium"
+                    >
+                      Generate Narrative Report →
+                    </button>
+                  </div>
+                )}
+
+                {state.reportPhase === 'generating' && (
+                  <div className="text-center py-6 space-y-3">
+                    <div className="flex justify-center items-center">
+                      <AnalyzingMessage messages={SYNTHESIS_MESSAGES} />
+                    </div>
+                    <p className="font-mono text-xs text-muted italic">
+                      This may take 30–60 seconds for large batches.
+                    </p>
+                  </div>
+                )}
+
+                {state.reportPhase === 'ready' && (
+                  <div className="text-center py-4 space-y-4">
+                    <div className="flex justify-center items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-[#2A5A3E] text-white flex items-center justify-center font-bold text-xs">✓</span>
+                      <span className="font-display text-xl text-ink font-medium">Report ready</span>
+                    </div>
+
+                    <div className="flex flex-col items-center gap-3">
+                      <button
+                        onClick={handleDownloadCachedReport}
+                        className="font-display bg-accent text-white px-8 py-3 hover:bg-opacity-95 transition-colors cursor-pointer text-base"
+                      >
+                        Download Report (Word) ↓
+                      </button>
+                      <p className="font-mono text-xs text-muted max-w-sm mx-auto leading-relaxed">
+                        Open in Word, Google Docs, or Pages to review and edit before sharing.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {state.reportPhase === 'error' && (
+                  <div className="space-y-4 text-center py-4">
+                    <p className="font-mono text-xs text-accent">
+                      {state.reportError || "Failed to generate report."}
+                    </p>
+                    <button
+                      onClick={() => dispatch({ type: 'SET_REPORT_PHASE', phase: 'idle' })}
+                      className="font-mono text-xs uppercase tracking-widest text-accent font-semibold hover:underline bg-transparent border-0 cursor-pointer"
+                    >
+                      Try again
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className="text-center pt-8">
             <button
-              onClick={() => dispatch({ type: 'RESET' })}
+              onClick={handleReset}
               className="font-mono text-sm text-muted underline hover:text-ink cursor-pointer bg-transparent border-0"
             >
               Start new batch
