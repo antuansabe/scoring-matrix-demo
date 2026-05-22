@@ -1,17 +1,7 @@
 import { NextResponse } from "next/server";
 import { callClaudeWithCachedSystem, AnthropicConfigError } from "@/lib/anthropic";
 import { SCORER_SYSTEM_PROMPT } from "@/lib/prompts/scorer";
-import {
-  calculateEnactmentScore,
-  resolveEACHOrientation,
-  resolveParadigmName,
-} from "@/lib/paradigm";
-import type {
-  DimensionKey,
-  DimensionScore,
-  GenreTag,
-  ScoreResult,
-} from "@/lib/types";
+import { validateAndComputeScore } from "@/lib/scoring";
 import { countWords } from "@/lib/text";
 
 // The Anthropic SDK needs the Node.js runtime. maxDuration gives the Sonnet
@@ -21,67 +11,6 @@ export const maxDuration = 30;
 
 const MIN_WORDS = 50;
 const MAX_WORDS = 7000;
-
-const DIMENSION_KEYS: DimensionKey[] = ["D1", "D2", "D3", "D4", "D5"];
-const VALID_GENRE_TAGS: GenreTag[] = [
-  "free-form-interview",
-  "structured-profile",
-  "social-media-post",
-  "institutional-report",
-  "speech-public-address",
-  "fundraising-copy",
-];
-
-function isDimensionScore(value: unknown): value is DimensionScore {
-  if (typeof value !== "object" || value === null) return false;
-  const o = value as Record<string, unknown>;
-  return (
-    typeof o.score === "number" &&
-    o.score >= 0 &&
-    o.score <= 4 &&
-    typeof o.justification === "string" &&
-    Array.isArray(o.quotes) &&
-    o.quotes.every((q) => typeof q === "string")
-  );
-}
-
-interface ValidatedScore {
-  genreTag: GenreTag;
-  dimensions: Record<DimensionKey, DimensionScore>;
-  enactmentScore: number;
-  paradigmName: string;
-  eachOrientation: string;
-  wordCountWarnings: unknown;
-  confidenceFlags: unknown;
-}
-
-/** Minimal shape validation of the JSON the scorer returns. */
-function validateShape(parsed: unknown): parsed is ValidatedScore {
-  if (typeof parsed !== "object" || parsed === null) return false;
-  const o = parsed as Record<string, unknown>;
-
-  if (
-    typeof o.genreTag !== "string" ||
-    !VALID_GENRE_TAGS.includes(o.genreTag as GenreTag)
-  ) {
-    return false;
-  }
-  if (typeof o.dimensions !== "object" || o.dimensions === null) return false;
-  const dims = o.dimensions as Record<string, unknown>;
-  for (const key of DIMENSION_KEYS) {
-    if (!isDimensionScore(dims[key])) return false;
-  }
-  if (typeof o.enactmentScore !== "number") return false;
-  if (typeof o.paradigmName !== "string") return false;
-  if (typeof o.eachOrientation !== "string") return false;
-  return true;
-}
-
-function toStringArray(value: unknown): string[] {
-  return Array.isArray(value)
-    ? value.filter((x): x is string => typeof x === "string")
-    : [];
-}
 
 export async function POST(request: Request): Promise<Response> {
   // --- parse the request body ---
@@ -152,71 +81,14 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
-  // --- parse the JSON the scorer returned (code fences already stripped) ---
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(rawJson);
-  } catch {
-    console.error(
-      "[api/score] Could not parse the scorer's JSON:",
-      rawJson.slice(0, 500),
-    );
+  // --- validate and compute score ---
+  const validated = validateAndComputeScore(rawJson, words);
+  if (!validated.ok) {
     return NextResponse.json(
-      { error: "The scorer returned an unexpected response." },
-      { status: 502 },
+      { error: validated.error },
+      { status: validated.status },
     );
   }
 
-  // --- the scorer's documented "too short / gibberish" escape hatch ---
-  if (
-    typeof parsed === "object" &&
-    parsed !== null &&
-    "error" in parsed &&
-    typeof (parsed as Record<string, unknown>).error === "string"
-  ) {
-    return NextResponse.json(
-      { error: (parsed as { error: string }).error },
-      { status: 422 },
-    );
-  }
-
-  // --- shape validation ---
-  if (!validateShape(parsed)) {
-    console.error(
-      "[api/score] Invalid shape from the scorer:",
-      JSON.stringify(parsed).slice(0, 500),
-    );
-    return NextResponse.json(
-      { error: "The scorer returned an unexpected response." },
-      { status: 502 },
-    );
-  }
-
-  // --- normalize the dimension scores (ints in [0,4]) ---
-  const dimensions = parsed.dimensions;
-  for (const key of DIMENSION_KEYS) {
-    const d = dimensions[key];
-    d.score = Math.min(4, Math.max(0, Math.round(d.score)));
-  }
-
-  // --- recompute the derived fields server-side; don't trust the LLM 100% ---
-  const serverScore = calculateEnactmentScore(dimensions, parsed.genreTag);
-  if (Math.abs(serverScore - parsed.enactmentScore) > 3) {
-    console.warn(
-      `[api/score] LLM enactmentScore (${parsed.enactmentScore}) differs from server (${serverScore}) by more than 3 points. Using the server value.`,
-    );
-  }
-
-  const result: ScoreResult = {
-    genreTag: parsed.genreTag,
-    wordCount: words,
-    dimensions,
-    enactmentScore: serverScore,
-    paradigmName: resolveParadigmName(serverScore),
-    eachOrientation: resolveEACHOrientation(dimensions),
-    wordCountWarnings: toStringArray(parsed.wordCountWarnings),
-    confidenceFlags: toStringArray(parsed.confidenceFlags),
-  };
-
-  return NextResponse.json(result, { status: 200 });
+  return NextResponse.json(validated.result, { status: 200 });
 }

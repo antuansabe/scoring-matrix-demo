@@ -72,3 +72,52 @@ export type Sample = {
   expectedEACHOrientation: string;
   expertScores: Record<DimensionKey, DimensionScore>;
 };
+
+// ---------------------------------------------------------------------------
+// Extraction & Analysis types (Phase 2 — batch pipeline / /api/analyze)
+// ---------------------------------------------------------------------------
+
+/** Hello World shifts — 4 arrays of verbatim quotes from the text. */
+export type HelloWorldShifts = {
+  shift1_contribution: string[];
+  shift2_sharedExperience: string[];
+  shift3_valueOfContributions: string[];
+  shift4_fluidCommunities: string[];
+};
+
+/** Structured extraction output (extractor prompt, schemaVersion 1). */
+export type ExtractionResult = {
+  schemaVersion: number;
+  actors: string[];
+  problemQuotes: string[];
+  solutionQuotes: string[];
+  geography: string[];
+  helloWorldShifts: HelloWorldShifts;
+};
+
+/** Token usage for cost tracking (both calls combined). */
+export type AnalysisUsage = {
+  totalInputTokens: number;
+  totalOutputTokens: number;
+  scoringInputTokens: number;
+  scoringOutputTokens: number;
+  extractionInputTokens: number;
+  extractionOutputTokens: number;
+  cacheReadTokens: number;
+  cacheCreationTokens: number;
+};
+
+/** Combined scoring + extraction result (returned by /api/analyze). */
+export type AnalysisResult = {
+  score: ScoreResult;
+  extraction: ExtractionResult;
+  meta: {
+    slug?: string;
+    wordCount: number;
+    analyzedAt: string;
+    usage: AnalysisUsage;
+    /** True when extraction failed and was degraded to empty arrays. */
+    extractionDegraded?: boolean;
+  };
+};
+
