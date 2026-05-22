@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducer, useState, useRef } from "react";
+import { useReducer, useState, useRef, useEffect } from "react";
 import pLimit from "p-limit";
 import { countWords } from "@/lib/text";
 import { CountUpNumber } from "@/components/CountUpNumber";
@@ -9,6 +9,63 @@ import { RadarProfile } from "@/components/RadarProfile";
 import { ScoreBreakdown } from "@/components/ScoreBreakdown";
 import { JustificationQuotes } from "@/components/JustificationQuotes";
 import type { AnalysisResult } from "@/lib/types";
+
+const ANALYZING_MESSAGES = [
+  "Reading the architecture of the text...",
+  "Identifying agency patterns...",
+  "Mapping systemic framing...",
+  "Analyzing empathy quality...",
+  "Evaluating collaboration signals...",
+  "Assessing identity embodiment...",
+  "Extracting key quotes...",
+  "Computing paradigm enactment score...",
+  "Calibrating dimension weights...",
+  "Finalizing analysis...",
+];
+
+function AnalyzingMessage() {
+  const [index, setIndex] = useState(0);
+  const [reduceMotion, setReduceMotion] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduceMotion(mediaQuery.matches);
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      setReduceMotion(e.matches);
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+
+    if (mediaQuery.matches) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setIndex((prevIndex) => (prevIndex + 1) % ANALYZING_MESSAGES.length);
+    }, 2500);
+
+    return () => {
+      clearInterval(interval);
+      mediaQuery.removeEventListener("change", handleChange);
+    };
+  }, []);
+
+  if (reduceMotion) {
+    return (
+      <span className="font-mono text-xs text-muted italic">
+        Analyzing...
+      </span>
+    );
+  }
+
+  return (
+    <span className="font-mono text-xs text-muted italic inline-flex items-center">
+      <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse inline-block mr-2 shrink-0" />
+      {ANALYZING_MESSAGES[index]}
+    </span>
+  );
+}
 
 // ---------------------------------------------------------------------------
 // State Machine Types
@@ -550,22 +607,31 @@ export function BatchView() {
                     {isFailed && (
                       <div className="w-3 h-3 rounded-full bg-[#C44536] shrink-0" title="Failed" />
                     )}
-                    <span className="font-display font-medium text-lg text-ink truncate">
-                      {item.name}
-                    </span>
-                    <span className="font-mono text-xs text-muted shrink-0">
-                      ({item.wordCount} words)
-                    </span>
-                    {isDone && item.result && (
-                      <span className="font-mono text-xs text-muted">
-                        · {item.result.score.enactmentScore}/100 · {item.result.score.paradigmName}
-                      </span>
-                    )}
-                    {isFailed && (
-                      <span className="font-mono text-xs text-[#C44536]">
-                        · failed
-                      </span>
-                    )}
+                    <div className="flex flex-col min-w-0">
+                      <div className="flex items-baseline gap-2 min-w-0 flex-wrap">
+                        <span className="font-display font-medium text-lg text-ink truncate">
+                          {item.name}
+                        </span>
+                        <span className="font-mono text-xs text-muted shrink-0">
+                          ({item.wordCount} words)
+                        </span>
+                        {isDone && item.result && (
+                          <span className="font-mono text-xs text-muted">
+                            · {item.result.score.enactmentScore}/100 · {item.result.score.paradigmName}
+                          </span>
+                        )}
+                        {isFailed && (
+                          <span className="font-mono text-xs text-[#C44536]">
+                            · failed
+                          </span>
+                        )}
+                      </div>
+                      {isAnalyzing && (
+                        <div className="mt-1">
+                          <AnalyzingMessage />
+                        </div>
+                      )}
+                    </div>
                   </div>
                   {isPending && (
                     <button
@@ -609,6 +675,9 @@ export function BatchView() {
               <CountUpNumber value={state.processedCount} animate={true} />
               <span className="text-muted text-2xl font-mono ml-2">/ {state.items.length}</span>
             </div>
+            <div className="mt-2 min-h-[1.5rem]">
+              <AnalyzingMessage />
+            </div>
           </div>
 
           <div className="w-full h-[2px] bg-border rounded-full overflow-hidden">
@@ -643,22 +712,31 @@ export function BatchView() {
                     {isFailed && (
                       <div className="w-3 h-3 rounded-full bg-[#C44536] shrink-0" />
                     )}
-                    <span className="font-display font-medium text-lg text-ink truncate">
-                      {item.name}
-                    </span>
-                    <span className="font-mono text-xs text-muted shrink-0">
-                      ({item.wordCount} words)
-                    </span>
-                    {isDone && item.result && (
-                      <span className="font-mono text-xs text-muted">
-                        · {item.result.score.enactmentScore}/100 · {item.result.score.paradigmName}
-                      </span>
-                    )}
-                    {isFailed && (
-                      <span className="font-mono text-xs text-[#C44536]">
-                        · failed
-                      </span>
-                    )}
+                    <div className="flex flex-col min-w-0">
+                      <div className="flex items-baseline gap-2 min-w-0 flex-wrap">
+                        <span className="font-display font-medium text-lg text-ink truncate">
+                          {item.name}
+                        </span>
+                        <span className="font-mono text-xs text-muted shrink-0">
+                          ({item.wordCount} words)
+                        </span>
+                        {isDone && item.result && (
+                          <span className="font-mono text-xs text-muted">
+                            · {item.result.score.enactmentScore}/100 · {item.result.score.paradigmName}
+                          </span>
+                        )}
+                        {isFailed && (
+                          <span className="font-mono text-xs text-[#C44536]">
+                            · failed
+                          </span>
+                        )}
+                      </div>
+                      {isAnalyzing && (
+                        <div className="mt-1">
+                          <AnalyzingMessage />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               );
