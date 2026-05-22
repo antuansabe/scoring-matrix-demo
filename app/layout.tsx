@@ -23,6 +23,9 @@ const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-plex-mono",
 });
 
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+
 const SITE_TITLE = "Changemaker Paradigm Scoring Matrix — Demo";
 const SITE_DESCRIPTION =
   "An interactive demo of Ashoka's Changemaker Paradigm Scoring Matrix — reading the architecture of a text across five dimensions.";
@@ -47,7 +50,11 @@ export default function RootLayout({
       lang="es"
       className={`${fraunces.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full">{children}</body>
+      <body className="min-h-full">
+        <Header />
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }

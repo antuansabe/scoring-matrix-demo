@@ -92,14 +92,20 @@ scoring-matrix-demo/
 │   ├── SAMPLES.md
 │   └── SYSTEM_PROMPT.md
 ├── app/
-│   ├── layout.tsx
-│   ├── page.tsx
+│   ├── layout.tsx            — Root layout (global Header & Footer island wrappers)
+│   ├── page.tsx              — Home page (Instrument Demo Switcher & Live Scorer)
+│   ├── batch/
+│   │   └── page.tsx          — Batch Analysis Page (renders BatchView client component)
 │   ├── globals.css
 │   └── api/
-│       └── score/
-│           └── route.ts
+│       ├── score/
+│       │   └── route.ts      — Scorer API route
+│       └── analyze/
+│           └── route.ts      — Combined Scorer + Extractor API route
 ├── components/
-│   ├── Header.tsx
+│   ├── Header.tsx            — Top bar + Sub-navigation tabs wrapper
+│   ├── NavLinks.tsx          — Client-side sub-navigation component (usePathname)
+│   ├── BatchView.tsx         — Batch view state machine, processors & file exporters
 │   ├── SampleSwitcher.tsx
 │   ├── TextExcerpt.tsx
 │   ├── ScoreCard.tsx
@@ -132,6 +138,11 @@ scoring-matrix-demo/
 ├── .env.local.example
 └── package.json
 ```
+
+## Routing & Pages
+
+1. **`/` (Instrument Demo)**: Static page displaying Ashoka's pre-scored expert anchors and exposing the single Live Scorer widget. Wraps scoring results in custom editorial aesthetics.
+2. **`/batch` (Batch Analysis)**: Static route designed for Giselle (Framework Change) to compile, queue, process (limited to 3 concurrent requests), inspect granular Radar/Breakdown layouts, and download consolidated files. Public route (no API keys exposed to client; all requests leverage server-side SDK calls).
 
 ## Pipeline CLI
 
