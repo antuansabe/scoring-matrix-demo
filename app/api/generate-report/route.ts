@@ -5,7 +5,7 @@ import { generateWordReport } from "@/lib/report-generator";
 import type { AnalysisResult, SynthesisResult } from "@/lib/types";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 // Validates the parsed synthesis JSON matches the expected SynthesisResult structure.
 function validateAndCleanSynthesis(parsed: any): SynthesisResult {

@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "app/api/generate-report/route.ts": {
+      "maxDuration": 120
+    },
+    "app/api/analyze/route.ts": {
+      "maxDuration": 60
+    }
+  }
+}
