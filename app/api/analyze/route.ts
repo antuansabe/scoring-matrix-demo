@@ -15,7 +15,7 @@ import type {
 } from "@/lib/types";
 
 export const runtime = "nodejs";
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 const MIN_WORDS = 50;
 const MAX_WORDS = 7000;
@@ -175,7 +175,7 @@ export async function POST(request: Request): Promise<Response> {
       model: "claude-sonnet-4-6",
       systemPrompt: SCORER_SYSTEM_PROMPT,
       userMessage: text,
-      maxTokens: 3000,
+      maxTokens: 5000,
       temperature: 0,
     });
 
@@ -183,7 +183,7 @@ export async function POST(request: Request): Promise<Response> {
       model: "claude-haiku-4-5-20251001",
       systemPrompt: EXTRACTOR_SYSTEM_PROMPT,
       userMessage: text,
-      maxTokens: 2000,
+      maxTokens: 3000,
       temperature: 0,
     }).catch((err) => {
       // Extraction is non-critical — degrade gracefully

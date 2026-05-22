@@ -69,4 +69,12 @@ Evidence of fluid, adaptive networks, intergenerational teams, or inter-organiza
 
 1. Quotes MUST be verbatim. Every quote in actors, problemQuotes, solutionQuotes, and helloWorldShifts MUST be an exact substring of the original text. Do not paraphrase. Do not translate. Preserve original punctuation, accents, and capitalization.
 2. If there is no clear evidence for a field or a shift, return an empty array []. Never make up quotes or infer things not explicitly stated.
-3. If the input text is empty, gibberish, or under 50 words total, return a JSON object where all fields are empty arrays.`;
+3. If the input text is empty, gibberish, or under 50 words total, return a JSON object where all fields are empty arrays.
+
+Hard limits to stay within token bounds:
+- actors: at most 10 items
+- problemQuotes, solutionQuotes: at most 5 quotes each
+- geography: at most 10 items  
+- Each helloWorldShifts array: at most 3 quotes
+When there are more candidates than the limit, pick the most 
+representative ones.`;

@@ -7,7 +7,7 @@ import { countWords } from "@/lib/text";
 // The Anthropic SDK needs the Node.js runtime. maxDuration gives the Sonnet
 // call room on Vercel.
 export const runtime = "nodejs";
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 const MIN_WORDS = 50;
 const MAX_WORDS = 7000;
@@ -62,7 +62,7 @@ export async function POST(request: Request): Promise<Response> {
       model: "claude-sonnet-4-6",
       systemPrompt: SCORER_SYSTEM_PROMPT,
       userMessage: text,
-      maxTokens: 3000,
+      maxTokens: 5000,
       temperature: 0,
     });
     rawJson = result.text;

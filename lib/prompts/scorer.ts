@@ -142,6 +142,8 @@ For each dimension, BEFORE assigning a score:
 
 If you cannot quote the text to support a score, lower the score. Justification with citation is non-negotiable.
 
+Quote limit: provide AT MOST 2 verbatim quotes per dimension — the most representative ones. Even if the text has many relevant passages, never exceed 2 quotes per dimension. This is a hard limit to ensure the response stays within token bounds.
+
 # Output format
 
 Return ONLY a single JSON object. No prose, no markdown fences, no commentary before or after. The JSON must validate against this schema:
