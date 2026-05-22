@@ -1023,7 +1023,7 @@ export function BatchView() {
                     </div>
                     
                     <p className="font-mono text-xs text-muted leading-relaxed">
-                      Claude will synthesize all {nAnalyzed} analyzed texts into a structured Word document ready to share.
+                      The instrument will synthesize all {nAnalyzed} analyzed texts into a structured narrative report — community paradigm profile, Hello World shifts, key patterns, and full data appendix.
                     </p>
                     
                     <button
