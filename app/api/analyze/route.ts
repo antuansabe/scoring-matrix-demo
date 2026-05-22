@@ -210,7 +210,7 @@ export async function POST(request: Request): Promise<Response> {
     }
     console.error("[api/analyze] Scoring call failed:", err);
     return NextResponse.json(
-      { error: "Could not complete the analysis. Please try again." },
+      { error: "The analysis service is busy right now. Use the Retry button to try this text again." },
       { status: 502 },
     );
   }

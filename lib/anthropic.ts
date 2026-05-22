@@ -33,7 +33,7 @@ function getClient(): Anthropic {
   if (!_client) {
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) throw new AnthropicConfigError("ANTHROPIC_API_KEY is not set");
-    _client = new Anthropic({ apiKey });
+    _client = new Anthropic({ apiKey, maxRetries: 0 });
   }
   return _client;
 }
@@ -49,32 +49,65 @@ export async function callClaudeWithCachedSystem(
 ): Promise<ClaudeCallResult> {
   const { model, systemPrompt, userMessage, maxTokens, temperature = 0 } = opts;
 
-  const response = await getClient().messages.create({
-    model,
-    max_tokens: maxTokens,
-    temperature,
-    system: [
-      {
-        type: "text",
-        text: systemPrompt,
-        cache_control: { type: "ephemeral" },
-      },
-    ],
-    messages: [{ role: "user", content: userMessage }],
-  });
+  let attempt = 1;
+  const maxAttempts = 4;
 
-  const first = response.content[0];
-  if (!first || first.type !== "text") {
-    throw new Error("The model response contains no text.");
+  while (true) {
+    try {
+      const response = await getClient().messages.create({
+        model,
+        max_tokens: maxTokens,
+        temperature,
+        system: [
+          {
+            type: "text",
+            text: systemPrompt,
+            cache_control: { type: "ephemeral" },
+          },
+        ],
+        messages: [{ role: "user", content: userMessage }],
+      });
+
+      const first = response.content[0];
+      if (!first || first.type !== "text") {
+        throw new Error("The model response contains no text.");
+      }
+
+      return {
+        text: stripCodeFences(first.text),
+        usage: {
+          inputTokens: response.usage.input_tokens,
+          outputTokens: response.usage.output_tokens,
+          cacheReadTokens: response.usage.cache_read_input_tokens ?? 0,
+          cacheCreationTokens: response.usage.cache_creation_input_tokens ?? 0,
+        },
+      };
+    } catch (err: any) {
+      const status = err?.status || err?.statusCode;
+      const isRetryable =
+        !status || // Network/Fetch/Timeout error
+        status === 429 || // Rate Limit
+        status === 529 || // Overloaded
+        (status >= 500 && status <= 504); // Generic Server Errors
+
+      if (isRetryable && attempt < maxAttempts) {
+        // base delay: 2^attempt * 1000 (2s, 4s, 8s)
+        const baseDelay = Math.pow(2, attempt) * 1000;
+        // jitter: +/- 25% (between 0.75 and 1.25)
+        const jitter = 0.75 + Math.random() * 0.5;
+        const delay = Math.round(baseDelay * jitter);
+
+        const errorType = status ? `status ${status}` : "network error";
+        console.warn(
+          `[anthropic] Anthropic call failed (${errorType}), retrying in ${(delay / 1000).toFixed(1)}s (attempt ${attempt}/${maxAttempts - 1})...`
+        );
+
+        await new Promise((resolve) => setTimeout(resolve, delay));
+        attempt++;
+      } else {
+        throw err;
+      }
+    }
   }
-
-  return {
-    text: stripCodeFences(first.text),
-    usage: {
-      inputTokens: response.usage.input_tokens,
-      outputTokens: response.usage.output_tokens,
-      cacheReadTokens: response.usage.cache_read_input_tokens ?? 0,
-      cacheCreationTokens: response.usage.cache_creation_input_tokens ?? 0,
-    },
-  };
 }
+

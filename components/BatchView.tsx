@@ -303,7 +303,7 @@ export function BatchView() {
 
     dispatch({ type: 'START_PROCESSING' });
 
-    const limit = pLimit(3); // maximum 3 concurrent HTTP calls
+    const limit = pLimit(2); // maximum 2 concurrent HTTP calls
 
     await Promise.all(
       pendingItems.map((item) =>
@@ -317,12 +317,18 @@ export function BatchView() {
             });
             if (!res.ok) {
               const errText = await res.text();
-              let parsedErr = "Analysis failed";
+              let parsedErr = "The analysis service is busy right now. Use the Retry button to try this text again.";
               try {
                 const json = JSON.parse(errText);
-                if (json.error) parsedErr = json.error;
+                if (json.error) {
+                  if (json.error === "Could not complete the analysis. Please try again.") {
+                    parsedErr = "The analysis service is busy right now. Use the Retry button to try this text again.";
+                  } else {
+                    parsedErr = json.error;
+                  }
+                }
               } catch {
-                parsedErr = errText || `HTTP ${res.status}`;
+                parsedErr = "The analysis service is busy right now. Use the Retry button to try this text again.";
               }
               throw new Error(parsedErr);
             }
@@ -741,6 +747,11 @@ export function BatchView() {
                           </span>
                         )}
                       </div>
+                      {isFailed && item.error && (
+                        <div className="mt-1 font-mono text-xs text-[#C44536] max-w-xl break-words">
+                          Error: {item.error}
+                        </div>
+                      )}
                       {isAnalyzing && (
                         <div className="mt-1">
                           <AnalyzingMessage />
@@ -846,6 +857,11 @@ export function BatchView() {
                           </span>
                         )}
                       </div>
+                      {isFailed && item.error && (
+                        <div className="mt-1 font-mono text-xs text-[#C44536] max-w-xl break-words">
+                          Error: {item.error}
+                        </div>
+                      )}
                       {isAnalyzing && (
                         <div className="mt-1">
                           <AnalyzingMessage />
@@ -975,14 +991,18 @@ export function BatchView() {
                 if (item.status === 'failed') {
                   return (
                     <div key={item.id} className="p-4 border border-border bg-surface rounded-sm flex items-center justify-between gap-4 flex-wrap">
-                      <div className="flex items-center gap-3">
-                        <div className="w-3 h-3 rounded-full bg-[#C44536]" />
-                        <span className="font-display font-medium text-lg text-ink">
-                          {item.name}
-                        </span>
-                        <span className="font-mono text-xs text-[#C44536]">
-                          · {item.error || "failed"}
-                        </span>
+                      <div className="flex flex-col min-w-0">
+                        <div className="flex items-center gap-3">
+                          <div className="w-3 h-3 rounded-full bg-[#C44536]" />
+                          <span className="font-display font-medium text-lg text-ink">
+                            {item.name}
+                          </span>
+                        </div>
+                        {item.error && (
+                          <div className="mt-1 font-mono text-xs text-[#C44536] max-w-xl break-words pl-6">
+                            Error: {item.error}
+                          </div>
+                        )}
                       </div>
                       <button
                         onClick={() => dispatch({ type: 'RETRY_ITEM', id: item.id })}
