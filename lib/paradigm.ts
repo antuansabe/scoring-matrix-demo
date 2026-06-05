@@ -25,7 +25,7 @@ export const DIMENSIONS: DimensionMeta[] = [
     fullName: "Agency & Contribution",
     shortName: "Agency",
     defaultWeight: 0.25,
-    color: "#C44536",
+    color: "#C41425",
     oneLineDescription:
       "Who acts in this text, who is acted upon, and who gets to contribute? This dimension tests whether agency is concentrated in institutions and adults — or distributed universally, and in the present tense.",
   },
@@ -34,7 +34,7 @@ export const DIMENSIONS: DimensionMeta[] = [
     fullName: "Systemic & Architectural Framing",
     shortName: "Systemic Framing",
     defaultWeight: 0.25,
-    color: "#2A4F4F",
+    color: "#0A3558",
     oneLineDescription:
       "Does the text locate problems and solutions at the level of rules, structures, and social architectures — or at the level of individuals and programs?",
   },

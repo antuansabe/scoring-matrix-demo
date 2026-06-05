@@ -198,13 +198,13 @@ export function LiveAnalyzer() {
       {status === "error" && errorMsg && (
         <div
           className="mt-8 border border-border bg-surface p-5 sm:p-6"
-          style={{ borderLeftWidth: 3, borderLeftColor: "#C44536" }}
+          style={{ borderLeftWidth: 3, borderLeftColor: "#C41425" }}
           role="alert"
         >
           <p className="font-mono text-xs uppercase tracking-widest text-ink">
             <span
               className="mr-2 inline-block h-2 w-2 align-middle"
-              style={{ backgroundColor: "#C44536" }}
+              style={{ backgroundColor: "#C41425" }}
               aria-hidden="true"
             />
             Couldn&apos;t analyze
@@ -215,10 +215,18 @@ export function LiveAnalyzer() {
 
       {status === "done" && result && (
         <div className="space-y-8">
-          <ScoreBreakdown result={result} />
-          <ScoreCard result={result} onGenreChange={handleGenreChange} />
-          <RadarProfile result={result} />
-          <JustificationQuotes result={result} />
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-10">
+            <div className="space-y-8">
+              <ScoreCard result={result} onGenreChange={handleGenreChange} />
+              <RadarProfile result={result} />
+            </div>
+            <div>
+              <ScoreBreakdown result={result} />
+            </div>
+          </div>
+          <div className="mt-8">
+            <JustificationQuotes result={result} />
+          </div>
 
           {/* Reset affordance — the only way back to the textarea once a result
               is showing. Editorial mono link, no border, no fill. */}

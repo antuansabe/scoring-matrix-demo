@@ -24,7 +24,7 @@ export function NavLinks() {
 
   return (
     <div className="border-b border-border">
-      <nav className="mx-auto flex max-w-6xl gap-6 sm:gap-8 px-6 text-xs sm:text-sm overflow-x-auto whitespace-nowrap">
+      <nav className="mx-auto flex max-w-6xl gap-6 sm:gap-8 px-6 text-xs sm:text-sm overflow-x-auto whitespace-nowrap no-scrollbar">
         {links.map((link) => {
           const isActive = link.exact
             ? pathname === link.href
