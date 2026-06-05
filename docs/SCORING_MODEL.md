@@ -17,15 +17,15 @@ Each dimension is scored 0–4. Each score has a named paradigm level.
 
 **Question:** Does the text enact a world where every person — including and especially young people — is capable of contributing to the common good? Or does it reserve agency for adults, experts, and institutions?
 
-**Youth bias built in:** a text that distributes agency broadly but systematically excludes or defers youth agency cannot score above 3.
+**Youth bias built in:** a text with no youth-in-present-tense or intergenerational agency dimension can reach level 3, but cannot score above 3 on D1.
 
 | Score | Description |
 |---|---|
 | 0 | Agency belongs exclusively to the organization or narrator. Community members are objects of action. Contribution = receiving. |
 | 1 | Community occasionally acts, but narrator holds epistemic authority. Youth as beneficiaries or future leaders. "We empower them." |
 | 2 | Distributed agency across adult actors. Youth acknowledged but framed as future agents. Narrator still primary initiator. |
-| 3 | Mutual contribution across actors. "We" is genuinely collective and includes youth as present agents. |
-| 4 | Universal, structurally enacted agency. Text works against concentration of agency. Youth in charge in the present tense. Adult role is explicitly enabling, not directing. |
+| 3 | Mutual contribution. "We" is genuinely collective and agency is distributed among any actors (adults included), without requiring youth or intergenerational presence. |
+| 4 | Universal, structurally enacted agency. Level-3 profile with the addition of youth as present agents / youth in charge in the present tense. |
 
 **Key linguistic signals:** grammatical subject of active verbs, temporal framing of youth (present vs. deferred), "common good" vocabulary, breadth of named actors, who is attributed problem-solving.
 
@@ -74,15 +74,15 @@ The 8 COMPLETE dimensions: **C**ultural, **O**rganizational, **M**etrics, **P**o
 
 **Question:** Does the text enact distributed, fluid leadership that shares power and knowledge across hierarchies — including across generations?
 
-**Intergenerational test:** a text that models fluid collaboration only among adult peers cannot score above 3.
+**Intergenerational test:** a text that models fluid collaboration only among adult peers (no substantive intergenerational dimension) can reach level 3, but cannot score above 3 on D4 (cannot reach level 4).
 
 | Score | Description |
 |---|---|
 | 0 | Single leader / hero model. Collaboration is delegation. "I built / I created / I led." No intergenerational dimension. |
 | 1 | Team acknowledged but narrator is clearly the driver. Collaboration = method narrator employs. Intergenerational = mentorship. |
 | 2 | Multiple leaders named. Roles shared in description if not in grammar. Intergenerational mentioned but hierarchically structured. |
-| 3 | Fluid role-switching. Narrator positions as both leader and follower. Knowledge-sharing bidirectional. Intergenerational teams with youth in substantive co-design roles. |
-| 4 | Leadership structural and distributed across ages, roles, hierarchies. "Equipos en red" logic. Youth and adults as co-contributors. Knowledge flows multidirectionally. Power explicitly shared. |
+| 3 | Fluid role-switching. Knowledge-sharing bidirectional. Distributed leadership and fluid collaboration among any actors, without requiring youth or intergenerational presence. |
+| 4 | Leadership structural and distributed across ages, roles, hierarchies. Level-3 profile with the addition of a substantive intergenerational dimension (youth and adults as co-contributors with power explicitly shared). |
 
 **Key linguistic signals:** subject distribution across ages, role vocabulary (fixed vs. fluid), network language, knowledge-sharing markers and directionality, intergenerational markers, bidirectionality signals.
 
@@ -126,7 +126,7 @@ The same naming applies at each dimension's individual 0–4 score for the radar
 ### Default weights
 | Dimension | Weight | Rationale |
 |---|---|---|
-| D1 — Agency & Contribution | **25%** | Strongest structural signal; hardest to fake; central to EACH and Youth in Charge. |
+| D1 — Agency & Contribution | **25%** | Strongest structural signal; hardest to fake; central to EACH and Lifelong Contribution. |
 | D2 — Systemic & Architectural Framing | **25%** | Core to COMPLETE Framework; Ashoka's strategic differentiator. |
 | D3 — Empathy Quality | **20%** | First of the 4 skills; most detectable in language; key to Empathy-based Societies. |
 | D4 — Collaboration & Leadership | **20%** | Second + third skills; intergenerational collaboration as explicit test. |
@@ -174,13 +174,13 @@ After scoring, the dimensional profile is read against Ashoka's three Key Societ
 
 | If text scores highest on… | Primary orientation toward… |
 |---|---|
-| D1 + D5 (both ≥ 3, and these are the top two) | **Youth in Charge** |
-| D2 + D4 (both ≥ 3, top two) | **Interconnected Teams** |
+| D1 + D5 (both ≥ 3, and these are the top two) | **Lifelong Contribution** |
+| D2 + D4 (both ≥ 3, top two) | **Changemaker Networks** |
 | D3 + D1 (both ≥ 3, top two) | **Empathy-based Societies** |
 | All five ≥ 3 with no two clearly dominant | **Full EACH Alignment** |
 | None of above (overall score < 60 or no clear dominance) | **Emerging** |
 
-**Note on overlap:** A text high on D1 + D3 + D5 may trigger both Youth in Charge and Empathy-based Societies. Surface this honestly — show the dual orientation rather than forcing a single label. This is a known open question in the model (Q-overlap).
+**Note on overlap:** A text high on D1 + D3 + D5 may trigger both Lifelong Contribution and Empathy-based Societies. Surface this honestly — show the dual orientation rather than forcing a single label. This is a known open question in the model (Q-overlap).
 
 ## Validation protocol (informational, not implemented in demo)
 

@@ -14,7 +14,7 @@ Your task is to analyze a batch of pre-scored articles (containing their scoring
    - D4: Collaboration & Leadership (fluid, interconnected teams vs rigid hierarchies)
    - D5: Identity Embodiment (acting as a lifelong changemaker)
 2. **EACH Orientations:**
-   - Derived from dimension profiles: "Youth in Charge", "Interconnected Teams", "Empathy-based Societies", "Full EACH Alignment", or "Emerging".
+   - Derived from dimension profiles: "Lifelong Contribution", "Changemaker Networks", "Empathy-based Societies", "Full EACH Alignment", or "Emerging".
 3. **Hello World Shifts:**
    - Four distinct narrative frames focused specifically on people in motion (migrants, refugees, displaced communities):
      - **shift1_contribution**: People in motion contribute to the common good significantly.

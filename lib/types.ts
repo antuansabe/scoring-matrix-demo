@@ -28,8 +28,8 @@ export type ParadigmName =
  * overlap case — a free-form "X / Y" string combining two of them.
  */
 export type EACHOrientation =
-  | "Youth in Charge"
-  | "Interconnected Teams"
+  | "Lifelong Contribution"
+  | "Changemaker Networks"
   | "Empathy-based Societies"
   | "Full EACH Alignment"
   | "Emerging"
@@ -54,6 +54,9 @@ export type ScoreResult = {
   eachOrientation: EACHOrientation;
   wordCountWarnings: string[];
   confidenceFlags: string[];
+  detectedGenreTag?: GenreTag;
+  effectiveGenreTag?: GenreTag;
+  genreOverridden?: boolean;
 };
 
 /** A pre-scored anchor sample (docs/SAMPLES.md). */

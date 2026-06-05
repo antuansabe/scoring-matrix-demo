@@ -382,8 +382,8 @@ export function BatchView() {
     });
 
     const eachDistribution: Record<string, number> = {
-      "Youth in Charge": 0,
-      "Interconnected Teams": 0,
+      "Lifelong Contribution": 0,
+      "Changemaker Networks": 0,
       "Empathy-based Societies": 0,
       "Full EACH Alignment": 0,
       "Emerging": 0,

@@ -181,8 +181,8 @@ export function resolveEACHOrientation(
   };
 
   const matched: string[] = [];
-  if (isTopPair("D1", "D5")) matched.push("Youth in Charge");
-  if (isTopPair("D2", "D4")) matched.push("Interconnected Teams");
+  if (isTopPair("D1", "D5")) matched.push("Lifelong Contribution");
+  if (isTopPair("D2", "D4")) matched.push("Changemaker Networks");
   if (isTopPair("D3", "D1")) matched.push("Empathy-based Societies");
 
   if (matched.length === 1) return matched[0];
@@ -192,4 +192,35 @@ export function resolveEACHOrientation(
   // across enough dimensions that no single pair dominates).
   const allHigh = ORDERED_KEYS.every((k) => scoreOf(k) >= 3);
   return allHigh ? "Full EACH Alignment" : "Emerging";
+}
+
+/**
+ * Explains how a genre's weights differ from the default weights [0.25, 0.25, 0.20, 0.20, 0.10].
+ */
+export function getGenreWeightExplanation(genre: GenreTag, locale: "es" | "en" = "es"): string {
+  const defaultWeights = [0.25, 0.25, 0.20, 0.20, 0.10];
+  const weights = GENRE_WEIGHTS[genre];
+  const diffs: string[] = [];
+  const dims: DimensionKey[] = ["D1", "D2", "D3", "D4", "D5"];
+
+  for (let i = 0; i < 5; i++) {
+    const w = weights[i];
+    const defW = defaultWeights[i];
+    if (Math.abs(w - defW) > 0.001) {
+      const pct = Math.round(w * 100);
+      if (w > defW) {
+        diffs.push(locale === "es" ? `${dims[i]} sube a ${pct}%` : `${dims[i]} up to ${pct}%`);
+      } else {
+        diffs.push(locale === "es" ? `${dims[i]} baja a ${pct}%` : `${dims[i]} down to ${pct}%`);
+      }
+    }
+  }
+
+  if (diffs.length === 0) {
+    return locale === "es" ? "Usa los pesos por defecto" : "Uses default weights";
+  }
+
+  return locale === "es"
+    ? `Ajusta los pesos: ${diffs.join(", ")}`
+    : `Adjusts weights: ${diffs.join(", ")}`;
 }

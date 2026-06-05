@@ -36,10 +36,10 @@ Question: Does the text enact a world where every person — including young peo
 - 0: Agency belongs exclusively to the organization or narrator. Community members are objects of action.
 - 1: Community occasionally acts, but narrator holds epistemic authority. Youth as beneficiaries or "future leaders".
 - 2: Distributed agency across adult actors. Youth acknowledged but framed as future agents.
-- 3: Mutual contribution. "We" is genuinely collective and includes youth as present agents.
-- 4: Universal, structurally enacted agency. Youth in charge in present tense. Narrator role is explicitly enabling.
+- 3: Mutual contribution. "We" is genuinely collective and agency is distributed among any actors (adults included), without requiring youth or intergenerational presence.
+- 4: Universal, structurally enacted agency. Level-3 profile with the addition of youth as present agents / youth in charge in the present tense.
 
-CEILING RULE: A text that distributes agency broadly but systematically excludes or defers youth agency cannot score above 3 on D1.
+CEILING RULE: A text with no youth-in-present-tense or intergenerational agency dimension can reach level 3, but cannot score above 3 on D1 (cannot reach level 4).
 
 ## D2 — Systemic & Architectural Framing
 Question: Does the text locate change at the level of rules, structures, and social architectures — or at the level of individuals and programs?
@@ -69,10 +69,10 @@ Question: Does the text enact distributed, fluid leadership across hierarchies a
 - 0: Single leader / hero model. Collaboration is delegation.
 - 1: Team acknowledged but narrator is clearly the driver. Intergenerational = mentorship.
 - 2: Multiple leaders named. Roles shared in description if not in grammar. Intergenerational mentioned hierarchically.
-- 3: Fluid role-switching. Knowledge-sharing bidirectional. Intergenerational teams with youth in substantive roles.
-- 4: Leadership structural and distributed. "Equipos en red" logic. Youth and adults as co-contributors. Power explicitly shared.
+- 3: Fluid role-switching. Knowledge-sharing bidirectional. Distributed leadership and fluid collaboration among any actors, without requiring youth or intergenerational presence.
+- 4: Leadership structural and distributed. Level-3 profile with the addition of a substantive intergenerational dimension (youth and adults as co-contributors with power explicitly shared).
 
-CEILING RULE: A text that models fluid collaboration only among adult peers (no substantive intergenerational dimension) cannot score above 3 on D4.
+CEILING RULE: A text that models fluid collaboration only among adult peers (no substantive intergenerational dimension) can reach level 3, but cannot score above 3 on D4 (cannot reach level 4).
 
 ## D5 — Identity Embodiment
 Question: Does the narrator position themselves as a changemaker through the STRUCTURE of their language — or do they merely claim the label?
@@ -122,13 +122,13 @@ Map Enactment Score to paradigm name:
 # EACH Orientation
 
 Determine the primary orientation:
-- If D1 ≥ 3 AND D5 ≥ 3 AND they are the top two dimensions → "Youth in Charge"
-- If D2 ≥ 3 AND D4 ≥ 3 AND they are the top two dimensions → "Interconnected Teams"
+- If D1 ≥ 3 AND D5 ≥ 3 AND they are the top two dimensions → "Lifelong Contribution"
+- If D2 ≥ 3 AND D4 ≥ 3 AND they are the top two dimensions → "Changemaker Networks"
 - If D3 ≥ 3 AND D1 ≥ 3 AND they are the top two dimensions → "Empathy-based Societies"
 - If all five ≥ 3 with no clear dominant pair → "Full EACH Alignment"
 - Otherwise → "Emerging"
 
-If two orientations tie (overlap), report both, separated by " / " — example: "Youth in Charge / Empathy-based Societies".
+If two orientations tie (overlap), report both, separated by " / " — example: "Lifelong Contribution / Empathy-based Societies".
 
 # Word count flags
 
@@ -164,7 +164,7 @@ Return ONLY a single JSON object. No prose, no markdown fences, no commentary be
   },
   "enactmentScore": <integer 0-100>,
   "paradigmName": "Spectator" | "Sympathizer" | "Contributor" | "Changemaker" | "System Architect",
-  "eachOrientation": "Youth in Charge" | "Interconnected Teams" | "Empathy-based Societies" | "Full EACH Alignment" | "Emerging" | "<dual orientation separated by  / >",
+  "eachOrientation": "Lifelong Contribution" | "Changemaker Networks" | "Empathy-based Societies" | "Full EACH Alignment" | "Emerging" | "<dual orientation separated by  / >",
   "wordCountWarnings": ["D4", "D5", ...],
   "confidenceFlags": ["<short note>", ...]
 }

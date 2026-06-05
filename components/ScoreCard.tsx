@@ -1,5 +1,5 @@
-import { PARADIGM_NAMES } from "@/lib/paradigm";
-import type { ScoreResult } from "@/lib/types";
+import { PARADIGM_NAMES, getGenreWeightExplanation, GENRE_WEIGHTS } from "@/lib/paradigm";
+import type { ScoreResult, GenreTag } from "@/lib/types";
 import { CountUpNumber } from "@/components/CountUpNumber";
 
 /**
@@ -12,22 +12,69 @@ export function ScoreCard({
   result,
   accentColor = "#C44536",
   animateScore = true,
+  onGenreChange,
 }: {
   result: ScoreResult;
   accentColor?: string;
   animateScore?: boolean;
+  onGenreChange?: (genre: GenreTag) => void;
 }) {
   const paradigm = PARADIGM_NAMES.find((p) => p.name === result.paradigmName);
   const hasFlags =
     result.wordCountWarnings.length > 0 || result.confidenceFlags.length > 0;
+
+  const activeGenre = result.effectiveGenreTag || result.genreTag;
 
   return (
     <div
       className="border border-border bg-surface p-5 sm:p-6 lg:p-8"
       style={{ borderLeftWidth: 3, borderLeftColor: accentColor }}
     >
-      <p className="font-mono text-xs uppercase tracking-widest text-muted">
-        Genre · {result.genreTag}
+      {/* Genre Selector / Display header */}
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/40 pb-4 mb-4">
+        {onGenreChange ? (
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="font-mono text-xs uppercase tracking-widest text-muted">
+              Genre Tag:
+            </span>
+            <select
+              value={activeGenre}
+              onChange={(e) => onGenreChange(e.target.value as GenreTag)}
+              className="border border-border bg-bg px-2 py-1 font-mono text-xs uppercase tracking-wider text-ink focus:outline-none"
+            >
+              {Object.keys(GENRE_WEIGHTS).map((g) => (
+                <option key={g} value={g}>
+                  {g}
+                </option>
+              ))}
+            </select>
+          </div>
+        ) : (
+          <span className="font-mono text-xs uppercase tracking-widest text-muted">
+            Genre · {result.genreTag}
+          </span>
+        )}
+
+        <div className="flex flex-wrap items-center gap-2">
+          {result.genreOverridden ? (
+            <>
+              <span className="line-through text-muted/60 font-mono text-xs uppercase tracking-widest">
+                Detected: {result.detectedGenreTag}
+              </span>
+              <span className="font-mono text-[0.65rem] uppercase tracking-widest bg-accent text-white px-2 py-0.5 font-medium rounded-sm">
+                Genre adjusted by user
+              </span>
+            </>
+          ) : (
+            <span className="font-mono text-xs uppercase tracking-widest text-muted/60">
+              Detected: {result.detectedGenreTag || result.genreTag}
+            </span>
+          )}
+        </div>
+      </div>
+
+      <p className="font-sans text-xs text-muted italic -mt-2 mb-4">
+        {getGenreWeightExplanation(activeGenre, "en")}
       </p>
 
       <div className="mt-2 flex items-baseline gap-2">

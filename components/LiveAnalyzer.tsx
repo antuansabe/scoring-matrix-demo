@@ -1,11 +1,12 @@
 "use client";
 
 import { useRef, useState } from "react";
-import type { ScoreResult } from "@/lib/types";
+import type { ScoreResult, GenreTag } from "@/lib/types";
 import { ScoreCard } from "@/components/ScoreCard";
 import { RadarProfile } from "@/components/RadarProfile";
 import { ScoreBreakdown } from "@/components/ScoreBreakdown";
 import { JustificationQuotes } from "@/components/JustificationQuotes";
+import { calculateEnactmentScore, resolveParadigmName, resolveEACHOrientation } from "@/lib/paradigm";
 
 const MIN_WORDS = 50;
 const MAX_WORDS = 7000;
@@ -86,12 +87,48 @@ export function LiveAnalyzer() {
         setStatus("error");
         return;
       }
-      setResult(data as ScoreResult);
+      const scoreRes = data as ScoreResult;
+      setResult({
+        ...scoreRes,
+        detectedGenreTag: scoreRes.detectedGenreTag || scoreRes.genreTag,
+        effectiveGenreTag: scoreRes.effectiveGenreTag || scoreRes.genreTag,
+        genreOverridden: scoreRes.genreOverridden || false,
+      });
       setStatus("done");
     } catch {
       setErrorMsg("Could not connect to the analysis service.");
       setStatus("error");
     }
+  }
+
+  function handleGenreChange(newGenre: GenreTag) {
+    if (!result) return;
+
+    const originalGenre = result.detectedGenreTag || result.genreTag;
+    const isOverridden = newGenre !== originalGenre;
+
+    const mockDims = {
+      D1: { score: result.dimensions.D1.score, justification: "", quotes: [] },
+      D2: { score: result.dimensions.D2.score, justification: "", quotes: [] },
+      D3: { score: result.dimensions.D3.score, justification: "", quotes: [] },
+      D4: { score: result.dimensions.D4.score, justification: "", quotes: [] },
+      D5: { score: result.dimensions.D5.score, justification: "", quotes: [] },
+    };
+
+    const newScore = calculateEnactmentScore(mockDims, newGenre);
+    const newParadigm = resolveParadigmName(newScore);
+    const newEACH = resolveEACHOrientation(mockDims);
+
+    setResult({
+      ...result,
+      genreTag: newGenre,
+      enactmentScore: newScore,
+      paradigmName: newParadigm,
+      eachOrientation: newEACH,
+      effectiveGenreTag: newGenre,
+      detectedGenreTag: originalGenre,
+      genreOverridden: isOverridden,
+    });
   }
 
   function reset() {
@@ -179,7 +216,7 @@ export function LiveAnalyzer() {
       {status === "done" && result && (
         <div className="space-y-8">
           <ScoreBreakdown result={result} />
-          <ScoreCard result={result} />
+          <ScoreCard result={result} onGenreChange={handleGenreChange} />
           <RadarProfile result={result} />
           <JustificationQuotes result={result} />
 

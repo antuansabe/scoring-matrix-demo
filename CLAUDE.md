@@ -23,7 +23,7 @@ Read `docs/SCORING_MODEL.md` for the full spec. Quick summary:
 - **Weights**: D1 25% · D2 25% · D3 20% · D4 20% · D5 10%. Adjusted by genre (see `docs/SCORING_MODEL.md`).
 - **Enactment Score** = (Σ Dn × wn) × 25 → range 0–100.
 - **Paradigm names** by score band: 0–19 Spectator · 20–39 Sympathizer · 40–59 Contributor · 60–79 Changemaker · 80–100 System Architect.
-- **EACH Orientation** is derived from which dimensions dominate the profile (Youth in Charge, Interconnected Teams, Empathy-based Societies, or Full Alignment).
+- **EACH Orientation** is derived from which dimensions dominate the profile (Lifelong Contribution, Changemaker Networks, Empathy-based Societies, or Full Alignment).
 - **Genre Tag** modulates weights and minimum word counts.
 - **Cross-Genre Coherence Flag** (HIGH/MEDIUM/LOW) is out of scope for v0.1 since we only score one text at a time.
 
