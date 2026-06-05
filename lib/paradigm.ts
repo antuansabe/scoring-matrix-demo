@@ -25,7 +25,7 @@ export const DIMENSIONS: DimensionMeta[] = [
     fullName: "Agency & Contribution",
     shortName: "Agency",
     defaultWeight: 0.25,
-    color: "#C26E00",
+    color: "#E05326",
     oneLineDescription:
       "Who acts in this text, who is acted upon, and who gets to contribute? This dimension tests whether agency is concentrated in institutions and adults — or distributed universally, and in the present tense.",
   },
@@ -43,7 +43,7 @@ export const DIMENSIONS: DimensionMeta[] = [
     fullName: "Empathy Enactment",
     shortName: "Empathy",
     defaultWeight: 0.2,
-    color: "#7A6B3E",
+    color: "#B98A39",
     oneLineDescription:
       "Does the text demonstrate the practice of conscious empathy — the capacity to be aware of and understand our own and others’ perspectives, and to guide one’s actions to contribute to the common good — or does it stop at emotional solidarity?",
   },
@@ -52,7 +52,7 @@ export const DIMENSIONS: DimensionMeta[] = [
     fullName: "Collaboration & Leadership Model",
     shortName: "Collaboration",
     defaultWeight: 0.2,
-    color: "#3D5A6C",
+    color: "#334E68",
     oneLineDescription:
       "Does the text enact distributed, fluid leadership that shares power and knowledge across hierarchies — including across generations?",
   },
@@ -61,7 +61,7 @@ export const DIMENSIONS: DimensionMeta[] = [
     fullName: "Identity Embodiment",
     shortName: "Identity",
     defaultWeight: 0.1,
-    color: "#2A5A3E",
+    color: "#627D98",
     oneLineDescription:
       "Does the narrator position themselves as a changemaker through the structure of their language — or do they merely claim the label? This dimension tests the gap between stated identity (\"I am a changemaker\") and enacted identity: language that demonstrates the worldview without requiring the vocabulary, consistently across contexts and over time. It tests reflexivity.",
   },

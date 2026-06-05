@@ -49,17 +49,17 @@ const EXPLAINER_SECTIONS = [
 function getParadigmColor(name: string): string {
   switch (name) {
     case "Spectator":
-      return "#7A6B3E";
+      return "#627D98";
     case "Sympathizer":
-      return "#B5341E";
+      return "#C46246";
     case "Contributor":
-      return "#7A6B3E";
+      return "#B98A39";
     case "Changemaker":
-      return "#3D5A6C";
+      return "#E05326";
     case "System Architect":
-      return "#2A5A3E";
+      return "#0A3558";
     default:
-      return "#C26E00";
+      return "#E05326";
   }
 }
 

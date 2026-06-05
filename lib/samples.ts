@@ -14,7 +14,7 @@ export const SAMPLES: Sample[] = [
     paradigmLevel: 0,
     paradigmName: "Spectator",
     genreTag: "fundraising-copy",
-    accentColor: "#7A6B3E",
+    accentColor: "#627D98",
     expectedEnactmentScore: 12,
     expectedEACHOrientation: "Emerging",
     excerpt: `Cada año atendemos a más de 5,000 niños y niñas en situación de vulnerabilidad en todo el país. Nuestro equipo de voluntarios entrega despensas, organiza posadas navideñas y proporciona apoyo escolar a quienes más lo necesitan. Gracias al esfuerzo de nuestros aliados corporativos, hemos podido extender nuestra labor a tres nuevos estados durante este año.
@@ -68,7 +68,7 @@ Este año, gracias a la generosidad de nuestros donantes, logramos impactar a 1,
     paradigmLevel: 1,
     paradigmName: "Sympathizer",
     genreTag: "institutional-report",
-    accentColor: "#B5341E",
+    accentColor: "#C46246",
     expectedEnactmentScore: 28,
     expectedEACHOrientation: "Emerging",
     excerpt: `Somos una organización transformadora comprometida con el cambio sistémico y el empoderamiento de las comunidades más vulnerables de América Latina. Lideramos iniciativas innovadoras que están redefiniendo el ecosistema de impacto social en la región, articulando alianzas estratégicas con actores de todos los sectores para construir un futuro más equitativo.
@@ -128,7 +128,7 @@ En los últimos cinco años hemos impulsado más de cuarenta proyectos transform
     paradigmLevel: 3,
     paradigmName: "Changemaker",
     genreTag: "free-form-interview",
-    accentColor: "#3D5A6C",
+    accentColor: "#E05326",
     expectedEnactmentScore: 72,
     expectedEACHOrientation: "Empathy-based Societies",
     excerpt: `Las asambleas vecinales con las que trabajamos en Iztapalapa no son destinatarias de nuestra intervención: son las que están definiendo qué problema se trabaja y a qué velocidad. Cuando en 2023 intentamos imponer un cronograma externo financiado por un fondo internacional, las propias asambleas nos lo regresaron — nos dijeron que esa lógica de entregables no se sostenía con los tiempos de las decisiones colectivas. Tuvimos que reaprender lo que habíamos hecho mal.
@@ -189,7 +189,7 @@ Sigo aprendiendo a soltar. Mi formación previa me había enseñado a llegar con
     paradigmLevel: 4,
     paradigmName: "System Architect",
     genreTag: "free-form-interview",
-    accentColor: "#2A5A3E",
+    accentColor: "#0A3558",
     expectedEnactmentScore: 92,
     expectedEACHOrientation: "Full EACH Alignment",
     excerpt: `Cuando hablamos de transformar la educación, casi siempre hablamos de cambiar lo que ocurre dentro del aula — la pedagogía, los contenidos, la formación docente. Pero las reglas que definen qué cuenta como aprendizaje válido en este país no están en el aula: están en los marcos de evaluación, en los criterios de financiamiento público, en las decisiones de SEP sobre qué se mide y qué no. Hasta que esas reglas no se renombran, lo que pasa dentro del aula sigue empujando contra una arquitectura que premia exactamente lo contrario.

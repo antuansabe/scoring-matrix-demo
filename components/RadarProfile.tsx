@@ -19,7 +19,7 @@ import type { ScoreResult } from "@/lib/types";
  */
 export function RadarProfile({
   result,
-  accentColor = "#C26E00",
+  accentColor = "#E05326",
 }: {
   result: ScoreResult;
   accentColor?: string;
