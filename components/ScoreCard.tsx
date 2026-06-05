@@ -10,7 +10,7 @@ import { CountUpNumber } from "@/components/CountUpNumber";
  */
 export function ScoreCard({
   result,
-  accentColor = "#E05326",
+  accentColor = "#E87722",
   animateScore = true,
   onGenreChange,
 }: {

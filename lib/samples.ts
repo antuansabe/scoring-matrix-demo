@@ -128,7 +128,7 @@ En los últimos cinco años hemos impulsado más de cuarenta proyectos transform
     paradigmLevel: 3,
     paradigmName: "Changemaker",
     genreTag: "free-form-interview",
-    accentColor: "#E05326",
+    accentColor: "#E87722",
     expectedEnactmentScore: 72,
     expectedEACHOrientation: "Empathy-based Societies",
     excerpt: `Las asambleas vecinales con las que trabajamos en Iztapalapa no son destinatarias de nuestra intervención: son las que están definiendo qué problema se trabaja y a qué velocidad. Cuando en 2023 intentamos imponer un cronograma externo financiado por un fondo internacional, las propias asambleas nos lo regresaron — nos dijeron que esa lógica de entregables no se sostenía con los tiempos de las decisiones colectivas. Tuvimos que reaprender lo que habíamos hecho mal.

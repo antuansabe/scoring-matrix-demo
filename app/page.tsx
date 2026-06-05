@@ -37,24 +37,37 @@ export default function Home() {
           </p>
         </div>
         
-        <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 animate-slide-up animation-delay-200">
-          {DIMENSIONS.map((d) => (
-            <div
-              key={d.key}
-              className="premium-card p-6 sm:p-8 relative border-t-4"
-              style={{ borderTopColor: d.color }}
-            >
-              <p className="font-mono text-xs uppercase tracking-wider text-muted">
-                {d.key}
-              </p>
-              <h3 className="mt-2 font-display text-xl font-normal leading-tight text-ink">
-                {d.fullName}
-              </h3>
-              <p className="mt-3 font-sans text-sm leading-relaxed text-muted">
-                {d.oneLineDescription}
-              </p>
-            </div>
-          ))}
+        <div className="mt-10 grid grid-cols-1 md:grid-cols-12 gap-6 animate-slide-up animation-delay-200">
+          {DIMENSIONS.map((d, index) => {
+            const spanClass = index < 3 ? "md:col-span-4" : "md:col-span-6";
+            return (
+              <div
+                key={d.key}
+                className={`premium-card p-6 sm:p-8 relative border-t-4 flex flex-col justify-between ${spanClass}`}
+                style={{ borderTopColor: d.color }}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span 
+                      className="font-mono text-xs font-semibold px-2.5 py-0.5 rounded-sm"
+                      style={{ backgroundColor: `${d.color}15`, color: d.color }}
+                    >
+                      {d.key}
+                    </span>
+                    <span className="font-mono text-[0.65rem] uppercase tracking-widest text-muted/50">
+                      Dimension
+                    </span>
+                  </div>
+                  <h3 className="font-display text-xl font-normal leading-snug text-ink">
+                    {d.fullName}
+                  </h3>
+                  <p className="mt-3 font-sans text-sm leading-relaxed text-muted">
+                    {d.oneLineDescription}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
         </div>
 
         <div className="mt-12 animate-slide-up animation-delay-300">

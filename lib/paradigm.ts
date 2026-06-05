@@ -25,7 +25,7 @@ export const DIMENSIONS: DimensionMeta[] = [
     fullName: "Agency & Contribution",
     shortName: "Agency",
     defaultWeight: 0.25,
-    color: "#E05326",
+    color: "#E87722",
     oneLineDescription:
       "Who acts in this text, who is acted upon, and who gets to contribute? This dimension tests whether agency is concentrated in institutions and adults — or distributed universally, and in the present tense.",
   },

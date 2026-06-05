@@ -53,13 +53,13 @@ function getParadigmColor(name: string): string {
     case "Sympathizer":
       return "#C46246";
     case "Contributor":
-      return "#B98A39";
+      return "#F39334";
     case "Changemaker":
-      return "#E05326";
+      return "#E87722";
     case "System Architect":
       return "#0A3558";
     default:
-      return "#E05326";
+      return "#E87722";
   }
 }
 

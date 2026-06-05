@@ -7,15 +7,15 @@
   --ink: #0A3558;       /* Ashoka Blue - primary text and branding */
   --muted: #486581;     /* slate blue - secondary text */
   --border: #E5DEC9;    /* soft gold-tinted border */
-  --accent: #E05326;    /* Vibrant Ashoka Orange - readable text highlights and primary accents */
-  --accent-2: #F4DAA6;  /* Light Ashoka Orange/Gold - highlighting and active states */
-  --accent-light: #FFF7F4; /* Extremely soft orange/gold tint for warnings and hover fills */
+  --accent: #E87722;    /* Vibrant Ashoka Orange - readable text highlights and primary accents */
+  --accent-2: #F39334;  /* Light Ashoka Orange/Gold - highlighting and active states */
+  --accent-light: #FFF8F5; /* Extremely soft orange/gold tint for warnings and hover fills */
 
   /* Paradigm colors — sample tags and per-paradigm accents */
   --paradigm-0: #627D98; /* Spectator — Muted Slate Gray */
   --paradigm-1: #C46246; /* Sympathizer — Soft Terracotta */
-  --paradigm-2: #B98A39; /* Contributor — Ashoka Gold */
-  --paradigm-3: #E05326; /* Changemaker — Ashoka Orange */
+  --paradigm-2: #F39334; /* Contributor — Light Orange */
+  --paradigm-3: #E87722; /* Changemaker — Ashoka Orange */
   --paradigm-4: #0A3558; /* System Architect — Ashoka Blue */
 }
 
@@ -44,7 +44,7 @@ body {
   /* Two very subtle radial gradients — Ashoka Orange from top-left, Ashoka Blue from
      bottom-right, ~4-5% opacity. */
   background-image:
-    radial-gradient(900px 700px at top left, rgba(224, 83, 38, 0.04), transparent 70%),
+    radial-gradient(900px 700px at top left, rgba(232, 119, 34, 0.04), transparent 70%),
     radial-gradient(900px 700px at bottom right, rgba(10, 53, 88, 0.05), transparent 70%);
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -95,7 +95,7 @@ body {
 .premium-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 20px 40px -4px rgba(10, 53, 88, 0.06), 0 4px 12px -2px rgba(10, 53, 88, 0.02);
-  border-color: rgba(224, 83, 38, 0.35);
+  border-color: rgba(232, 119, 34, 0.35);
 }
 
 /* Entrance Animations */

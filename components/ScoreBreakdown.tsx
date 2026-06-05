@@ -17,7 +17,7 @@ const LEVEL_NAMES = [
  */
 export function ScoreBreakdown({
   result,
-  accentColor = "#E05326",
+  accentColor = "#E87722",
 }: {
   result: ScoreResult;
   accentColor?: string;

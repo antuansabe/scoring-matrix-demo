@@ -198,13 +198,13 @@ export function LiveAnalyzer() {
       {status === "error" && errorMsg && (
         <div
           className="mt-8 border border-border bg-surface p-5 sm:p-6"
-          style={{ borderLeftWidth: 3, borderLeftColor: "#E05326" }}
+          style={{ borderLeftWidth: 3, borderLeftColor: "#E87722" }}
           role="alert"
         >
           <p className="font-mono text-xs uppercase tracking-widest text-ink">
             <span
               className="mr-2 inline-block h-2 w-2 align-middle"
-              style={{ backgroundColor: "#E05326" }}
+              style={{ backgroundColor: "#E87722" }}
               aria-hidden="true"
             />
             Couldn&apos;t analyze
