@@ -8,7 +8,7 @@ const STRINGS = {
   ctaEyebrow: "LIVE SCORER",
   ctaTitlePart1: "Ready to score your ",
   ctaTitlePart2: "own text",
-  ctaSubtitle: "Analyze your text across the five dimensions using our live parser powered by Claude.",
+  ctaSubtitle: "Analyze your text across the five dimensions using our live parser powered by Ashoka IA.",
   ctaButton: "Open Live Analyzer →",
 };
 

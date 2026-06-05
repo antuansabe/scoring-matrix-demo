@@ -36,14 +36,14 @@ export function Footer() {
             <Link href="/" className="hover:text-ink transition-colors">
               {STRINGS.nav.home}
             </Link>
+            <Link href="/about" className="hover:text-ink transition-colors">
+              {STRINGS.nav.about}
+            </Link>
             <Link href="/tool" className="hover:text-ink transition-colors">
               {STRINGS.nav.tool}
             </Link>
             <Link href="/batch" className="hover:text-ink transition-colors">
               {STRINGS.nav.batch}
-            </Link>
-            <Link href="/about" className="hover:text-ink transition-colors">
-              {STRINGS.nav.about}
             </Link>
             <Link href="/badge" className="hover:text-ink transition-colors">
               {STRINGS.nav.badge}

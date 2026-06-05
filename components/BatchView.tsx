@@ -962,7 +962,7 @@ export function BatchView() {
           </div>
 
           <p className="font-mono text-xs text-muted text-center max-w-md mx-auto mt-2 leading-relaxed">
-            Paste the JSON into Claude.ai or ChatGPT to generate your community narrative synthesis.
+            Paste the JSON into Ashoka IA or ChatGPT to generate your community narrative synthesis.
           </p>
 
           <div className="mt-10 pt-10 border-t border-border">

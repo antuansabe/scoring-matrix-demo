@@ -16,9 +16,9 @@ export function NavLinks() {
 
   const links = [
     { href: "/", label: STRINGS.home, exact: true },
+    { href: "/about", label: STRINGS.about, exact: false },
     { href: "/tool", label: STRINGS.tool, exact: false },
     { href: "/batch", label: STRINGS.batch, exact: false },
-    { href: "/about", label: STRINGS.about, exact: false },
     { href: "/badge", label: STRINGS.badge, exact: false },
   ];
 
