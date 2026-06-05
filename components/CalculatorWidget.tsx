@@ -59,7 +59,7 @@ function getParadigmColor(name: string): string {
     case "System Architect":
       return "#2A5A3E";
     default:
-      return "#C41425";
+      return "#C26E00";
   }
 }
 

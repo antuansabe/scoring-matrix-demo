@@ -37,14 +37,17 @@ export default function Home() {
           </p>
         </div>
         
-        <div className="mt-10 grid grid-cols-1 gap-x-10 gap-y-10 lg:grid-cols-3">
+        <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 animate-slide-up animation-delay-200">
           {DIMENSIONS.map((d) => (
-            <div key={d.key} className="relative">
-              <div className="h-px w-8" style={{ backgroundColor: d.color }} aria-hidden="true" />
-              <p className="mt-4 font-mono text-xs uppercase tracking-wider text-muted">
+            <div
+              key={d.key}
+              className="premium-card p-6 sm:p-8 relative border-t-4"
+              style={{ borderTopColor: d.color }}
+            >
+              <p className="font-mono text-xs uppercase tracking-wider text-muted">
                 {d.key}
               </p>
-              <h3 className="mt-1 font-display text-xl font-normal leading-tight text-ink">
+              <h3 className="mt-2 font-display text-xl font-normal leading-tight text-ink">
                 {d.fullName}
               </h3>
               <p className="mt-3 font-sans text-sm leading-relaxed text-muted">
@@ -54,7 +57,7 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="mt-12">
+        <div className="mt-12 animate-slide-up animation-delay-300">
           <Link
             href="/about"
             className="font-mono text-xs uppercase tracking-widest text-accent hover:text-opacity-80 transition-colors inline-block border border-accent/30 px-5 py-3 rounded-sm"
@@ -65,8 +68,9 @@ export default function Home() {
       </section>
 
       {/* Live Analyzer Entry */}
-      <section className="border-t border-border py-12 lg:py-16">
-        <div className="border border-border bg-surface p-6 sm:p-8 rounded-sm max-w-3xl">
+      <section className="border-t border-border py-12 lg:py-16 animate-slide-up animation-delay-300">
+        <div className="premium-card p-6 sm:p-8 max-w-3xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-accent-2/15 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-accent-2/30 transition-all duration-500" />
           <p className="font-mono text-xs uppercase tracking-widest text-muted">
             {STRINGS.ctaEyebrow}
           </p>
@@ -80,7 +84,7 @@ export default function Home() {
           <div className="mt-6">
             <Link
               href="/tool"
-              className="font-display bg-accent text-white px-5 py-3 text-sm hover:bg-opacity-95 transition-colors inline-block rounded-sm"
+              className="font-display bg-accent text-white px-5 py-3 text-sm hover:bg-opacity-95 transition-all inline-block rounded-sm shadow-md hover:shadow-lg transform hover:-translate-y-[1px] duration-200"
             >
               {STRINGS.ctaButton}
             </Link>

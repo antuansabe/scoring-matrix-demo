@@ -8,7 +8,7 @@ const STRINGS = {
 
 export default function ToolPage() {
   return (
-    <main className="mx-auto max-w-6xl px-6 py-12">
+    <main className="mx-auto max-w-6xl px-6 py-12 animate-slide-up">
       <section className="max-w-4xl mx-auto">
         <p className="font-mono text-xs uppercase tracking-widest text-muted">
           {STRINGS.eyebrow}

@@ -251,7 +251,7 @@ function getParadigmColor(name: string): string {
     case "System Architect":
       return "#2A5A3E";
     default:
-      return "#C41425";
+      return "#C26E00";
   }
 }
 
@@ -752,7 +752,7 @@ export function BatchView() {
                       <div className="w-3 h-3 rounded-full bg-[#2A5A3E] shrink-0" title="Done" />
                     )}
                     {isFailed && (
-                      <div className="w-3 h-3 rounded-full bg-[#C41425] shrink-0" title="Failed" />
+                      <div className="w-3 h-3 rounded-full bg-[#C26E00] shrink-0" title="Failed" />
                     )}
                     <div className="flex flex-col min-w-0">
                       <div className="flex items-baseline gap-2 min-w-0 flex-wrap">
@@ -768,13 +768,13 @@ export function BatchView() {
                           </span>
                         )}
                         {isFailed && (
-                          <span className="font-mono text-xs text-[#C41425]">
+                          <span className="font-mono text-xs text-[#C26E00]">
                             · failed
                           </span>
                         )}
                       </div>
                       {isFailed && item.error && (
-                        <div className="mt-1 font-mono text-xs text-[#C41425] max-w-xl break-words">
+                        <div className="mt-1 font-mono text-xs text-[#C26E00] max-w-xl break-words">
                           Error: {item.error}
                         </div>
                       )}
@@ -862,7 +862,7 @@ export function BatchView() {
                       <div className="w-3 h-3 rounded-full bg-[#2A5A3E] shrink-0" />
                     )}
                     {isFailed && (
-                      <div className="w-3 h-3 rounded-full bg-[#C41425] shrink-0" />
+                      <div className="w-3 h-3 rounded-full bg-[#C26E00] shrink-0" />
                     )}
                     <div className="flex flex-col min-w-0">
                       <div className="flex items-baseline gap-2 min-w-0 flex-wrap">
@@ -878,13 +878,13 @@ export function BatchView() {
                           </span>
                         )}
                         {isFailed && (
-                          <span className="font-mono text-xs text-[#C41425]">
+                          <span className="font-mono text-xs text-[#C26E00]">
                             · failed
                           </span>
                         )}
                       </div>
                       {isFailed && item.error && (
-                        <div className="mt-1 font-mono text-xs text-[#C41425] max-w-xl break-words">
+                        <div className="mt-1 font-mono text-xs text-[#C26E00] max-w-xl break-words">
                           Error: {item.error}
                         </div>
                       )}
@@ -1019,13 +1019,13 @@ export function BatchView() {
                     <div key={item.id} className="p-4 border border-border bg-surface rounded-sm flex items-center justify-between gap-4 flex-wrap">
                       <div className="flex flex-col min-w-0">
                         <div className="flex items-center gap-3">
-                          <div className="w-3 h-3 rounded-full bg-[#C41425]" />
+                          <div className="w-3 h-3 rounded-full bg-[#C26E00]" />
                           <span className="font-display font-medium text-lg text-ink">
                             {getItemName(item)}
                           </span>
                         </div>
                         {item.error && (
-                          <div className="mt-1 font-mono text-xs text-[#C41425] max-w-xl break-words pl-6">
+                          <div className="mt-1 font-mono text-xs text-[#C26E00] max-w-xl break-words pl-6">
                             Error: {item.error}
                           </div>
                         )}

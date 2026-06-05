@@ -11,7 +11,7 @@ const STRINGS = {
 
 export default function AboutPage() {
   return (
-    <main className="mx-auto max-w-6xl px-6 py-12">
+    <main className="mx-auto max-w-6xl px-6 py-12 animate-slide-up">
       <div className="max-w-6xl mx-auto">
         <p className="font-mono text-xs uppercase tracking-widest text-muted">
           {STRINGS.eyebrow}

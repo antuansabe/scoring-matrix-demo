@@ -162,7 +162,7 @@ export function LiveAnalyzer() {
             placeholder="Paste any text to analyze (minimum 50 words, maximum 7000). The instrument works in English and Spanish."
             rows={10}
             spellCheck={false}
-            className="block min-h-[15rem] w-full resize-y border border-border bg-surface p-4 font-sans text-base leading-relaxed text-ink placeholder:text-muted focus:border-accent"
+            className="block min-h-[15rem] w-full resize-y border border-border bg-surface p-4 font-sans text-base leading-relaxed text-ink placeholder:text-muted focus:ring-2 focus:ring-accent/20 focus:border-accent focus:outline-none transition-all duration-300 rounded-md"
           />
 
           <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
@@ -198,13 +198,13 @@ export function LiveAnalyzer() {
       {status === "error" && errorMsg && (
         <div
           className="mt-8 border border-border bg-surface p-5 sm:p-6"
-          style={{ borderLeftWidth: 3, borderLeftColor: "#C41425" }}
+          style={{ borderLeftWidth: 3, borderLeftColor: "#C26E00" }}
           role="alert"
         >
           <p className="font-mono text-xs uppercase tracking-widest text-ink">
             <span
               className="mr-2 inline-block h-2 w-2 align-middle"
-              style={{ backgroundColor: "#C41425" }}
+              style={{ backgroundColor: "#C26E00" }}
               aria-hidden="true"
             />
             Couldn&apos;t analyze

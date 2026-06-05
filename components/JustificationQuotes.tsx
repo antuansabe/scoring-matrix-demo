@@ -8,7 +8,7 @@ import type { ScoreResult } from "@/lib/types";
  */
 export function JustificationQuotes({
   result,
-  accentColor = "#C41425",
+  accentColor = "#C26E00",
 }: {
   result: ScoreResult;
   accentColor?: string;

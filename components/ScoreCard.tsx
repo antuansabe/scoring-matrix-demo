@@ -10,7 +10,7 @@ import { CountUpNumber } from "@/components/CountUpNumber";
  */
 export function ScoreCard({
   result,
-  accentColor = "#C41425",
+  accentColor = "#C26E00",
   animateScore = true,
   onGenreChange,
 }: {
@@ -61,7 +61,7 @@ export function ScoreCard({
               <span className="line-through text-muted/60 font-mono text-xs uppercase tracking-widest">
                 Detected: {result.detectedGenreTag}
               </span>
-              <span className="font-mono text-[0.65rem] uppercase tracking-widest bg-accent text-white px-2 py-0.5 font-medium rounded-sm">
+              <span className="font-mono text-[0.65rem] uppercase tracking-widest bg-accent-light text-accent border border-accent-2/60 px-2.5 py-0.5 font-medium rounded-full">
                 Genre adjusted by user
               </span>
             </>
