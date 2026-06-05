@@ -19,7 +19,7 @@ The demo is being built by Antonio Dromundo (Ashoka ITI / Drupal builder) for a 
 
 Read `docs/SCORING_MODEL.md` for the full spec. Quick summary:
 
-- **5 dimensions**, each scored 0–4: D1 Agency & Contribution, D2 Systemic & Architectural Framing, D3 Empathy Quality, D4 Collaboration & Leadership, D5 Identity Embodiment.
+- **5 dimensions**, each scored 0–4: D1 Agency & Contribution, D2 Systemic & Architectural Framing, D3 Empathy Enactment, D4 Collaboration & Leadership, D5 Identity Embodiment.
 - **Weights**: D1 25% · D2 25% · D3 20% · D4 20% · D5 10%. Adjusted by genre (see `docs/SCORING_MODEL.md`).
 - **Enactment Score** = (Σ Dn × wn) × 25 → range 0–100.
 - **Paradigm names** by score band: 0–19 Spectator · 20–39 Sympathizer · 40–59 Contributor · 60–79 Changemaker · 80–100 System Architect.

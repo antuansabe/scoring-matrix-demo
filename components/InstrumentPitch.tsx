@@ -5,7 +5,7 @@
 const BLOCKS = [
   {
     header: "What it measures",
-    body: "The instrument scores the structural alignment between a text and the changemaker paradigm across five dimensions — agency, systemic framing, empathy quality, collaboration, and identity embodiment. The output is an Enactment Score from 0 to 100, a radar profile, and an orientation toward Ashoka's three key societal shifts.",
+    body: "The instrument scores the structural alignment between a text and the changemaker paradigm across five dimensions — agency, systemic framing, empathy enactment, collaboration, and identity embodiment. The output is an Enactment Score from 0 to 100, a radar profile, and an orientation toward Ashoka's three key societal shifts.",
   },
   {
     header: "What it does not measure",

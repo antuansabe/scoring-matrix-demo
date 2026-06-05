@@ -27,7 +27,7 @@ export const DIMENSIONS: DimensionMeta[] = [
     defaultWeight: 0.25,
     color: "#C44536",
     oneLineDescription:
-      "Does the text enact a world where every person — including and especially young people — is capable of contributing to the common good? Or does it reserve agency for adults, experts, and institutions?",
+      "Who acts in this text, who is acted upon, and who gets to contribute? This dimension tests whether agency is concentrated in institutions and adults — or distributed universally, and in the present tense.",
   },
   {
     key: "D2",
@@ -36,16 +36,16 @@ export const DIMENSIONS: DimensionMeta[] = [
     defaultWeight: 0.25,
     color: "#2A4F4F",
     oneLineDescription:
-      "Does the text locate change at the level of rules, structures, and social architectures — or at the level of individuals and programs?",
+      "Does the text locate problems and solutions at the level of rules, structures, and social architectures — or at the level of individuals and programs?",
   },
   {
     key: "D3",
-    fullName: "Empathy Quality",
+    fullName: "Empathy Enactment",
     shortName: "Empathy",
     defaultWeight: 0.2,
     color: "#7A6B3E",
     oneLineDescription:
-      "Does the text demonstrate conscious empathy — recognizing others' perspectives AND using that understanding to identify systemic patterns and orient action toward the common good? Or does it stop at emotional solidarity?",
+      "Does the text demonstrate the practice of conscious empathy — the capacity to be aware of and understand our own and others’ perspectives, and to guide one’s actions to contribute to the common good — or does it stop at emotional solidarity?",
   },
   {
     key: "D4",
@@ -63,7 +63,7 @@ export const DIMENSIONS: DimensionMeta[] = [
     defaultWeight: 0.1,
     color: "#2A5A3E",
     oneLineDescription:
-      "Does the narrator position themselves as a changemaker through the structure of their language — or do they merely claim the label? Is the identity enacted consistently across time and context, or only when the frame is activated?",
+      "Does the narrator position themselves as a changemaker through the structure of their language — or do they merely claim the label? This dimension tests the gap between stated identity (\"I am a changemaker\") and enacted identity: language that demonstrates the worldview without requiring the vocabulary, consistently across contexts and over time. It tests reflexivity.",
   },
 ];
 

@@ -50,10 +50,10 @@ The 8 COMPLETE dimensions: **C**ultural, **O**rganizational, **M**etrics, **P**o
 
 ---
 
-### D3 — Empathy Quality
+### D3 — Empathy Enactment
 *Drawn from: De Fina (level 2 & 3 positioning), Wodak (DHA: nomination + predication), Van Dijk (context models). Ashoka: Empatía Consciente.*
 
-**Question:** Does the text demonstrate conscious empathy — recognizing others' perspectives AND using that understanding to identify systemic patterns and orient action toward the common good? Or does it stop at emotional solidarity?
+**Question:** Does the text demonstrate the practice of conscious empathy — the capacity to be aware of and understand our own and others’ perspectives, and to guide one’s actions to contribute to the common good — or does it stop at emotional solidarity?
 
 **Critical threshold (between 2 and 3):** emotional empathy ("I care about you") vs. conscious empathy ("I used understanding of your perspective to identify a structural pattern and changed my approach").
 
@@ -128,7 +128,7 @@ The same naming applies at each dimension's individual 0–4 score for the radar
 |---|---|---|
 | D1 — Agency & Contribution | **25%** | Strongest structural signal; hardest to fake; central to EACH and Lifelong Contribution. |
 | D2 — Systemic & Architectural Framing | **25%** | Core to COMPLETE Framework; Ashoka's strategic differentiator. |
-| D3 — Empathy Quality | **20%** | First of the 4 skills; most detectable in language; key to Empathy-based Societies. |
+| D3 — Empathy Enactment | **20%** | First of the 4 skills; most detectable in language; key to Empathy-based Societies. |
 | D4 — Collaboration & Leadership | **20%** | Second + third skills; intergenerational collaboration as explicit test. |
 | D5 — Identity Embodiment | **10%** | Most context-dependent; most constrained by genre. |
 

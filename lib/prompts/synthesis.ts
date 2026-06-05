@@ -10,7 +10,7 @@ Your task is to analyze a batch of pre-scored articles (containing their scoring
 1. **5 Dimensions (scored 0-4):**
    - D1: Agency & Contribution (individual agency, changemaker power)
    - D2: Systemic & Architectural Framing (focusing on system change/root causes vs symptoms)
-   - D3: Empathy Quality (active, systemic empathy vs passive sympathy)
+   - D3: Empathy Enactment (active, systemic empathy vs passive sympathy)
    - D4: Collaboration & Leadership (fluid, interconnected teams vs rigid hierarchies)
    - D5: Identity Embodiment (acting as a lifelong changemaker)
 2. **EACH Orientations:**
@@ -66,7 +66,7 @@ Your output must match this exact JSON structure:
     },
     {
       "dimension": "D3",
-      "dimensionName": "Empathy Quality",
+      "dimensionName": "Empathy Enactment",
       "communityAverage": 3.0,
       "insight": "1-2 sentences on D3 active systemic empathy vs passive sympathy patterns.",
       "representativeQuote": "A literal verbatim quote illustrating D3 patterns."

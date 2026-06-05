@@ -48,8 +48,8 @@ The 8 COMPLETE dimensions of social architecture: Cultural, Organizational, Metr
 - 3: Multiple architectural dimensions are targeted simultaneously. Field- or system-level change theory.
 - 4: Awareness that rules themselves need redesigning. Interdependencies named. Complexity held without premature resolution.
 
-## D3 — Empathy Quality
-Question: Does the text demonstrate conscious empathy (recognizing others' perspectives AND using that understanding to identify systemic patterns) — or does it stop at emotional solidarity?
+## D3 — Empathy Enactment
+Question: Does the text demonstrate the practice of conscious empathy — the capacity to be aware of and understand our own and others’ perspectives, and to guide one’s actions to contribute to the common good — or does it stop at emotional solidarity?
 
 CRITICAL THRESHOLD between 2 and 3: emotional empathy ("we care about X") vs. conscious empathy ("we changed our approach because X's perspective revealed a pattern").
 

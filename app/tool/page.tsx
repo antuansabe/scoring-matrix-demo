@@ -1,11 +1,9 @@
 import { LiveAnalyzer } from "@/components/LiveAnalyzer";
 
 const STRINGS = {
-  eyebrow: "SCORING TOOL",
-  titlePart1: "Try the ",
-  titlePart2: "instrument",
-  titlePart3: " on your own text",
-  subtitle: "Your text is processed securely. We do not store or share what you submit.",
+  eyebrow: "TEST THE TOOL:",
+  title: "Choose a text where you speak about your work, your role, or a reflection on how you see the world. You can choose any piece of your own writing or a transcript from a video or interview where you speak.",
+  subtitle: "You will get an aggregate score, a score per dimension, and direct feedback regarding the framing and language you are using:",
 };
 
 export default function ToolPage() {
@@ -15,12 +13,11 @@ export default function ToolPage() {
         <p className="font-mono text-xs uppercase tracking-widest text-muted">
           {STRINGS.eyebrow}
         </p>
-        <h1 className="mt-4 font-display text-3xl font-normal leading-tight text-ink sm:text-4xl">
-          {STRINGS.titlePart1}
-          <span className="font-light italic text-accent">{STRINGS.titlePart2}</span>
-          {STRINGS.titlePart3}
+        <h1 className="mt-4 font-display text-2xl font-normal leading-relaxed text-ink sm:text-3xl max-w-3xl">
+          Choose a text where you speak about your work, your role, or a reflection on{" "}
+          <span className="font-light italic text-accent">how you see the world</span>. You can choose any piece of your own writing or a transcript from a video or interview where you speak.
         </h1>
-        <p className="mt-2 mb-8 max-w-prose font-sans text-sm leading-relaxed text-muted">
+        <p className="mt-4 mb-8 max-w-prose font-sans text-sm leading-relaxed text-muted">
           {STRINGS.subtitle}
         </p>
         <LiveAnalyzer />

@@ -3,8 +3,11 @@ import { DIMENSIONS } from "@/lib/paradigm";
 import Link from "next/link";
 
 const STRINGS = {
-  explainerEyebrow: "MODEL ARCHITECTURE",
-  explainerTitle: "The Five Dimensions",
+  explainerEyebrow: "ABOUT MEASURING CHANGEMAKER DISCURSIVE ENACTMENT",
+  explainerParagraph1: "This tool does not only care about what you say. It's designed to look for how you narrate actions, how you position yourself, and how you describe your relationships and context.",
+  explainerParagraph2: "Specifically, it measures the degree to which the architecture of language aligns with what Ashoka calls “the Everyone a Changemaker Framework”.",
+  explainerParagraph3: "We are not ranking changemakers; we are reading the traces the worldview leaves — or does not leave — in language. We do so in five dimensions:",
+  learnMoreButton: "LEARN MORE ABOUT THE MODEL AND ASHOKA'S FRAMEWORK →",
   ctaEyebrow: "LIVE SCORER",
   ctaTitlePart1: "Ready to score your ",
   ctaTitlePart2: "own text",
@@ -22,10 +25,19 @@ export default function Home() {
         <p className="font-mono text-xs uppercase tracking-widest text-muted">
           {STRINGS.explainerEyebrow}
         </p>
-        <h2 className="mt-4 font-display text-3xl font-normal leading-tight text-ink sm:text-4xl">
-          {STRINGS.explainerTitle}
-        </h2>
-        <div className="mt-8 grid grid-cols-1 gap-x-10 gap-y-10 lg:grid-cols-3">
+        <div className="mt-6 max-w-[70ch] space-y-4">
+          <p className="font-sans text-[1.0625rem] leading-[1.6] text-ink">
+            {STRINGS.explainerParagraph1}
+          </p>
+          <p className="font-sans text-[1.0625rem] leading-[1.6] text-ink">
+            {STRINGS.explainerParagraph2}
+          </p>
+          <p className="font-sans text-[1.0625rem] leading-[1.6] text-ink">
+            {STRINGS.explainerParagraph3}
+          </p>
+        </div>
+        
+        <div className="mt-10 grid grid-cols-1 gap-x-10 gap-y-10 lg:grid-cols-3">
           {DIMENSIONS.map((d) => (
             <div key={d.key} className="relative">
               <div className="h-px w-8" style={{ backgroundColor: d.color }} aria-hidden="true" />
@@ -40,6 +52,15 @@ export default function Home() {
               </p>
             </div>
           ))}
+        </div>
+
+        <div className="mt-12">
+          <Link
+            href="/about"
+            className="font-mono text-xs uppercase tracking-widest text-accent hover:text-opacity-80 transition-colors inline-block border border-accent/30 px-5 py-3 rounded-sm"
+          >
+            {STRINGS.learnMoreButton}
+          </Link>
         </div>
       </section>
 

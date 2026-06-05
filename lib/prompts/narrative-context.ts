@@ -12,6 +12,6 @@ export const NARRATIVE_CONTEXT = `Ashoka's framework change strategy is structur
    - Relates to: D2 (Systemic & Architectural Framing) + D4 (Collaboration & Leadership Model)
 
 3. Empathy-based Societies: Active, conscious empathy is the foundation of changemaking. Shift away from simple emotional sympathy or charity toward conscious empathy that identifies exclusion patterns and dynamically adjusts approaches.
-   - Relates to: D3 (Empathy Quality) + D1 (Agency & Contribution)
+   - Relates to: D3 (Empathy Enactment) + D1 (Agency & Contribution)
 
 Instruction: This narrative context serves as a calibration lens to guide your interpretation of the text's grammar, metaphors, and narrative positioning. It does NOT add new scoring dimensions or modify the existing 0-4 rubrics or weights.`;

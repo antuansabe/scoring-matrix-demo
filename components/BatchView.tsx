@@ -14,7 +14,7 @@ const ANALYZING_MESSAGES = [
   "Reading the architecture of the text...",
   "Identifying agency patterns...",
   "Mapping systemic framing...",
-  "Analyzing empathy quality...",
+  "Analyzing empathy enactment...",
   "Evaluating collaboration signals...",
   "Assessing identity embodiment...",
   "Extracting key quotes...",
