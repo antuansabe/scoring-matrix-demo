@@ -5,9 +5,9 @@ import Link from "next/link";
 const STRINGS = {
   explainerEyebrow: "ABOUT MEASURING CHANGEMAKER DISCURSIVE ENACTMENT",
   explainerParagraph1: "This tool does not only care about what you say. It's designed to look for how you narrate actions, how you position yourself, and how you describe your relationships and context.",
-  explainerParagraph2: "Specifically, it measures the degree to which the architecture of language aligns with what Ashoka calls “the Everyone a Changemaker Framework”.",
+  explainerParagraph2: "Specifically, it measures the degree to which the architecture of language aligns with what Ashoka calls \u201cthe Everyone a Changemaker Framework\u201d.",
   explainerParagraph3: "We are not ranking changemakers; we are reading the traces the worldview leaves — or does not leave — in language. We do so in five dimensions:",
-  learnMoreButton: "LEARN MORE ABOUT THE MODEL AND ASHOKA'S FRAMEWORK →",
+  learnMoreButton: "Learn more about the model →",
   ctaEyebrow: "LIVE SCORER",
   ctaTitlePart1: "Ready to score your ",
   ctaTitlePart2: "own text",
@@ -21,59 +21,51 @@ export default function Home() {
       <Hero />
       
       {/* Five Dimensions Explainer */}
-      <section className="border-t border-border py-12 lg:py-16">
+      <section className="border-t border-border pt-16 pb-20 lg:pt-20 lg:pb-24">
         <p className="font-mono text-xs uppercase tracking-widest text-muted">
           {STRINGS.explainerEyebrow}
         </p>
-        <div className="mt-6 max-w-[70ch] space-y-4">
-          <p className="font-sans text-[1.0625rem] leading-[1.6] text-ink">
+        <div className="mt-6 max-w-[62ch] space-y-5">
+          <p className="font-sans text-base leading-[1.75] text-ink">
             {STRINGS.explainerParagraph1}
           </p>
-          <p className="font-sans text-[1.0625rem] leading-[1.6] text-ink">
+          <p className="font-sans text-base leading-[1.75] text-ink">
             {STRINGS.explainerParagraph2}
           </p>
-          <p className="font-sans text-[1.0625rem] leading-[1.6] text-ink">
+          <p className="font-sans text-base leading-[1.75] text-muted">
             {STRINGS.explainerParagraph3}
           </p>
         </div>
         
-        <div className="mt-10 grid grid-cols-1 md:grid-cols-12 gap-6 animate-slide-up animation-delay-200">
-          {DIMENSIONS.map((d, index) => {
-            const spanClass = index < 3 ? "md:col-span-4" : "md:col-span-6";
-            return (
-              <div
-                key={d.key}
-                className={`premium-card p-6 sm:p-8 relative border-t-4 flex flex-col justify-between ${spanClass}`}
-                style={{ borderTopColor: d.color }}
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span 
-                      className="font-mono text-xs font-semibold px-2.5 py-0.5 rounded-sm"
-                      style={{ backgroundColor: `${d.color}15`, color: d.color }}
-                    >
-                      {d.key}
-                    </span>
-                    <span className="font-mono text-[0.65rem] uppercase tracking-widest text-muted/50">
-                      Dimension
-                    </span>
-                  </div>
-                  <h3 className="font-display text-xl font-normal leading-snug text-ink">
-                    {d.fullName}
-                  </h3>
-                  <p className="mt-3 font-sans text-sm leading-relaxed text-muted">
-                    {d.oneLineDescription}
-                  </p>
-                </div>
+        <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 animate-slide-up animation-delay-200">
+          {DIMENSIONS.map((d) => (
+            <div
+              key={d.key}
+              className="premium-card p-6 relative border-l-4 flex flex-col"
+              style={{ borderLeftColor: d.color, borderTopWidth: 0 }}
+            >
+              <div className="flex items-center gap-2.5 mb-3">
+                <span 
+                  className="font-mono text-[0.7rem] font-bold px-2 py-0.5 rounded"
+                  style={{ backgroundColor: `${d.color}12`, color: d.color }}
+                >
+                  {d.key}
+                </span>
+                <h3 className="font-display text-base font-medium leading-snug text-ink">
+                  {d.fullName}
+                </h3>
               </div>
-            );
-          })}
+              <p className="font-sans text-[0.8rem] leading-relaxed text-muted line-clamp-4">
+                {d.oneLineDescription}
+              </p>
+            </div>
+          ))}
         </div>
 
-        <div className="mt-12 animate-slide-up animation-delay-300">
+        <div className="mt-10 animate-slide-up animation-delay-300">
           <Link
             href="/about"
-            className="font-mono text-xs uppercase tracking-widest text-accent hover:text-opacity-80 transition-colors inline-block border border-accent/30 px-5 py-3 rounded-sm"
+            className="font-mono text-xs uppercase tracking-widest text-accent hover:text-accent-cta transition-colors inline-flex items-center gap-1"
           >
             {STRINGS.learnMoreButton}
           </Link>
@@ -81,24 +73,21 @@ export default function Home() {
       </section>
 
       {/* Live Analyzer Entry */}
-      <section className="border-t border-border py-12 lg:py-16 animate-slide-up animation-delay-300">
-        <div className="premium-card p-6 sm:p-8 max-w-3xl relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-accent-2/15 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-accent-2/30 transition-all duration-500" />
+      <section className="border-t border-border pt-16 pb-8 lg:pt-20 animate-slide-up animation-delay-300">
+        <div className="premium-card p-8 sm:p-10 max-w-3xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-40 h-40 bg-accent-2/10 rounded-full blur-3xl -mr-12 -mt-12 group-hover:bg-accent-2/20 transition-all duration-700" />
           <p className="font-mono text-xs uppercase tracking-widest text-muted">
             {STRINGS.ctaEyebrow}
           </p>
-          <h3 className="mt-4 font-display text-2xl font-normal leading-tight text-ink sm:text-3xl">
+          <h3 className="mt-5 font-display text-2xl font-normal leading-snug text-ink sm:text-3xl">
             {STRINGS.ctaTitlePart1}
             <span className="font-light italic text-accent">{STRINGS.ctaTitlePart2}</span>
           </h3>
-          <p className="mt-3 max-w-prose font-sans text-[1.0625rem] leading-[1.6] text-ink">
+          <p className="mt-4 max-w-[50ch] font-sans text-sm leading-relaxed text-muted">
             {STRINGS.ctaSubtitle}
           </p>
-          <div className="mt-6">
-            <Link
-              href="/tool"
-              className="font-display bg-accent text-white px-5 py-3 text-sm hover:bg-opacity-95 transition-all inline-block rounded-sm shadow-md hover:shadow-lg transform hover:-translate-y-[1px] duration-200"
-            >
+          <div className="mt-8">
+            <Link href="/tool" className="btn-primary">
               {STRINGS.ctaButton}
             </Link>
           </div>

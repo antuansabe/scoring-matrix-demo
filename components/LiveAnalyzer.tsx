@@ -177,7 +177,7 @@ export function LiveAnalyzer() {
               type="button"
               onClick={analyze}
               disabled={!canSubmit}
-              className="bg-accent px-6 py-2.5 font-mono text-sm uppercase tracking-widest text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+              className="bg-accent-cta px-6 py-2.5 font-mono text-sm uppercase tracking-widest text-white rounded-md transition-all hover:bg-accent hover:shadow-md disabled:cursor-not-allowed disabled:opacity-40"
             >
               {status === "loading" ? "Analyzing…" : "Analyze"}
             </button>

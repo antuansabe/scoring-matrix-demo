@@ -716,7 +716,7 @@ export function BatchView() {
               <button
                 type="submit"
                 disabled={isAddDisabled}
-                className="font-display bg-accent text-white px-5 py-2 text-sm hover:bg-opacity-95 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                className="font-display bg-accent-cta text-white px-5 py-2 text-sm hover:bg-opacity-95 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
               >
                 Add to batch →
               </button>
@@ -809,7 +809,7 @@ export function BatchView() {
         <div className="mt-8">
           <button
             onClick={processAll}
-            className="font-display text-xl bg-accent text-white w-full py-4 hover:bg-opacity-95 transition-colors cursor-pointer"
+            className="font-display text-xl bg-accent-cta text-white w-full py-4 hover:bg-opacity-95 transition-colors cursor-pointer"
           >
             Analyze {state.items.filter((i) => i.status === 'pending').length} {state.items.filter((i) => i.status === 'pending').length === 1 ? 'text' : 'texts'} →
           </button>
@@ -949,7 +949,7 @@ export function BatchView() {
           <div className="mt-8 flex gap-4 flex-wrap justify-center">
             <button
               onClick={downloadJSON}
-              className="font-display bg-accent text-white px-6 py-3 hover:bg-opacity-95 transition-colors cursor-pointer text-sm"
+              className="font-display bg-accent-cta text-white px-6 py-3 hover:bg-opacity-95 transition-colors cursor-pointer text-sm"
             >
               Download Analysis Data (JSON) ↓
             </button>
@@ -1074,7 +1074,7 @@ export function BatchView() {
                     
                     <button
                       onClick={handleGenerateReport}
-                      className="font-display bg-accent text-white w-full py-4 text-lg hover:bg-opacity-95 transition-colors cursor-pointer font-medium"
+                      className="font-display bg-accent-cta text-white w-full py-4 text-lg hover:bg-opacity-95 transition-colors cursor-pointer font-medium"
                     >
                       Generate Narrative Report →
                     </button>
@@ -1102,7 +1102,7 @@ export function BatchView() {
                     <div className="flex flex-col items-center gap-3">
                       <button
                         onClick={handleDownloadCachedReport}
-                        className="font-display bg-accent text-white px-8 py-3 hover:bg-opacity-95 transition-colors cursor-pointer text-base"
+                        className="font-display bg-accent-cta text-white px-8 py-3 hover:bg-opacity-95 transition-colors cursor-pointer text-base"
                       >
                         Download Report (Word) ↓
                       </button>
