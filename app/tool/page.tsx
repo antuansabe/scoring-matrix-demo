@@ -1,4 +1,5 @@
 import { LiveAnalyzer } from "@/components/LiveAnalyzer";
+import { Reveal } from "@/components/Reveal";
 
 const STRINGS = {
   eyebrow: "TEST THE TOOL:",
@@ -7,18 +8,20 @@ const STRINGS = {
 
 export default function ToolPage() {
   return (
-    <main className="mx-auto max-w-6xl px-6 py-14 sm:py-20 animate-slide-up">
+    <main className="mx-auto max-w-6xl px-6 py-14 sm:py-20">
       <section className="max-w-3xl mx-auto">
-        <p className="font-mono text-xs uppercase tracking-widest text-accent-cta font-semibold">
-          {STRINGS.eyebrow}
-        </p>
-        <h1 className="mt-5 font-display text-2xl font-normal leading-relaxed text-ink sm:text-3xl max-w-2xl">
-          Choose a text where you speak about your work, your role, or a reflection on{" "}
-          <span className="font-light italic text-accent">how you see the world</span>. You can choose any piece of your own writing or a transcript from a video or interview where you speak.
-        </h1>
-        <p className="mt-5 mb-10 max-w-prose font-sans text-sm leading-relaxed text-muted">
-          {STRINGS.subtitle}
-        </p>
+        <Reveal>
+          <p className="font-mono text-xs uppercase tracking-widest text-accent-cta font-semibold">
+            {STRINGS.eyebrow}
+          </p>
+          <h1 className="mt-5 font-display text-2xl font-normal leading-relaxed text-ink sm:text-3xl max-w-2xl">
+            Choose a text where you speak about your work, your role, or a reflection on{" "}
+            <span className="font-light italic text-accent">how you see the world</span>. You can choose any piece of your own writing or a transcript from a video or interview where you speak.
+          </h1>
+          <p className="mt-5 mb-10 max-w-prose font-sans text-sm leading-relaxed text-muted">
+            {STRINGS.subtitle}
+          </p>
+        </Reveal>
         <LiveAnalyzer />
       </section>
     </main>

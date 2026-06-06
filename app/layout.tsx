@@ -25,6 +25,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { ScrollProgress } from "@/components/ScrollProgress";
 
 const SITE_TITLE = "Changemaker Paradigm Scoring Matrix — Demo";
 const SITE_DESCRIPTION =
@@ -51,6 +52,7 @@ export default function RootLayout({
       className={`${fraunces.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
       <body className="min-h-full">
+        <ScrollProgress />
         <Header />
         {children}
         <Footer />

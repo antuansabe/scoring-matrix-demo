@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Reveal } from "@/components/Reveal";
 
 const STRINGS = {
   eyebrow: "BADGE & CERTIFICATION PROGRAM",
@@ -109,26 +110,31 @@ export default function BadgePage() {
         </p>
 
         {/* Coming Soon Alert Card */}
-        <div className="mt-12 premium-card p-6 sm:p-8 relative overflow-hidden border-l-4 border-l-accent">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-accent-light rounded-full blur-2xl -mr-10 -mt-10" />
-          <h2 className="font-display text-xl font-semibold leading-tight text-ink">
-            {STRINGS.comingSoonTitle}
-          </h2>
-          <p className="mt-3 font-sans text-sm leading-relaxed text-muted max-w-3xl">
-            {STRINGS.comingSoonText}
-          </p>
-        </div>
+        <Reveal className="mt-12">
+          <div className="premium-card p-6 sm:p-8 relative overflow-hidden border-l-4 border-l-accent">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-accent-light rounded-full blur-2xl -mr-10 -mt-10" />
+            <h2 className="font-display text-xl font-semibold leading-tight text-ink">
+              {STRINGS.comingSoonTitle}
+            </h2>
+            <p className="mt-3 font-sans text-sm leading-relaxed text-muted max-w-3xl">
+              {STRINGS.comingSoonText}
+            </p>
+          </div>
+        </Reveal>
 
         {/* Badge Simulator */}
         <section className="mt-20 border-t border-border/60 pt-16">
-          <p className="font-mono text-xs uppercase tracking-widest text-muted">
-            SIMULATION
-          </p>
-          <h2 className="mt-3 font-display text-2xl font-normal leading-tight text-ink sm:text-3xl">
-            {STRINGS.badgeSimulatorTitle}
-          </h2>
+          <Reveal>
+            <p className="font-mono text-xs uppercase tracking-widest text-muted">
+              SIMULATION
+            </p>
+            <h2 className="mt-3 font-display text-2xl font-normal leading-tight text-ink sm:text-3xl">
+              {STRINGS.badgeSimulatorTitle}
+            </h2>
+          </Reveal>
 
-          <div className="mt-10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          <Reveal delay={100} className="mt-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             {/* Interactive Badge Display */}
             <div className="lg:col-span-5 flex flex-col items-center justify-center p-6 bg-surface border border-border/50 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 relative group overflow-hidden">
               <div className="absolute inset-0 bg-radial from-transparent to-bg/5 pointer-events-none" />
@@ -239,21 +245,24 @@ export default function BadgePage() {
               </div>
             </div>
           </div>
+          </Reveal>
         </section>
 
         {/* Timeline Process */}
         <section className="mt-24 border-t border-border/60 pt-16">
-          <p className="font-mono text-xs uppercase tracking-widest text-muted">
-            PROCESS
-          </p>
-          <h2 className="mt-3 font-display text-2xl font-normal leading-tight text-ink sm:text-3xl">
-            {STRINGS.howItWorksTitle}
-          </h2>
+          <Reveal>
+            <p className="font-mono text-xs uppercase tracking-widest text-muted">
+              PROCESS
+            </p>
+            <h2 className="mt-3 font-display text-2xl font-normal leading-tight text-ink sm:text-3xl">
+              {STRINGS.howItWorksTitle}
+            </h2>
+          </Reveal>
 
           <div className="mt-12 space-y-6 max-w-3xl">
             {STAGES.map((st, idx) => (
-              <div 
-                key={st.step} 
+              <Reveal key={st.step} delay={idx * 80}>
+              <div
                 className="premium-card p-6 bg-surface/40 flex flex-col sm:flex-row gap-5 items-start relative hover:border-accent/30 duration-300"
               >
                 <span className="font-display text-3xl font-light text-accent/80 shrink-0 leading-none">
@@ -271,6 +280,7 @@ export default function BadgePage() {
                   <div className="hidden sm:block absolute left-9 top-full h-6 w-px bg-border/80" />
                 )}
               </div>
+              </Reveal>
             ))}
           </div>
         </section>

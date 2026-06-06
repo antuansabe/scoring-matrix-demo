@@ -3,7 +3,7 @@ import Link from "next/link";
 const STRINGS = {
   calculatorLabelEs: "Cómo se calcula el score",
   calculatorLabelEn: "How the score is calculated",
-  credits: "A collaboration between Ashoka Framework Change and Ashoka ITI, co-led by Giselle Kuri and Antonio Dromundo. Stage 1 scoring model and demo built jointly by both teams. v0.1 — not a production tool.",
+  credits: "A collaboration between Ashoka Framework Change and Ashoka ITI, co-led by Giselle Kuri and Antonio Dromundo. Stage 1 scoring model and demo built jointly by both teams. v0.5 — not a production tool.",
   nav: {
     home: "Home",
     tool: "Scoring Tool",
@@ -97,7 +97,7 @@ export function Footer() {
             {STRINGS.credits}
           </p>
           <span className="shrink-0 font-mono text-[0.65rem] uppercase tracking-widest text-muted/50 bg-bg px-2 py-1 border border-border/40 rounded-sm">
-            Ashoka Framework Change · v0.1
+            Ashoka Framework Change · v0.5
           </span>
         </div>
       </div>

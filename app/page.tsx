@@ -1,4 +1,5 @@
 import { Hero } from "@/components/Hero";
+import { Reveal } from "@/components/Reveal";
 import { DIMENSIONS } from "@/lib/paradigm";
 import Link from "next/link";
 
@@ -23,81 +24,88 @@ export default function Home() {
       
       {/* Five Dimensions Explainer */}
       <section className="border-t border-border pt-16 pb-20 lg:pt-20 lg:pb-24">
-        <p className="font-mono text-xs uppercase tracking-widest text-muted">
-          {STRINGS.explainerEyebrow}
-        </p>
-        <h2 className="mt-4 font-display text-2xl font-normal leading-tight text-ink sm:text-3xl lg:text-4xl max-w-2xl">
-          {STRINGS.explainerTitle}
-        </h2>
-        <div className="mt-6 max-w-[62ch] space-y-5">
-          <p className="font-sans text-base leading-[1.75] text-ink">
-            {STRINGS.explainerParagraph1}
+        <Reveal>
+          <p className="font-mono text-xs uppercase tracking-widest text-muted">
+            {STRINGS.explainerEyebrow}
           </p>
-          <p className="font-sans text-base leading-[1.75] text-ink">
-            {STRINGS.explainerParagraph2}
-          </p>
-          <p className="font-sans text-base leading-[1.75] text-muted">
-            {STRINGS.explainerParagraph3}
-          </p>
-        </div>
-        
-        <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-slide-up animation-delay-200">
-          {DIMENSIONS.map((d) => (
-            <div
-              key={d.key}
-              className="premium-card p-6 relative border-l-4 flex flex-col justify-between"
-              style={{ borderLeftColor: d.color, borderTopWidth: 0 }}
-            >
-              <div>
-                <div className="flex items-center gap-2.5 mb-3">
-                  <span 
-                    className="font-mono text-[0.7rem] font-bold px-2 py-0.5 rounded"
-                    style={{ backgroundColor: `${d.color}12`, color: d.color }}
-                  >
-                    {d.key}
-                  </span>
-                  <h3 className="font-display text-lg font-semibold leading-snug text-ink sm:text-xl">
-                    {d.fullName}
-                  </h3>
+          <h2 className="mt-4 font-display text-2xl font-normal leading-tight text-ink sm:text-3xl lg:text-4xl max-w-2xl">
+            {STRINGS.explainerTitle}
+          </h2>
+        </Reveal>
+        <Reveal delay={90}>
+          <div className="mt-6 max-w-[62ch] space-y-5">
+            <p className="font-sans text-base leading-[1.75] text-ink">
+              {STRINGS.explainerParagraph1}
+            </p>
+            <p className="font-sans text-base leading-[1.75] text-ink">
+              {STRINGS.explainerParagraph2}
+            </p>
+            <p className="font-sans text-base leading-[1.75] text-muted">
+              {STRINGS.explainerParagraph3}
+            </p>
+          </div>
+        </Reveal>
+
+        <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {DIMENSIONS.map((d, i) => (
+            <Reveal key={d.key} delay={i * 90} className="h-full">
+              <div
+                className="premium-card p-6 relative border-l-4 flex flex-col justify-between h-full"
+                style={{ borderLeftColor: d.color, borderTopWidth: 0 }}
+              >
+                <div>
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <span
+                      className="font-mono text-[0.7rem] font-bold px-2 py-0.5 rounded"
+                      style={{ backgroundColor: `${d.color}12`, color: d.color }}
+                    >
+                      {d.key}
+                    </span>
+                    <h3 className="font-display text-lg font-semibold leading-snug text-ink sm:text-xl">
+                      {d.fullName}
+                    </h3>
+                  </div>
+                  <p className="font-sans text-sm leading-relaxed text-muted line-clamp-4">
+                    {d.oneLineDescription}
+                  </p>
                 </div>
-                <p className="font-sans text-sm leading-relaxed text-muted line-clamp-4">
-                  {d.oneLineDescription}
-                </p>
               </div>
-            </div>
+            </Reveal>
           ))}
         </div>
 
-        <div className="mt-10 animate-slide-up animation-delay-300">
+        <Reveal className="mt-10" delay={100}>
           <Link
             href="/about"
             className="font-mono text-xs uppercase tracking-widest text-accent hover:text-accent-cta transition-colors inline-flex items-center gap-1"
           >
             {STRINGS.learnMoreButton}
           </Link>
-        </div>
+        </Reveal>
       </section>
 
       {/* Live Analyzer Entry */}
-      <section className="border-t border-border pt-16 pb-8 lg:pt-20 animate-slide-up animation-delay-300">
-        <div className="premium-card p-8 sm:p-10 max-w-3xl relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-40 h-40 bg-accent-2/10 rounded-full blur-3xl -mr-12 -mt-12 group-hover:bg-accent-2/20 transition-all duration-700" />
-          <p className="font-mono text-xs uppercase tracking-widest text-muted">
-            {STRINGS.ctaEyebrow}
-          </p>
-          <h3 className="mt-5 font-display text-2xl font-normal leading-snug text-ink sm:text-3xl">
-            {STRINGS.ctaTitlePart1}
-            <span className="font-light italic text-accent">{STRINGS.ctaTitlePart2}</span>
-          </h3>
-          <p className="mt-4 max-w-[50ch] font-sans text-sm leading-relaxed text-muted">
-            {STRINGS.ctaSubtitle}
-          </p>
-          <div className="mt-8">
-            <Link href="/tool" className="btn-primary">
-              {STRINGS.ctaButton}
-            </Link>
+      <section className="border-t border-border pt-16 pb-8 lg:pt-20">
+        <Reveal className="max-w-3xl">
+          <div className="premium-card p-8 sm:p-10 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-accent-2/10 rounded-full blur-3xl -mr-12 -mt-12 group-hover:bg-accent-2/20 transition-all duration-700" />
+            <p className="font-mono text-xs uppercase tracking-widest text-muted">
+              {STRINGS.ctaEyebrow}
+            </p>
+            <h3 className="mt-5 font-display text-2xl font-normal leading-snug text-ink sm:text-3xl">
+              {STRINGS.ctaTitlePart1}
+              <span className="font-light italic text-accent">{STRINGS.ctaTitlePart2}</span>
+            </h3>
+            <p className="mt-4 max-w-[50ch] font-sans text-sm leading-relaxed text-muted">
+              {STRINGS.ctaSubtitle}
+            </p>
+            <div className="mt-8">
+              <Link href="/tool" className="btn-primary">
+                {STRINGS.ctaButton}
+              </Link>
+            </div>
           </div>
-        </div>
+        </Reveal>
       </section>
     </main>
   );

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { SAMPLES } from "@/lib/samples";
 import type { Sample, ScoreResult } from "@/lib/types";
 import { SampleSwitcher } from "@/components/SampleSwitcher";
+import { Reveal } from "@/components/Reveal";
 import { TextExcerpt } from "@/components/TextExcerpt";
 import { ScoreCard } from "@/components/ScoreCard";
 import { RadarProfile } from "@/components/RadarProfile";
@@ -47,11 +48,13 @@ export function SampleShowcase() {
   return (
     <section className="mt-6">
       <h2 className="sr-only">{STRINGS.sectionTitle}</h2>
-      <SampleSwitcher
-        samples={SAMPLES}
-        selectedId={selectedId}
-        onSelect={handleSelectSample}
-      />
+      <Reveal variant="rise-sm">
+        <SampleSwitcher
+          samples={SAMPLES}
+          selectedId={selectedId}
+          onSelect={handleSelectSample}
+        />
+      </Reveal>
 
       {/* key forces a remount on switch → 200ms opacity fade + the radar
           replays its entry animation. */}

@@ -1,3 +1,5 @@
+import { Reveal } from "@/components/Reveal";
+
 /**
  * "The Instrument" — three editorial columns: what it measures, what it does
  * not, and why it matters. Server component.
@@ -22,26 +24,29 @@ const BLOCKS = [
 
 export function InstrumentPitch() {
   return (
-    <section className="border-t border-border/60 py-14 lg:py-20 animate-slide-up">
-      <p className="font-mono text-xs uppercase tracking-widest text-muted">
-        The Instrument
-      </p>
+    <section className="border-t border-border/60 py-14 lg:py-20">
+      <Reveal>
+        <p className="font-mono text-xs uppercase tracking-widest text-muted">
+          The Instrument
+        </p>
+      </Reveal>
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {BLOCKS.map((block) => (
-          <div 
-            key={block.header}
-            className="premium-card p-6 relative border-t-4 flex flex-col justify-between"
-            style={{ borderTopColor: block.color }}
-          >
-            <div>
-              <h3 className="font-display text-xl font-semibold leading-tight text-ink">
-                {block.header}
-              </h3>
-              <p className="mt-4 font-sans text-[0.875rem] leading-[1.65] text-muted">
-                {block.body}
-              </p>
+        {BLOCKS.map((block, i) => (
+          <Reveal key={block.header} delay={i * 90} className="h-full">
+            <div
+              className="premium-card p-6 relative border-t-4 flex flex-col justify-between h-full"
+              style={{ borderTopColor: block.color }}
+            >
+              <div>
+                <h3 className="font-display text-xl font-semibold leading-tight text-ink">
+                  {block.header}
+                </h3>
+                <p className="mt-4 font-sans text-[0.875rem] leading-[1.65] text-muted">
+                  {block.body}
+                </p>
+              </div>
             </div>
-          </div>
+          </Reveal>
         ))}
       </div>
     </section>

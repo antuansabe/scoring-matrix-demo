@@ -1,6 +1,6 @@
 # Changemaker Paradigm Scoring Matrix — Demo
 
-A v0.1 demo of an instrument that measures the discursive enactment of changemaker identity in a text. Five dimensions, anchored in critical discourse analysis and Ashoka's framework.
+A v0.5 demo of an instrument that measures the discursive enactment of changemaker identity in a text. Five dimensions, anchored in critical discourse analysis and Ashoka's framework.
 
 This is a research prototype, not a production tool.
 

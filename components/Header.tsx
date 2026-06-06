@@ -32,7 +32,7 @@ export function Header() {
       <div className="bg-ink text-[0.68rem] text-white py-1 px-6 border-b border-border/10">
         <div className="max-w-6xl mx-auto flex justify-between items-center font-mono uppercase tracking-widest">
           <span>Scoring Matrix · Ashoka Framework Change</span>
-          <span className="opacity-80 font-semibold">v0.1</span>
+          <span className="opacity-80 font-semibold">v0.5</span>
         </div>
       </div>
 
