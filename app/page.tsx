@@ -4,6 +4,7 @@ import Link from "next/link";
 
 const STRINGS = {
   explainerEyebrow: "ABOUT MEASURING CHANGEMAKER DISCURSIVE ENACTMENT",
+  explainerTitle: "The Five Dimensions of Discursive Enactment",
   explainerParagraph1: "This tool does not only care about what you say. It's designed to look for how you narrate actions, how you position yourself, and how you describe your relationships and context.",
   explainerParagraph2: "Specifically, it measures the degree to which the architecture of language aligns with what Ashoka calls \u201cthe Everyone a Changemaker Framework\u201d.",
   explainerParagraph3: "We are not ranking changemakers; we are reading the traces the worldview leaves — or does not leave — in language. We do so in five dimensions:",
@@ -25,6 +26,9 @@ export default function Home() {
         <p className="font-mono text-xs uppercase tracking-widest text-muted">
           {STRINGS.explainerEyebrow}
         </p>
+        <h2 className="mt-4 font-display text-2xl font-normal leading-tight text-ink sm:text-3xl lg:text-4xl max-w-2xl">
+          {STRINGS.explainerTitle}
+        </h2>
         <div className="mt-6 max-w-[62ch] space-y-5">
           <p className="font-sans text-base leading-[1.75] text-ink">
             {STRINGS.explainerParagraph1}
@@ -37,27 +41,29 @@ export default function Home() {
           </p>
         </div>
         
-        <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 animate-slide-up animation-delay-200">
+        <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-slide-up animation-delay-200">
           {DIMENSIONS.map((d) => (
             <div
               key={d.key}
-              className="premium-card p-6 relative border-l-4 flex flex-col"
+              className="premium-card p-6 relative border-l-4 flex flex-col justify-between"
               style={{ borderLeftColor: d.color, borderTopWidth: 0 }}
             >
-              <div className="flex items-center gap-2.5 mb-3">
-                <span 
-                  className="font-mono text-[0.7rem] font-bold px-2 py-0.5 rounded"
-                  style={{ backgroundColor: `${d.color}12`, color: d.color }}
-                >
-                  {d.key}
-                </span>
-                <h3 className="font-display text-base font-medium leading-snug text-ink">
-                  {d.fullName}
-                </h3>
+              <div>
+                <div className="flex items-center gap-2.5 mb-3">
+                  <span 
+                    className="font-mono text-[0.7rem] font-bold px-2 py-0.5 rounded"
+                    style={{ backgroundColor: `${d.color}12`, color: d.color }}
+                  >
+                    {d.key}
+                  </span>
+                  <h3 className="font-display text-lg font-semibold leading-snug text-ink sm:text-xl">
+                    {d.fullName}
+                  </h3>
+                </div>
+                <p className="font-sans text-sm leading-relaxed text-muted line-clamp-4">
+                  {d.oneLineDescription}
+                </p>
               </div>
-              <p className="font-sans text-[0.8rem] leading-relaxed text-muted line-clamp-4">
-                {d.oneLineDescription}
-              </p>
             </div>
           ))}
         </div>
