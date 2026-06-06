@@ -65,6 +65,7 @@ function getParadigmColor(name: string): string {
 
 export function CalculatorWidget() {
   const [genre, setGenre] = useState<GenreTag>("free-form-interview");
+  const [lang, setLang] = useState<"en" | "es">("en");
   const [scores, setScores] = useState<Record<DimensionKey, number>>({
     D1: 3,
     D2: 2,
@@ -101,7 +102,7 @@ export function CalculatorWidget() {
       {/* Interactive Section */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] lg:gap-12">
         {/* Left: Inputs */}
-        <div className="border border-border bg-surface p-6 sm:p-8 rounded-sm">
+        <div className="premium-card p-6 sm:p-8 relative overflow-hidden">
           <p className="mb-6 font-mono text-xs uppercase tracking-widest text-muted">
             {STRINGS.inputsHeader}
           </p>
@@ -116,7 +117,7 @@ export function CalculatorWidget() {
                 id="genre-select"
                 value={genre}
                 onChange={(e) => setGenre(e.target.value as GenreTag)}
-                className="block w-full border border-border bg-bg px-3 py-2.5 font-sans text-sm text-ink focus:border-accent focus:outline-none"
+                className="block w-full border border-border bg-surface px-4 py-3 font-sans text-sm text-ink rounded-md focus:ring-2 focus:ring-accent/20 focus:border-accent focus:outline-none transition-all duration-300 cursor-pointer shadow-sm"
               >
                 {Object.keys(GENRE_WEIGHTS).map((g) => (
                   <option key={g} value={g}>
@@ -127,18 +128,19 @@ export function CalculatorWidget() {
             </div>
 
             {/* Sliders */}
-            <div className="space-y-5 pt-4 border-t border-border">
+            <div className="space-y-6 pt-6 border-t border-border/60">
               {DIMENSIONS.map((d, index) => (
-                <div key={d.key}>
-                  <div className="flex justify-between items-baseline mb-2">
-                    <span className="font-mono text-xs uppercase tracking-widest text-ink">
+                <div key={d.key} className="space-y-2">
+                  <div className="flex justify-between items-baseline">
+                    <span className="font-mono text-xs uppercase tracking-widest text-ink font-semibold flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: d.color }} />
                       {d.key} · {d.shortName}
                     </span>
                     <span className="font-mono text-[0.7rem] text-muted">
                       weight {Math.round(weights[index] * 100)}%
                     </span>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-5 bg-bg/40 p-3 rounded-md border border-border/40 hover:border-border transition-colors duration-200">
                     <div className="flex-1">
                       <input
                         type="range"
@@ -147,10 +149,10 @@ export function CalculatorWidget() {
                         step="1"
                         value={scores[d.key]}
                         onChange={(e) => handleScoreChange(d.key, parseInt(e.target.value))}
-                        className="w-full accent-accent h-1 bg-border rounded appearance-none cursor-pointer"
+                        className="w-full h-1.5 bg-border rounded-full appearance-none cursor-pointer transition-all focus:outline-none"
                         style={{ accentColor: d.color }}
                       />
-                      <div className="mt-1 flex justify-between px-0.5 text-[0.65rem] font-mono text-muted">
+                      <div className="mt-1.5 flex justify-between px-0.5 text-[0.65rem] font-mono text-muted">
                         <span>0</span>
                         <span>1</span>
                         <span>2</span>
@@ -158,7 +160,7 @@ export function CalculatorWidget() {
                         <span>4</span>
                       </div>
                     </div>
-                    <span className="w-6 text-right font-display text-2xl font-normal text-ink">
+                    <span className="w-8 text-right font-display text-3xl font-normal text-ink" style={{ color: d.color }}>
                       {scores[d.key]}
                     </span>
                   </div>
@@ -170,7 +172,7 @@ export function CalculatorWidget() {
 
         {/* Right: Outputs */}
         <div className="space-y-6">
-          <div className="border border-border bg-surface p-6 sm:p-8 rounded-sm">
+          <div className="premium-card p-6 sm:p-8 relative overflow-hidden">
             <p className="mb-6 font-mono text-xs uppercase tracking-widest text-muted">
               {STRINGS.outputsHeader}
             </p>
@@ -182,7 +184,7 @@ export function CalculatorWidget() {
                   Enactment Score
                 </p>
                 <div className="flex items-baseline gap-2 mt-1">
-                  <span className="font-display text-6xl font-normal leading-none sm:text-7xl" style={{ color: paradigmColor }}>
+                  <span className="font-display text-6xl font-normal leading-none sm:text-7xl transition-all duration-300" style={{ color: paradigmColor }}>
                     {enactmentScore}
                   </span>
                   <span className="font-mono text-lg text-muted">/100</span>
@@ -194,7 +196,7 @@ export function CalculatorWidget() {
                 <p className="font-mono text-[0.7rem] uppercase tracking-widest text-muted">
                   Paradigm Level
                 </p>
-                <p className="mt-1 font-display text-xl font-normal text-ink">
+                <p className="mt-1 font-display text-xl font-semibold text-ink" style={{ color: paradigmColor }}>
                   {paradigmName}
                 </p>
               </div>
@@ -204,7 +206,7 @@ export function CalculatorWidget() {
                 <p className="font-mono text-[0.7rem] uppercase tracking-widest text-muted">
                   EACH Orientation
                 </p>
-                <p className="mt-1 font-mono text-xs uppercase tracking-wider text-ink font-medium">
+                <p className="mt-1 font-mono text-xs uppercase tracking-wider text-ink font-semibold">
                   {eachOrientation}
                 </p>
               </div>
@@ -212,48 +214,65 @@ export function CalculatorWidget() {
           </div>
 
           {/* Formula Display Box */}
-          <div className="border border-border bg-surface p-6 sm:p-8 rounded-sm">
+          <div className="premium-card p-6 sm:p-8 relative overflow-hidden">
             <p className="mb-3 font-mono text-xs uppercase tracking-widest text-muted">
               {STRINGS.formulaHeader}
             </p>
-            <div className="bg-bg border border-border p-4 font-mono text-xs text-ink leading-relaxed break-all">
+            <div className="bg-bg border border-border/60 p-4 font-mono text-xs text-ink leading-relaxed break-all rounded-md">
               {formulaString}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Explainer Prose Section (Bilingual) */}
-      <section className="border-t border-border pt-12">
-        <p className="font-mono text-xs uppercase tracking-widest text-muted">
-          {STRINGS.explainerHeading}
-        </p>
-        <p className="mt-1 font-sans text-sm text-muted italic">
-          {STRINGS.explainerSub}
-        </p>
+      {/* Explainer Prose Section (Bilingual Tab Toggle) */}
+      <section className="border-t border-border/60 pt-12">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <p className="font-mono text-xs uppercase tracking-widest text-muted">
+              {STRINGS.explainerHeading}
+            </p>
+            <p className="mt-1 font-sans text-sm text-muted italic">
+              {STRINGS.explainerSub}
+            </p>
+          </div>
+          {/* Language Toggle buttons */}
+          <div className="inline-flex rounded-lg p-1 bg-border/40 border border-border/50 shrink-0 self-start sm:self-center">
+            <button
+              onClick={() => setLang("en")}
+              className={`px-4 py-1.5 font-mono text-xs uppercase tracking-widest rounded-md transition-all duration-200 cursor-pointer ${
+                lang === "en"
+                  ? "bg-surface text-ink font-semibold shadow-sm"
+                  : "text-muted hover:text-ink"
+              }`}
+            >
+              English
+            </button>
+            <button
+              onClick={() => setLang("es")}
+              className={`px-4 py-1.5 font-mono text-xs uppercase tracking-widest rounded-md transition-all duration-200 cursor-pointer ${
+                lang === "es"
+                  ? "bg-surface text-ink font-semibold shadow-sm"
+                  : "text-muted hover:text-ink"
+              }`}
+            >
+              Español
+            </button>
+          </div>
+        </div>
 
-        <div className="mt-8 grid grid-cols-1 gap-10 md:grid-cols-2">
+        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
           {EXPLAINER_SECTIONS.map((sec, idx) => (
-            <div key={idx} className="space-y-4">
-              {/* English */}
-              <div className="p-5 border border-border bg-surface rounded-sm relative">
-                <div className="absolute top-2 right-3 font-mono text-[0.6rem] text-muted tracking-widest uppercase">EN</div>
-                <h3 className="font-display text-lg font-normal text-ink">
-                  {sec.headingEn}
+            <div
+              key={idx}
+              className="premium-card p-6 relative flex flex-col justify-between"
+            >
+              <div>
+                <h3 className="font-display text-lg font-semibold leading-snug text-ink sm:text-xl">
+                  {lang === "en" ? sec.headingEn : sec.headingEs}
                 </h3>
-                <p className="mt-2 font-sans text-xs leading-relaxed text-muted">
-                  {sec.textEn}
-                </p>
-              </div>
-
-              {/* Spanish */}
-              <div className="p-5 border border-border bg-surface rounded-sm relative">
-                <div className="absolute top-2 right-3 font-mono text-[0.6rem] text-muted tracking-widest uppercase">ES</div>
-                <h3 className="font-display text-lg font-normal text-ink">
-                  {sec.headingEs}
-                </h3>
-                <p className="mt-2 font-sans text-xs leading-relaxed text-muted">
-                  {sec.textEs}
+                <p className="mt-3 font-sans text-sm leading-relaxed text-muted">
+                  {lang === "en" ? sec.textEn : sec.textEs}
                 </p>
               </div>
             </div>

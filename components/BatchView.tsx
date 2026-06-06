@@ -657,7 +657,22 @@ export function BatchView() {
   });
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-12">
+    <div className="mx-auto max-w-3xl px-6 py-14 sm:py-20 animate-slide-up">
+      {/* Page Header */}
+      {state.phase !== 'processing' && state.phase !== 'done' && (
+        <div className="mb-12">
+          <p className="font-mono text-xs uppercase tracking-widest text-muted">
+            CORPUS DIAGNOSTICS
+          </p>
+          <h1 className="mt-5 font-display text-3xl font-normal leading-tight text-ink sm:text-4xl lg:text-5xl">
+            Batch Analysis & <span className="font-light italic text-accent">Synthesizer</span>
+          </h1>
+          <p className="mt-4 max-w-prose font-sans text-base leading-relaxed text-muted">
+            Process multiple texts simultaneously, analyze paradigm distributions, and compile consolidated Word or JSON executive reports.
+          </p>
+        </div>
+      )}
+
       {/* ── SECCIÓN "ADD TEXTS" ── */}
       {state.phase !== 'processing' && state.phase !== 'done' && (
         <div>
@@ -665,9 +680,9 @@ export function BatchView() {
             ADD TEXTS TO YOUR BATCH
           </p>
 
-          <form onSubmit={handleAddItem} className="border border-border bg-surface p-6 lg:p-8 rounded-sm">
+          <form onSubmit={handleAddItem} className="premium-card p-6 sm:p-8 relative overflow-hidden rounded-xl">
             <div>
-              <label htmlFor="journalist-name-input" className="block font-mono text-xs uppercase tracking-widest text-muted mb-2">
+              <label htmlFor="journalist-name-input" className="block font-mono text-xs uppercase tracking-widest text-muted mb-2 font-semibold">
                 JOURNALIST NAME
               </label>
               <input
@@ -676,13 +691,13 @@ export function BatchView() {
                 value={journalistName}
                 onChange={(e) => setJournalistName(e.target.value)}
                 ref={nameInputRef}
-                className="w-full bg-transparent border-b border-border pb-1 text-ink font-sans focus:outline-none focus:border-accent text-sm"
+                className="w-full bg-transparent border-b border-border pb-1.5 text-ink font-sans focus:outline-none focus:border-accent text-sm transition-colors"
                 placeholder="e.g. Lucía Torres"
               />
             </div>
 
             <div className="mt-6">
-              <label htmlFor="article-title-input" className="block font-mono text-xs uppercase tracking-widest text-muted mb-2">
+              <label htmlFor="article-title-input" className="block font-mono text-xs uppercase tracking-widest text-muted mb-2 font-semibold">
                 ARTICLE TITLE
               </label>
               <input
@@ -690,19 +705,19 @@ export function BatchView() {
                 type="text"
                 value={articleTitle}
                 onChange={(e) => setArticleTitle(e.target.value)}
-                className="w-full bg-transparent border-b border-border pb-1 text-ink font-sans focus:outline-none focus:border-accent text-sm"
+                className="w-full bg-transparent border-b border-border pb-1.5 text-ink font-sans focus:outline-none focus:border-accent text-sm transition-colors"
                 placeholder="e.g. March piece"
               />
             </div>
 
             <div className="mt-6">
-              <label className="block font-mono text-xs uppercase tracking-widest text-muted mb-2">
+              <label className="block font-mono text-xs uppercase tracking-widest text-muted mb-2 font-semibold">
                 Text
               </label>
               <textarea
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-                className="w-full min-h-[180px] resize-y bg-transparent border border-border p-3 text-ink font-sans focus:outline-none focus:border-accent text-sm rounded-sm"
+                className="w-full min-h-[180px] resize-y bg-bg/40 border border-border p-3 text-ink font-sans focus:ring-2 focus:ring-accent/10 focus:border-accent focus:outline-none text-sm rounded-md transition-all duration-300"
                 placeholder="Paste article text here..."
               />
               <div
@@ -716,7 +731,7 @@ export function BatchView() {
               <button
                 type="submit"
                 disabled={isAddDisabled}
-                className="font-display bg-accent-cta text-white px-5 py-2 text-sm hover:bg-opacity-95 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                className="btn-primary py-2 px-5 text-sm"
               >
                 Add to batch →
               </button>

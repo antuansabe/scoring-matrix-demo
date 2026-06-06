@@ -10,18 +10,21 @@ const STRINGS = {
 
 export function DemoGuide() {
   return (
-    <section className="py-10">
+    <section className="border-t border-border/60 py-12 lg:py-16 animate-slide-up">
       <p className="font-mono text-xs uppercase tracking-widest text-muted">
         {STRINGS.eyebrow}
       </p>
-      <p className="mt-4 max-w-prose font-sans text-lg leading-relaxed text-ink">
-        {STRINGS.p1} {STRINGS.p2}{" "}
-        <Link href="/tool" className="text-accent underline font-medium hover:opacity-80 transition-opacity">
-          {STRINGS.linkText}
-        </Link>
-        .
-      </p>
-      <p className="mt-6 font-mono text-xs uppercase tracking-widest text-muted">
+      <div className="mt-6 p-6 sm:p-8 bg-surface border border-border/50 rounded-xl premium-card relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-24 h-24 bg-accent-light rounded-full blur-xl -mr-8 -mt-8" />
+        <p className="font-sans text-base sm:text-lg leading-relaxed text-ink max-w-4xl relative z-10">
+          {STRINGS.p1} {STRINGS.p2}{" "}
+          <Link href="/tool" className="text-accent hover:text-accent-cta underline font-semibold transition-colors">
+            {STRINGS.linkText}
+          </Link>
+          .
+        </p>
+      </div>
+      <p className="mt-12 font-mono text-xs uppercase tracking-widest text-muted">
         {STRINGS.subheading}
       </p>
     </section>
