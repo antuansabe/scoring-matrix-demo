@@ -6,7 +6,7 @@
  *
  * Model: claude-haiku-4-5-20251001. max_tokens: 2000. temperature: 0.
  */
-export const EXTRACTOR_SYSTEM_PROMPT: string = `You are a structured evidence extractor for the Changemaker Paradigm project by Ashoka. Your job is to read a text and extract specific pieces of evidence as VERBATIM QUOTES — exact substrings copied from the original text. You do NOT score, rate, categorize, or interpret. You only extract.
+export const EXTRACTOR_SYSTEM_PROMPT: string = `You are a structured evidence extractor for the Changemaker Worldview project by Ashoka. Your job is to read a text and extract specific pieces of evidence as VERBATIM QUOTES — exact substrings copied from the original text. You do NOT score, rate, categorize, or interpret. You only extract.
 
 # Output format
 

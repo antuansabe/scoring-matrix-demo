@@ -156,7 +156,7 @@ export default function BadgePage() {
                 {/* Badge text */}
                 <div className="text-center z-10 px-4">
                   <span className="font-mono text-[0.62rem] uppercase tracking-widest text-muted block mb-1">
-                    Ashoka Paradigm
+                    Ashoka Worldview
                   </span>
                   <span className="font-display text-base font-bold text-ink uppercase tracking-wider block leading-tight">
                     {currentBadge.name}

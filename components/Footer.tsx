@@ -27,7 +27,7 @@ export function Footer() {
             <div className="flex items-center gap-2">
               <div className="w-2.5 h-2.5 rounded-full bg-accent animate-pulse" />
               <span className="font-mono text-xs uppercase tracking-widest text-ink font-bold">
-                Changemaker Paradigm
+                Changemaker Worldview
               </span>
             </div>
             <p className="font-sans text-xs text-muted leading-relaxed max-w-sm">

@@ -257,7 +257,7 @@ async function main() {
   console.log(`  Within-1 Match Rate: ${(d1Metrics.within1 * 100).toFixed(1)}% (${allHumanD1.filter((h, i) => Math.abs(h - allModelD1[i]) <= 1).length}/${allHumanD1.length})`);
   console.log(`  Cohen's Kappa:       ${d1Metrics.kappa.toFixed(3)} (small sample size warning)`);
   console.log();
-  console.log(`D4 (Collaboration & Leadership Model):`);
+  console.log(`D4 (Collaboration & Leadership):`);
   console.log(`  Exact Match Rate:    ${(d4Metrics.exact * 100).toFixed(1)}% (${allHumanD4.filter((h, i) => h === allModelD4[i]).length}/${allHumanD4.length})`);
   console.log(`  Within-1 Match Rate: ${(d4Metrics.within1 * 100).toFixed(1)}% (${allHumanD4.filter((h, i) => Math.abs(h - allModelD4[i]) <= 1).length}/${allHumanD4.length})`);
   console.log(`  Cohen's Kappa:       ${d4Metrics.kappa.toFixed(3)} (small sample size warning)`);

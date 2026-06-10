@@ -4,7 +4,7 @@ Source of truth: `Stage1_Scoring_Model_FINAL` as developed by Giselle Kuri (Asho
 
 ## What it measures
 
-The Changemaker Paradigm Scoring Matrix is a **paradigm enactment instrument**, not a sentiment tool. It measures the **discursive enactment** of changemaker identity — the degree to which the architecture of a text (its grammar of agency, framing of problems and solutions, construction of relationships, empathy and collaboration outlook, and enactment of identity) is structurally consistent with the changemaker paradigm.
+The Changemaker Worldview Scoring Matrix is a **paradigm enactment instrument**, not a sentiment tool. It measures the **discursive enactment** of changemaker identity — the degree to which the architecture of a text (its grammar of agency, framing of problems and solutions, construction of relationships, empathy and collaboration outlook, and enactment of identity) is structurally consistent with the changemaker paradigm.
 
 It does NOT measure: how positive a text is, how inspiring it is, or "how much of a changemaker" the author is. We are not ranking changemakers; we are reading the linguistic traces the paradigm leaves — or does not leave.
 
@@ -69,7 +69,7 @@ The 8 COMPLETE dimensions: **C**ultural, **O**rganizational, **M**etrics, **P**o
 
 ---
 
-### D4 — Collaboration & Leadership Model
+### D4 — Collaboration & Leadership
 *Drawn from: Fairclough (orders of discourse), De Fina (positioning), Tajfel (group identity). Ashoka: Colaboración Fluida, Liderazgo Abierto, equipos interconectados.*
 
 **Question:** Does the text enact distributed, fluid leadership that shares power and knowledge across hierarchies — including across generations?

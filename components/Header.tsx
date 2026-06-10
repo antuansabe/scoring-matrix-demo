@@ -11,7 +11,7 @@ const STRINGS = {
   batch: "Batch Analysis",
   about: "About",
   badge: "Badge",
-  brandName: "Changemaker Paradigm",
+  brandName: "Changemaker Worldview",
 };
 
 export function Header() {

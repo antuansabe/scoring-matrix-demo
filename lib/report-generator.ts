@@ -148,7 +148,7 @@ export async function generateWordReport(
       alignment: AlignmentType.CENTER,
       children: [
         new TextRun({
-          text: "CHANGEMAKER PARADIGM · SCORING MATRIX",
+          text: "CHANGEMAKER WORLDVIEW · SCORING MATRIX",
           font: "IBM Plex Mono",
           size: 20,
           color: "C44536",
@@ -426,7 +426,7 @@ export async function generateWordReport(
     createMonoEyebrow("PART III"),
     createHeading1("Deep Dimension Breakdown"),
     createBodyParagraph(
-      "A rigorous assessment across the five pillars of the Changemaker paradigm, highlighting collective scores and textual illustrations."
+      "A rigorous assessment across the five pillars of the Changemaker worldview, highlighting collective scores and textual illustrations."
     )
   );
 

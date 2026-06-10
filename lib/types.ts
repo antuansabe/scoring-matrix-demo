@@ -1,5 +1,5 @@
 /**
- * Core types for the Changemaker Paradigm Scoring Matrix demo.
+ * Core types for the Changemaker Worldview Scoring Matrix demo.
  * Shapes mirror docs/SCORING_MODEL.md and docs/SYSTEM_PROMPT.md exactly.
  */
 

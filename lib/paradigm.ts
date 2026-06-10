@@ -49,7 +49,7 @@ export const DIMENSIONS: DimensionMeta[] = [
   },
   {
     key: "D4",
-    fullName: "Collaboration & Leadership Model",
+    fullName: "Collaboration & Leadership",
     shortName: "Collaboration",
     defaultWeight: 0.2,
     color: "#334E68",

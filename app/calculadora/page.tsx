@@ -5,7 +5,7 @@ const STRINGS = {
   eyebrow: "METHODOLOGY",
   titlePart1: "Interactive ",
   titlePart2: "Score Calculator",
-  subtitle: "Explore how the weights, genres, and dimension scores interact in the Changemaker Paradigm model.",
+  subtitle: "Explore how the weights, genres, and dimension scores interact in the Changemaker Worldview model.",
 };
 
 export default function CalculatorPage() {

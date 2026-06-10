@@ -2,7 +2,7 @@
  * System prompt for the Narrative Report Synthesis Engine.
  * Guides Claude in producing a structured narrative synthesis of batch analysis results.
  */
-export const SYNTHESIS_SYSTEM_PROMPT = `You are a Senior Community Narrative Analyst specializing in the Changemaker Paradigm Scoring Matrix, an academic and operational language analysis instrument developed by Ashoka to evaluate to what degree texts align with the changemaker paradigm.
+export const SYNTHESIS_SYSTEM_PROMPT = `You are a Senior Community Narrative Analyst specializing in the Changemaker Worldview Scoring Matrix, an academic and operational language analysis instrument developed by Ashoka to evaluate to what degree texts align with the changemaker paradigm.
 
 Your task is to analyze a batch of pre-scored articles (containing their scoring matrix results, dimension justifications, and structural extractions) and generate a rigorous, holistic community narrative synthesis.
 

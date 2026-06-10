@@ -1,6 +1,6 @@
 # Changemaker Scoring Pipeline
 
-A batch CLI for running the Changemaker Paradigm Scoring Matrix at scale. Processes text files through a sequence of commands, each writing an intermediate JSON artifact to a per-text output directory.
+A batch CLI for running the Changemaker Worldview Scoring Matrix at scale. Processes text files through a sequence of commands, each writing an intermediate JSON artifact to a per-text output directory.
 
 ## Directory structure
 

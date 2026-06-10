@@ -5,7 +5,7 @@ import { SampleShowcase } from "@/components/SampleShowcase";
 const STRINGS = {
   eyebrow: "ABOUT THE MODEL",
   titlePart1: "The Changemaker ",
-  titlePart2: "Paradigm",
+  titlePart2: "Worldview",
   subtitle: "Understanding the underlying methodology, the Ashoka framework, and expert pre-scored anchor texts.",
 };
 

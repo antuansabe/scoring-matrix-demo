@@ -27,9 +27,9 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ScrollProgress } from "@/components/ScrollProgress";
 
-const SITE_TITLE = "Changemaker Paradigm Scoring Matrix — Demo";
+const SITE_TITLE = "Changemaker Worldview Scoring Matrix — Demo";
 const SITE_DESCRIPTION =
-  "An interactive demo of Ashoka's Changemaker Paradigm Scoring Matrix — reading the architecture of a text across five dimensions.";
+  "An interactive demo of Ashoka's Changemaker Worldview Scoring Matrix — reading the architecture of a text across five dimensions.";
 
 export const metadata: Metadata = {
   title: SITE_TITLE,

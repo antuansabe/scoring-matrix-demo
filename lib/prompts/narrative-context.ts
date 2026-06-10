@@ -9,7 +9,7 @@ export const NARRATIVE_CONTEXT = `Ashoka's framework change strategy is structur
    - Relates to: D1 (Agency & Contribution) + D5 (Identity Embodiment)
 
 2. Changemaker Networks: Collaborative power replaces heroic individual leadership. Shift away from single command hierarchies or mentoring relationships toward fluid networks of teams sharing power across generations.
-   - Relates to: D2 (Systemic & Architectural Framing) + D4 (Collaboration & Leadership Model)
+   - Relates to: D2 (Systemic & Architectural Framing) + D4 (Collaboration & Leadership)
 
 3. Empathy-based Societies: Active, conscious empathy is the foundation of changemaking. Shift away from simple emotional sympathy or charity toward conscious empathy that identifies exclusion patterns and dynamically adjusts approaches.
    - Relates to: D3 (Empathy Enactment) + D1 (Agency & Contribution)

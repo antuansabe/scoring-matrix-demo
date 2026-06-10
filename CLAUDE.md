@@ -2,7 +2,7 @@
 
 ## What this is
 
-An interactive demo of the **Changemaker Paradigm Scoring Matrix**, a language analysis instrument developed by Ashoka (Framework Change department, led by Giselle Kuri) to measure the degree to which the architecture of a text is consistent with the changemaker paradigm.
+An interactive demo of the **Changemaker Worldview Scoring Matrix**, a language analysis instrument developed by Ashoka (Framework Change department, led by Giselle Kuri) to measure the degree to which the architecture of a text is consistent with the changemaker paradigm.
 
 The demo is being built by Antonio Dromundo (Ashoka ITI / Drupal builder) for a working session on Wednesday with an academic expert in rhetorical analysis. Audience: rigorous, doctorate-holding, will challenge the methodology.
 
