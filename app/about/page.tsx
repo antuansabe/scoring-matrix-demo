@@ -1,6 +1,7 @@
 import { InstrumentPitch } from "@/components/InstrumentPitch";
 import { DemoGuide } from "@/components/DemoGuide";
 import { SampleShowcase } from "@/components/SampleShowcase";
+import { ModelFoundations } from "@/components/ModelFoundations";
 
 const STRINGS = {
   eyebrow: "ABOUT THE MODEL",
@@ -27,6 +28,7 @@ export default function AboutPage() {
         <InstrumentPitch />
         <DemoGuide />
         <SampleShowcase />
+        <ModelFoundations />
       </div>
     </main>
   );
