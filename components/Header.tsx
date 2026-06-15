@@ -10,7 +10,7 @@ const STRINGS = {
   tool: "Scoring Tool",
   batch: "Batch Analysis",
   about: "About",
-  badge: "Badge",
+  badge: "Density Badge",
   brandName: "Changemaker Worldview",
 };
 

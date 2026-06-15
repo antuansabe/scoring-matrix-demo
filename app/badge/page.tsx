@@ -5,12 +5,15 @@ import Link from "next/link";
 import { Reveal } from "@/components/Reveal";
 
 const STRINGS = {
-  eyebrow: "BADGE & CERTIFICATION PROGRAM",
-  titlePart1: "Changemaker ",
-  titlePart2: "Narrative Badge",
-  subtitle: "Certifying organizations and writers who translate the Everyone a Changemaker worldview into active language.",
-  comingSoonTitle: "Program Development & Framework Diagnostics",
-  comingSoonText: "The official Narrative Badge Program is currently under design validation for v0.2. In this diagnostic phase, organizations can pilot the system, model scores, and explore requirements below.",
+  eyebrow: "NARRATIVE DENSITY BADGE",
+  titlePart1: "Narrative ",
+  titlePart2: "Density Badge",
+  subtitle: "A certification for organizations whose communities demonstrate Changemaker worldview density through their language.",
+  introP1: "This distinction can be acquired by Ashoka Fellows, Jiujitsu Partners and Changemaker Companies through the process of having their staff and communities use the tool to get scores on their social media publications.",
+  introP2: "Analyzed in batch, publications and/or content created by people in their circles give information about how they are internalizing and spreading the changemaker worldview.",
+  introP3Before: "If an organization gets a ",
+  introP3Highlight: "Changemaker or System Architect",
+  introP3After: " score, they qualify for a blockchain badge certifying that their community reflects Changemaker Density.",
   howItWorksTitle: "How the Certification Works",
   badgeSimulatorTitle: "Interactive Badge Preview & Requirements",
 };
@@ -39,7 +42,7 @@ const STAGES = [
   {
     step: "05",
     title: "Badge Certification",
-    desc: "Organizations achieving Level 3 (Changemaker) or Level 4 (System Architect) receive the certified Narrative Badge.",
+    desc: "Organizations achieving Level 3 (Changemaker) or Level 4 (System Architect) receive the certified Narrative Density Badge.",
   },
 ];
 
@@ -109,15 +112,24 @@ export default function BadgePage() {
           {STRINGS.subtitle}
         </p>
 
-        {/* Coming Soon Alert Card */}
+        {/* Descriptive intro */}
         <Reveal className="mt-12">
-          <div className="premium-card p-6 sm:p-8 relative overflow-hidden border-l-4 border-l-accent">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-accent-light rounded-full blur-2xl -mr-10 -mt-10" />
-            <h2 className="font-display text-xl font-semibold leading-tight text-ink">
-              {STRINGS.comingSoonTitle}
-            </h2>
-            <p className="mt-3 font-sans text-sm leading-relaxed text-muted max-w-3xl">
-              {STRINGS.comingSoonText}
+          <div
+            className="max-w-3xl border-l-[3px] pl-6 py-5 space-y-4"
+            style={{ borderColor: "#2A4F4F", backgroundColor: "#2A4F4F0D" }}
+          >
+            <p className="font-sans text-base leading-relaxed text-ink">
+              {STRINGS.introP1}
+            </p>
+            <p className="font-sans text-base leading-relaxed text-ink">
+              {STRINGS.introP2}
+            </p>
+            <p className="font-sans text-base leading-relaxed text-ink">
+              {STRINGS.introP3Before}
+              <span className="font-semibold" style={{ color: "#C44536" }}>
+                {STRINGS.introP3Highlight}
+              </span>
+              {STRINGS.introP3After}
             </p>
           </div>
         </Reveal>
