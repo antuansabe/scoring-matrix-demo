@@ -168,4 +168,39 @@ export type SynthesisResult = {
   opportunities: string[];
 };
 
+// ---------------------------------------------------------------------------
+// Feedback Card types (/api/feedback)
+// ---------------------------------------------------------------------------
+
+/** One "what works well" item — structural observation + verbatim anchor. */
+export type FeedbackObservation = {
+  observation: string;
+  textAnchor: string;
+};
+
+/** One "how to strengthen" item — gap / why it matters / concrete reframe. */
+export type FeedbackStrength = {
+  gap: string;
+  whyItMatters: string;
+  reframe: string;
+};
+
+/** Structured output of the Feedback Analyst (schemaVersion "1.0"). */
+export type FeedbackResult = {
+  schemaVersion: "1.0";
+  summary: {
+    keyMessages: string;
+    whoActs: string;
+    theProblem: string;
+    theSolution: string;
+  };
+  feedback: {
+    whatWorksWell: FeedbackObservation[];
+    howToStrengthen: FeedbackStrength[];
+  };
+  question: string;
+  /** Populated only in batch mode when crossGenreContext is provided. */
+  crossGenre: string | null;
+};
+
 

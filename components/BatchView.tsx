@@ -8,7 +8,8 @@ import { ScoreCard } from "@/components/ScoreCard";
 import { RadarProfile } from "@/components/RadarProfile";
 import { ScoreBreakdown } from "@/components/ScoreBreakdown";
 import { JustificationQuotes } from "@/components/JustificationQuotes";
-import type { AnalysisResult } from "@/lib/types";
+import type { AnalysisResult, FeedbackResult } from "@/lib/types";
+import { FeedbackCard } from "@/components/FeedbackCard";
 
 const ANALYZING_MESSAGES = [
   "Reading the architecture of the text...",
@@ -92,6 +93,8 @@ type BatchItem = {
   status: 'pending' | 'analyzing' | 'done' | 'failed';
   result?: AnalysisResult;       // consolidated analyzer output
   error?: string;
+  feedback?: FeedbackResult;
+  feedbackError?: string;
 };
 
 function getItemName(item: { journalistName: string; articleTitle: string }): string {
@@ -108,6 +111,8 @@ type BatchState = {
   reportPhase: 'idle' | 'generating' | 'ready' | 'error';
   batchNameInput: string;
   reportError?: string;
+  feedbackPhase: 'idle' | 'processing' | 'done';
+  crossGenreText: string | null;
 };
 
 type BatchAction =
@@ -122,7 +127,11 @@ type BatchAction =
   | { type: 'RETRY_ITEM'; id: string }
   | { type: 'SET_REPORT_PHASE'; phase: 'idle' | 'generating' | 'ready' | 'error' }
   | { type: 'SET_BATCH_NAME'; name: string }
-  | { type: 'SET_REPORT_ERROR'; error: string };
+  | { type: 'SET_REPORT_ERROR'; error: string }
+  | { type: 'START_FEEDBACK' }
+  | { type: 'SET_ITEM_FEEDBACK'; id: string; feedback: FeedbackResult }
+  | { type: 'SET_ITEM_FEEDBACK_ERROR'; id: string; error: string }
+  | { type: 'FINISH_FEEDBACK'; crossGenreText: string | null };
 
 // ---------------------------------------------------------------------------
 // State Reducer
@@ -138,6 +147,8 @@ function batchReducer(state: BatchState, action: BatchAction): BatchState {
         reportPhase: 'idle',
         batchNameInput: "",
         reportError: undefined,
+        feedbackPhase: 'idle',
+        crossGenreText: null,
       };
 
     case 'ADD_ITEM': {
@@ -208,7 +219,7 @@ function batchReducer(state: BatchState, action: BatchAction): BatchState {
         phase: nextPhase,
         items: state.items.map((item) =>
           item.id === action.id
-            ? { ...item, status: 'pending', error: undefined, result: undefined }
+            ? { ...item, status: 'pending', error: undefined, result: undefined, feedback: undefined, feedbackError: undefined }
             : item
         ),
       };
@@ -230,6 +241,32 @@ function batchReducer(state: BatchState, action: BatchAction): BatchState {
       return {
         ...state,
         reportError: action.error,
+      };
+
+    case 'START_FEEDBACK':
+      return { ...state, feedbackPhase: 'processing' };
+
+    case 'SET_ITEM_FEEDBACK':
+      return {
+        ...state,
+        items: state.items.map((item) =>
+          item.id === action.id ? { ...item, feedback: action.feedback } : item
+        ),
+      };
+
+    case 'SET_ITEM_FEEDBACK_ERROR':
+      return {
+        ...state,
+        items: state.items.map((item) =>
+          item.id === action.id ? { ...item, feedbackError: action.error } : item
+        ),
+      };
+
+    case 'FINISH_FEEDBACK':
+      return {
+        ...state,
+        feedbackPhase: 'done',
+        crossGenreText: action.crossGenreText,
       };
 
     default:
@@ -255,6 +292,34 @@ function getParadigmColor(name: string): string {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Cross-genre Context Builder (pure, module-level)
+// ---------------------------------------------------------------------------
+
+/** Returns a corpus description for the feedback model only when the batch
+ *  spans at least 2 distinct genre tags. Returns null otherwise. */
+function buildCrossGenreContext(
+  items: Array<{ id: string; text: string; result: AnalysisResult }>,
+): string | null {
+  if (items.length < 2) return null;
+  const genres = new Set(items.map((i) => i.result.score.genreTag));
+  if (genres.size < 2) return null;
+  const lines = items.map((it, idx) => {
+    const s = it.result.score;
+    return (
+      `- Text ${idx + 1} (genre: ${s.genreTag}, score: ${s.enactmentScore}/100, ` +
+      `paradigm: ${s.paradigmName}, ` +
+      `D1:${s.dimensions.D1.score} D2:${s.dimensions.D2.score} ` +
+      `D3:${s.dimensions.D3.score} D4:${s.dimensions.D4.score} D5:${s.dimensions.D5.score})`
+    );
+  });
+  return `Corpus context for cross-genre analysis — ${items.length} texts:\n${lines.join('\n')}`;
+}
+
+// ---------------------------------------------------------------------------
+// BatchView Component
+// ---------------------------------------------------------------------------
+
 export function BatchView() {
   const [state, dispatch] = useReducer(batchReducer, {
     phase: 'idle',
@@ -262,6 +327,8 @@ export function BatchView() {
     processedCount: 0,
     reportPhase: 'idle',
     batchNameInput: "",
+    feedbackPhase: 'idle',
+    crossGenreText: null,
   });
 
   const [journalistName, setJournalistName] = useState("");
@@ -312,9 +379,15 @@ export function BatchView() {
     const pendingItems = state.items.filter((i) => i.status === 'pending');
     if (pendingItems.length === 0) return;
 
+    // Snapshot already-done items so we can build full corpus context after scoring.
+    const alreadyDone = state.items
+      .filter((i) => i.status === 'done' && i.result)
+      .map((i) => ({ id: i.id, text: i.text, result: i.result! }));
+
     dispatch({ type: 'START_PROCESSING' });
 
     const limit = pLimit(2); // maximum 2 concurrent HTTP calls
+    const newlyScored: Array<{ id: string; text: string; result: AnalysisResult }> = [];
 
     await Promise.all(
       pendingItems.map((item) =>
@@ -344,6 +417,7 @@ export function BatchView() {
               throw new Error(parsedErr);
             }
             const result: AnalysisResult = await res.json();
+            newlyScored.push({ id: item.id, text: item.text, result });
             dispatch({ type: 'SET_DONE', id: item.id, result });
           } catch (err: any) {
             dispatch({
@@ -357,6 +431,63 @@ export function BatchView() {
     );
 
     dispatch({ type: 'FINISH_PROCESSING' });
+
+    // Second pass: generate feedback for newly scored items.
+    // Pass the full corpus context (already-done + new) so cross-genre is accurate.
+    const allScored = [...alreadyDone, ...newlyScored];
+    const crossGenreCtx = buildCrossGenreContext(allScored);
+    await generateFeedbackForAll(newlyScored, crossGenreCtx);
+  }
+
+  /** Second pLimit(2) pass — feedback for each newly scored item.
+   *  A single item failure is isolated and does not abort the batch. */
+  async function generateFeedbackForAll(
+    items: Array<{ id: string; text: string; result: AnalysisResult }>,
+    crossGenreContext: string | null,
+  ) {
+    if (items.length === 0) return;
+    dispatch({ type: 'START_FEEDBACK' });
+
+    const feedbackLimit = pLimit(2); // keep same 2-concurrent cap
+    let capturedCrossGenre: string | null = null;
+
+    await Promise.all(
+      items.map(({ id, text, result }) =>
+        feedbackLimit(async () => {
+          try {
+            const res = await fetch('/api/feedback', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                text,
+                scores: result.score.dimensions,
+                genre: result.score.genreTag,
+                ...(crossGenreContext ? { crossGenreContext } : {}),
+              }),
+            });
+            if (!res.ok) {
+              const errText = await res.text();
+              let parsedErr = "Feedback generation failed.";
+              try {
+                const parsed = JSON.parse(errText);
+                if (typeof parsed.error === 'string') parsedErr = parsed.error;
+              } catch { /* ignore */ }
+              throw new Error(parsedErr);
+            }
+            const feedback: FeedbackResult = await res.json();
+            if (!capturedCrossGenre && feedback.crossGenre) {
+              capturedCrossGenre = feedback.crossGenre;
+            }
+            dispatch({ type: 'SET_ITEM_FEEDBACK', id, feedback });
+          } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : 'Feedback failed.';
+            dispatch({ type: 'SET_ITEM_FEEDBACK_ERROR', id, error: message });
+          }
+        })
+      )
+    );
+
+    dispatch({ type: 'FINISH_FEEDBACK', crossGenreText: capturedCrossGenre });
   }
 
   // ---------------------------------------------------------------------------
@@ -983,6 +1114,11 @@ export function BatchView() {
           <div className="mt-10 pt-10 border-t border-border">
             <p className="font-mono text-xs uppercase tracking-widest text-muted mb-6">
               INDIVIDUAL RESULTS
+              {state.feedbackPhase === 'processing' && (
+                <span className="ml-3 text-[10px] normal-case tracking-normal italic">
+                  · generating deeper readings...
+                </span>
+              )}
             </p>
 
             <div className="space-y-6">
@@ -1023,6 +1159,35 @@ export function BatchView() {
                             <RadarProfile result={res.score} accentColor={accentColor} />
                           </div>
                           <JustificationQuotes result={res.score} accentColor={accentColor} />
+
+                          {/* Deeper Reading — pre-generated in the feedback pass */}
+                          {item.feedback ? (
+                            <FeedbackCard initialState="loaded" data={item.feedback} />
+                          ) : item.feedbackError ? (
+                            <div
+                              className="border border-border bg-surface p-5"
+                              style={{ borderLeftWidth: 3, borderLeftColor: '#C44536' }}
+                              role="alert"
+                            >
+                              <p className="font-mono text-xs uppercase tracking-widest" style={{ color: '#C44536' }}>
+                                Feedback Unavailable
+                              </p>
+                              <p className="mt-2 font-sans text-sm text-muted">{item.feedbackError}</p>
+                            </div>
+                          ) : state.feedbackPhase === 'processing' ? (
+                            <div
+                              className="border border-border bg-surface p-5"
+                              style={{ borderLeftWidth: 3, borderLeftColor: '#2A4F4F' }}
+                            >
+                              <div className="flex items-center gap-3">
+                                <div
+                                  className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-border"
+                                  style={{ borderTopColor: '#2A4F4F' }}
+                                />
+                                <p className="font-mono text-xs text-muted">Generating deeper reading...</p>
+                              </div>
+                            </div>
+                          ) : null}
                         </div>
                       )}
                     </div>
@@ -1059,6 +1224,31 @@ export function BatchView() {
               })}
             </div>
           </div>
+
+          {/* ── CROSS-GENRE COHERENCE — only when multiple genres were detected ── */}
+          {state.crossGenreText && (
+            <div className="mt-12 pt-10 border-t border-border">
+              <p
+                className="font-mono text-xs uppercase tracking-widest mb-2"
+                style={{ color: '#2A4F4F' }}
+              >
+                Cross-Genre Coherence
+              </p>
+              <p className="mb-5 font-sans text-sm leading-relaxed text-muted max-w-prose">
+                Cross-Genre Coherence tracks whether structural patterns — agency attribution,
+                problem framing, self/other positioning — hold consistently across different
+                genres within this corpus, or collapse when the genre changes.
+              </p>
+              <div
+                className="rounded-sm border px-6 py-5"
+                style={{ backgroundColor: '#2A4F4F0A', borderColor: '#2A4F4F30' }}
+              >
+                <p className="font-sans text-sm leading-relaxed text-ink">
+                  {state.crossGenreText}
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* ── SECCIÓN "GENERATE REPORT" ── */}
           {nAnalyzed > 0 && (

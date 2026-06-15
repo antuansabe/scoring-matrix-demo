@@ -6,6 +6,7 @@ import { ScoreCard } from "@/components/ScoreCard";
 import { RadarProfile } from "@/components/RadarProfile";
 import { ScoreBreakdown } from "@/components/ScoreBreakdown";
 import { JustificationQuotes } from "@/components/JustificationQuotes";
+import { FeedbackCard } from "@/components/FeedbackCard";
 import { calculateEnactmentScore, resolveParadigmName, resolveEACHOrientation } from "@/lib/paradigm";
 
 const MIN_WORDS = 50;
@@ -226,6 +227,14 @@ export function LiveAnalyzer() {
           </div>
           <div className="mt-8">
             <JustificationQuotes result={result} />
+          </div>
+
+          <div className="mt-8">
+            <FeedbackCard
+              text={text}
+              scores={result.dimensions}
+              genre={result.genreTag}
+            />
           </div>
 
           {/* Reset affordance — the only way back to the textarea once a result
