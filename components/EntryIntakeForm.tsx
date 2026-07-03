@@ -90,6 +90,10 @@ export function EntryIntakeForm({
     setStatus("saving");
     setErrorMsg(null);
 
+    // Lens A (Genre & Mobility Tag) is the model's own genre mechanism — the
+    // same one that drove the scoring weights — not the intake's materialGenre.
+    const effectiveGenreTag = score.effectiveGenreTag ?? score.detectedGenreTag ?? score.genreTag;
+
     const payload = {
       ...(mode === "existing"
         ? { subjectId: selectedSubjectId }
@@ -109,6 +113,8 @@ export function EntryIntakeForm({
       dimensions: score.dimensions,
       enactmentScore: score.enactmentScore,
       eachOrientation: score.eachOrientation,
+      effectiveGenreTag,
+      genreOverridden: score.genreOverridden ?? false,
       feedback,
     };
 

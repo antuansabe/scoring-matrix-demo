@@ -42,24 +42,30 @@ This visual system was validated in the v0.1 sketch with Giselle. Do not redesig
 
 ### Palette
 
+Aligned with Ashoka Brand Identity. This supersedes the original cream/terracotta/teal
+palette this doc documented in the v0.1 sketch — the site was rebranded since, and
+`app/globals.css`'s `:root` block is the source of truth; keep this section synced to it.
+
 ```
---bg:        #F4EFE3   /* warm cream background */
---surface:   #FAF7F0   /* card / panel surface */
---ink:       #1F1B16   /* primary text */
---muted:     #6B6358   /* secondary text */
---border:    #D9D2C2   /* soft warm border */
---accent:    #C44536   /* terracotta accent, rules, key marks */
---accent-2:  #2A4F4F   /* deep teal, secondary accent */
+--bg:           #FAF8F5   /* warm premium off-white background */
+--surface:      #FFFFFF   /* crisp white for cards and panels */
+--ink:          #0A3558   /* Ashoka Blue — primary text and branding */
+--muted:        #486581   /* slate blue — secondary text */
+--border:       #E5DEC9   /* soft gold-tinted border */
+--accent:       #E87722   /* Ashoka Orange — text highlights, primary accents */
+--accent-2:     #F39334   /* light orange/gold — highlighting, active states */
+--accent-cta:   #F39334   /* primary CTA button background */
+--accent-light: #FFF8F5   /* extremely soft orange/gold tint — warnings, hover fills */
 ```
 
 ### Paradigm colors (used for sample tags and per-paradigm accents)
 
 ```
-0 Spectator        #7A6B3E   olive
-1 Sympathizer      #B5341E   rust
-2 Contributor      #7A6B3E   olive (lighter use)
-3 Changemaker      #3D5A6C   slate
-4 System Architect #2A5A3E   forest
+0 Spectator        #627D98   muted slate gray
+1 Sympathizer      #C46246   soft terracotta
+2 Contributor      #F39334   light orange
+3 Changemaker      #E87722   Ashoka orange
+4 System Architect #0A3558   Ashoka blue
 ```
 
 ### Typography

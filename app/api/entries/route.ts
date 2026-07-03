@@ -3,8 +3,9 @@ import { createSubject, getSubject } from "@/lib/db/subjects";
 import { createEntry } from "@/lib/db/entries";
 import { saveAnalysis } from "@/lib/db/analyses";
 import { MODEL_VERSION } from "@/lib/modelVersion";
+import { GENRE_WEIGHTS } from "@/lib/paradigm";
 import type { MaterialGenre, Subject, SubjectType } from "@/lib/db/types";
-import type { DimensionKey, DimensionScore, FeedbackResult } from "@/lib/types";
+import type { DimensionKey, DimensionScore, FeedbackResult, GenreTag } from "@/lib/types";
 
 export const runtime = "nodejs";
 
@@ -18,6 +19,9 @@ const VALID_MATERIAL_GENRES: MaterialGenre[] = [
   "social",
   "other",
 ];
+// The scorer's own genre mechanism (drives weighting) — distinct from
+// MaterialGenre (the intake classification). This is Lens A.
+const VALID_GENRE_TAGS = Object.keys(GENRE_WEIGHTS) as GenreTag[];
 
 type NewSubjectPayload = { name: string; type: SubjectType; parentOrgId?: string | null };
 
@@ -32,6 +36,9 @@ type EntryPayload = {
   dimensions: Record<DimensionKey, DimensionScore>;
   enactmentScore: number;
   eachOrientation: string;
+  /** Lens A (Genre & Mobility Tag) — the scorer's effective/detected genre tag. */
+  effectiveGenreTag?: GenreTag;
+  genreOverridden?: boolean;
   feedback: FeedbackResult;
 };
 
@@ -105,6 +112,12 @@ function validate(body: unknown): { ok: true; payload: EntryPayload } | { ok: fa
   if (typeof b.feedback !== "object" || b.feedback === null) {
     return { ok: false, error: "`feedback` is required — save an entry only after the Deeper Reading feedback exists." };
   }
+  if (b.effectiveGenreTag !== undefined && !VALID_GENRE_TAGS.includes(b.effectiveGenreTag as GenreTag)) {
+    return { ok: false, error: "`effectiveGenreTag` is not a recognized genre tag." };
+  }
+  if (b.genreOverridden !== undefined && typeof b.genreOverridden !== "boolean") {
+    return { ok: false, error: "`genreOverridden` must be a boolean." };
+  }
 
   return {
     ok: true,
@@ -119,6 +132,8 @@ function validate(body: unknown): { ok: true; payload: EntryPayload } | { ok: fa
       dimensions: dims as Record<DimensionKey, DimensionScore>,
       enactmentScore: b.enactmentScore,
       eachOrientation: b.eachOrientation as string,
+      effectiveGenreTag: b.effectiveGenreTag as GenreTag | undefined,
+      genreOverridden: typeof b.genreOverridden === "boolean" ? b.genreOverridden : undefined,
       feedback: b.feedback as FeedbackResult,
     },
   };
@@ -175,7 +190,9 @@ export async function POST(request: Request): Promise<Response> {
       d4: payload.dimensions.D4.score,
       d5: payload.dimensions.D5.score,
       each_orientation: payload.eachOrientation,
-      lens_a_tag: payload.materialGenre,
+      // Lens A (Genre & Mobility Tag) is the scorer's own genre mechanism —
+      // not materialGenre, which is a separate intake classification.
+      lens_a_tag: payload.effectiveGenreTag ?? null,
       feedback_card: payload.feedback,
       model_version: MODEL_VERSION,
     });
