@@ -98,3 +98,14 @@ export interface SubjectWithStats extends Subject {
   entryCount: number;
   lastEntryDate: string | null;
 }
+
+/**
+ * AnalysisWithEntry plus the entry's material_text. Deliberately NOT part of
+ * AnalysisWithEntry itself — that type flows into client props for the
+ * subject timeline and compare view, neither of which needs (or should ship
+ * to the browser) the full source text for every entry in a subject's
+ * history. Used only server-side, by the Phase 5 change-narrative route.
+ */
+export interface AnalysisWithMaterialText extends AnalysisWithEntry {
+  entry: AnalysisWithEntry["entry"] & { material_text: string };
+}

@@ -29,3 +29,14 @@ export function detectMixedGenreHint(text: string): string | null {
   }
   return null;
 }
+
+/**
+ * First `maxWords` words of `text`, ellipsized if truncated. Used to give a
+ * model grounding context (e.g. the Phase 5 change narrative) without
+ * sending the whole corpus.
+ */
+export function excerpt(text: string, maxWords = 175): string {
+  const words = text.trim().split(/\s+/);
+  if (words.length <= maxWords) return text.trim();
+  return words.slice(0, maxWords).join(" ") + "…";
+}

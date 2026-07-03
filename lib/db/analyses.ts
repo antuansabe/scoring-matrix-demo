@@ -1,5 +1,5 @@
 import { getSupabaseClient } from "./client";
-import { Analysis, AnalysisInput, AnalysisWithEntry, MaterialGenre } from "./types";
+import { Analysis, AnalysisInput, AnalysisWithEntry, AnalysisWithMaterialText, MaterialGenre } from "./types";
 
 export async function saveAnalysis(input: AnalysisInput): Promise<Analysis> {
   const client = getSupabaseClient();
@@ -84,4 +84,24 @@ export async function getAnalysisByEntryId(entryId: string): Promise<AnalysisWit
 
   if (error) throw error;
   return (data as unknown as AnalysisWithEntry) ?? null;
+}
+
+// Server-only: used by the Phase 5 change-narrative route to ground the
+// generated paragraph in the actual source material. A single-row lookup by
+// exact entry_id needs no ordering, so (unlike listAnalysesBySubject) the
+// query-from-analyses shape here is fine.
+export async function getAnalysisWithMaterialTextByEntryId(
+  entryId: string,
+): Promise<AnalysisWithMaterialText | null> {
+  const client = getSupabaseClient();
+  const { data, error } = await client
+    .from("analyses")
+    .select(
+      "id, entry_id, enactment_score, d1, d2, d3, d4, d5, each_orientation, lens_a_tag, lens_b_flag, feedback_card, model_version, created_at, entry:entries!inner(subject_id, entry_date, genre, ashokan_name, contextual_notes, material_text)"
+    )
+    .eq("entry_id", entryId)
+    .maybeSingle();
+
+  if (error) throw error;
+  return (data as unknown as AnalysisWithMaterialText) ?? null;
 }

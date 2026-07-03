@@ -9,9 +9,11 @@ import {
   computeEnactmentDelta,
   getDimensionScore,
   resolveNarrativeDirection,
+  orderChronologically,
   NARRATIVE_DIRECTION_LABELS,
 } from "@/lib/compare";
 import { CompareRadar } from "@/components/CompareRadar";
+import { ChangeNarrativeCard } from "@/components/ChangeNarrativeCard";
 
 const GENRE_LABELS: Record<string, string> = {
   interview: "Interview",
@@ -30,13 +32,6 @@ const DIRECTION_GLYPH: Record<string, string> = {
 
 function formatSigned(n: number): string {
   return n > 0 ? `+${n}` : String(n);
-}
-
-// Fixed-width entry_date ("YYYY-MM-DD") as a string prefix makes this a valid
-// chronological sort key on its own; created_at only breaks ties between
-// same-date entries (e.g. Decision #6's same-day, different-genre case).
-function chronoKey(a: AnalysisWithEntry): string {
-  return `${a.entry.entry_date}T${a.created_at}`;
 }
 
 /**
@@ -60,8 +55,7 @@ export function CompareView({
 
   // Always read t1 = earlier, t2 = later, regardless of which dropdown slot
   // the user assigned them to — so the delta sign is never backwards.
-  const [t1, t2] =
-    chronoKey(selectedA) <= chronoKey(selectedB) ? [selectedA, selectedB] : [selectedB, selectedA];
+  const [t1, t2] = orderChronologically(selectedA, selectedB);
 
   const dimensionDeltas = computeDimensionDeltas(t1, t2);
   const enactmentDelta = computeEnactmentDelta(t1, t2);
@@ -229,6 +223,10 @@ export function CompareView({
           </p>
         </div>
       </div>
+
+      {/* Part D — Change Over Time. Keyed so switching the pair fully resets
+          the card instead of showing a stale narrative for the old pair. */}
+      <ChangeNarrativeCard key={`${t1.entry_id}-${t2.entry_id}`} entryId1={t1.entry_id} entryId2={t2.entry_id} />
     </div>
   );
 }

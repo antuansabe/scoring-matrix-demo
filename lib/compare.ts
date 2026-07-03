@@ -63,3 +63,22 @@ export function resolveNarrativeDirection(enactmentDelta: number): NarrativeDire
   if (enactmentDelta <= -STABLE_THRESHOLD) return "lower";
   return "stable";
 }
+
+/** Shape needed to order two records chronologically. */
+export type Dated = { entry: { entry_date: string }; created_at: string };
+
+// Fixed-width entry_date ("YYYY-MM-DD") as a string prefix makes this a valid
+// chronological sort key on its own; created_at only breaks ties between
+// same-date entries (e.g. Decision #6's same-day, different-genre case).
+export function chronoKey(a: Dated): string {
+  return `${a.entry.entry_date}T${a.created_at}`;
+}
+
+/**
+ * Orders two dated records chronologically as [earlier, later] — used
+ * anywhere t1/t2 must be read chronologically regardless of which UI slot
+ * or API argument position the caller assigned them to.
+ */
+export function orderChronologically<T extends Dated>(a: T, b: T): [T, T] {
+  return chronoKey(a) <= chronoKey(b) ? [a, b] : [b, a];
+}
