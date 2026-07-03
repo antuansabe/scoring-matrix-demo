@@ -63,8 +63,8 @@ If a phase hits one of these, stop and ask. Do not guess.
 
 | # | Phase | Priority | Status | Commit | Note |
 |---|-------|----------|--------|--------|------|
-| 0 | Foundations & safety net | — | IN PROGRESS | none yet | Files written to disk (db stubs, modelVersion, health route) but NOT committed — git reflog confirms no commit exists on this branch. Run build/typecheck, then commit before starting Phase 1. |
-| 1 | Data layer + schema + persistence | P1 | TODO | — | — |
+| 0 | Foundations & safety net | — | DONE | a5a54b5 | Build/typecheck pass, health route works. Repo relocated from ~/Desktop (iCloud-synced, caused a multi-hour build hang) to ~/Developer/Changemaker — see note below. |
+| 1 | Data layer + schema + persistence | P1 | DONE | 3a9d8f6 | Migration applied by Antonio. `@supabase/supabase-js` installed; `lib/db/client.ts` + repo functions (subjects/entries/analyses) implemented against the existing Phase 0 stub signatures. Round-trip verified via a temporary `/api/db-selftest` route (subject→entry→analysis created + read back + deleted; `ngl_requires_parent` confirmed to reject an orphan NGL with Postgres error 23514) — route removed before this commit. Build + typecheck pass. |
 | 2 | Entry intake (date, subject, type, genre, notes) | P1 | TODO | — | — |
 | 3 | Subject history view | P3→pulled up | TODO | — | — |
 | 4 | Comparative view (delta + overlaid radar + direction) | P2 | TODO | — | — |
