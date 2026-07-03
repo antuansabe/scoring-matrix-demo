@@ -1,5 +1,5 @@
 import { getSupabaseClient } from "./client";
-import { Analysis, AnalysisInput, AnalysisWithEntry } from "./types";
+import { Analysis, AnalysisInput, AnalysisWithEntry, MaterialGenre } from "./types";
 
 export async function saveAnalysis(input: AnalysisInput): Promise<Analysis> {
   const client = getSupabaseClient();
@@ -26,20 +26,48 @@ export async function saveAnalysis(input: AnalysisInput): Promise<Analysis> {
   return data as Analysis;
 }
 
-// Joined with entries so a subject's analyses can be walked in chronological
-// order without a second round-trip; entry_date lives on entries, not analyses.
+type EntryWithAnalysesRow = {
+  subject_id: string;
+  entry_date: string;
+  genre: MaterialGenre;
+  ashokan_name: string;
+  contextual_notes: string | null;
+  created_at: string;
+  analyses: Analysis[];
+};
+
+// Queries FROM entries (not analyses) so entry_date is a plain, own-table
+// order-by — ordering by a column on a joined/embedded resource via
+// PostgREST's `foreignTable` option (the previous approach here) silently
+// does not sort the result set in this Supabase project; it was only ever
+// masked because earlier verification happened to use entries that were
+// also created in chronological order. entries.created_at is a secondary
+// tiebreak for same-date entries (Decision #6's same-day, different-genre
+// case). Flattened back into AnalysisWithEntry[] so callers don't change.
 export async function listAnalysesBySubject(subjectId: string): Promise<AnalysisWithEntry[]> {
   const client = getSupabaseClient();
   const { data, error } = await client
-    .from("analyses")
+    .from("entries")
     .select(
-      "id, entry_id, enactment_score, d1, d2, d3, d4, d5, each_orientation, lens_a_tag, lens_b_flag, feedback_card, model_version, created_at, entry:entries!inner(subject_id, entry_date, genre, ashokan_name, contextual_notes)"
+      "subject_id, entry_date, genre, ashokan_name, contextual_notes, created_at, analyses!inner(id, entry_id, enactment_score, d1, d2, d3, d4, d5, each_orientation, lens_a_tag, lens_b_flag, feedback_card, model_version, created_at)"
     )
-    .eq("entry.subject_id", subjectId)
-    .order("entry_date", { foreignTable: "entry" });
+    .eq("subject_id", subjectId)
+    .order("entry_date", { ascending: true })
+    .order("created_at", { ascending: true });
 
   if (error) throw error;
-  return (data ?? []) as unknown as AnalysisWithEntry[];
+
+  const rows = (data ?? []) as unknown as EntryWithAnalysesRow[];
+  return rows.flatMap((row) => {
+    const entry = {
+      subject_id: row.subject_id,
+      entry_date: row.entry_date,
+      genre: row.genre,
+      ashokan_name: row.ashokan_name,
+      contextual_notes: row.contextual_notes,
+    };
+    return row.analyses.map((a) => ({ ...a, entry }));
+  });
 }
 
 // Used by the entry detail page (Feedback Card link from the subject

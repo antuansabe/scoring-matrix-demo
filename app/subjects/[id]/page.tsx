@@ -60,9 +60,19 @@ export default async function SubjectDetailPage({
       </Reveal>
 
       <div className="mt-10 border-t border-border pt-8">
-        <p className="font-mono text-xs uppercase tracking-widest text-muted">
-          {analyses.length} {analyses.length === 1 ? "Entry" : "Entries"} · Chronological
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <p className="font-mono text-xs uppercase tracking-widest text-muted">
+            {analyses.length} {analyses.length === 1 ? "Entry" : "Entries"} · Chronological
+          </p>
+          {analyses.length >= 2 && (
+            <Link
+              href={`/subjects/${subject.id}/compare`}
+              className="font-mono text-xs uppercase tracking-widest text-accent transition-colors hover:text-accent-cta"
+            >
+              Compare two entries →
+            </Link>
+          )}
+        </div>
 
         {analyses.length === 0 ? (
           <p className="mt-6 font-sans text-sm text-muted">No entries logged yet for this subject.</p>
