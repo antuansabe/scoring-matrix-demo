@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { generateFeedback, FeedbackParseError } from "@/lib/feedback";
+import { generateFeedback, FeedbackParseError, type SubjectVoice } from "@/lib/feedback";
 import { AnthropicConfigError } from "@/lib/anthropic";
 import type { DimensionKey, DimensionScore, GenreTag } from "@/lib/types";
 
@@ -53,6 +53,18 @@ export async function POST(request: Request): Promise<Response> {
   const crossGenreContext =
     typeof b.crossGenreContext === "string" ? b.crossGenreContext : undefined;
 
+  if (
+    b.subjectVoice !== undefined &&
+    b.subjectVoice !== "individual" &&
+    b.subjectVoice !== "organization"
+  ) {
+    return NextResponse.json(
+      { error: "`subjectVoice` must be 'individual' or 'organization' when provided." },
+      { status: 400 },
+    );
+  }
+  const subjectVoice = b.subjectVoice as SubjectVoice | undefined;
+
   // --- call feedback generator ---
   try {
     const result = await generateFeedback({
@@ -60,6 +72,7 @@ export async function POST(request: Request): Promise<Response> {
       scores: b.scores as Record<DimensionKey, DimensionScore>,
       genre,
       crossGenreContext,
+      subjectVoice,
     });
     return NextResponse.json(result, { status: 200 });
   } catch (err) {

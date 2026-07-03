@@ -8,6 +8,8 @@ import type {
   GenreTag,
   ParadigmName,
 } from "@/lib/types";
+import type { SubjectType } from "@/lib/db/types";
+import { DEFAULT_GENRE_WEIGHTS, getWeightVector } from "@/lib/scoring/weights";
 
 type DimensionMeta = {
   key: DimensionKey;
@@ -115,29 +117,27 @@ export const PARADIGM_NAMES: ParadigmMeta[] = [
 
 /**
  * Genre-adjusted weights [w1, w2, w3, w4, w5], one tuple per genre tag
- * (docs/SYSTEM_PROMPT.md). Each tuple sums to 1.0.
+ * (docs/SYSTEM_PROMPT.md). Each tuple sums to 1.0. The data now lives in
+ * lib/scoring/weights.ts (the per-subject-type config file); this re-export
+ * keeps the original import path working for existing consumers.
  */
-export const GENRE_WEIGHTS: Record<
-  GenreTag,
-  [number, number, number, number, number]
-> = {
-  "free-form-interview": [0.25, 0.2, 0.2, 0.2, 0.15],
-  "structured-profile": [0.25, 0.25, 0.2, 0.2, 0.1],
-  "social-media-post": [0.3, 0.2, 0.3, 0.1, 0.1],
-  "institutional-report": [0.2, 0.3, 0.2, 0.2, 0.1],
-  "speech-public-address": [0.25, 0.25, 0.2, 0.2, 0.1],
-  "fundraising-copy": [0.2, 0.3, 0.25, 0.15, 0.1],
-};
+export const GENRE_WEIGHTS = DEFAULT_GENRE_WEIGHTS;
 
 /**
  * Enactment Score = (D1·w1 + D2·w2 + D3·w3 + D4·w4 + D5·w5) × 25,
  * rounded to the nearest integer in [0, 100].
+ *
+ * `subjectType` selects the weight profile (Decision #5). Omitted — as in
+ * the ephemeral analyzer, where no subject exists yet — it uses the default
+ * profile. Both type profiles currently equal the default, so passing a
+ * type changes nothing numerically until Giselle's org values land.
  */
 export function calculateEnactmentScore(
   dims: Record<DimensionKey, DimensionScore>,
   genre: GenreTag,
+  subjectType?: SubjectType,
 ): number {
-  const [w1, w2, w3, w4, w5] = GENRE_WEIGHTS[genre];
+  const [w1, w2, w3, w4, w5] = getWeightVector(genre, subjectType);
   const weighted =
     dims.D1.score * w1 +
     dims.D2.score * w2 +

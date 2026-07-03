@@ -88,6 +88,10 @@ export function FeedbackCard({
   );
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [msgIdx, setMsgIdx] = useState(0);
+  // Whose discourse the text is (Decision #5 / Phase 6). Chosen here because
+  // the Deeper Reading runs before any subject is picked in the intake form,
+  // so subject.type is not yet known. Individual = original behavior.
+  const [subjectVoice, setSubjectVoice] = useState<"individual" | "organization">("individual");
 
   // Cycle through loading messages every 5 s while the Sonnet call is running.
   useEffect(() => {
@@ -110,7 +114,14 @@ export function FeedbackCard({
       const res = await fetch("/api/feedback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text, scores, genre }),
+        // subjectVoice only sent for organizations, keeping the individual
+        // request shape identical to pre-Phase-6.
+        body: JSON.stringify({
+          text,
+          scores,
+          genre,
+          ...(subjectVoice === "organization" ? { subjectVoice } : {}),
+        }),
       });
       const data: unknown = await res.json().catch(() => null);
 
@@ -161,6 +172,33 @@ export function FeedbackCard({
           A structured reading of what your text says and does, with specific
           guidance to strengthen it.
         </p>
+
+        <div className="mt-5">
+          <p className="font-mono text-xs uppercase tracking-widest text-muted">
+            Whose voice is this text?
+          </p>
+          <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2">
+            <label className="flex items-center gap-2 font-sans text-sm text-ink">
+              <input
+                type="radio"
+                name="subject-voice"
+                checked={subjectVoice === "individual"}
+                onChange={() => setSubjectVoice("individual")}
+              />
+              An individual&apos;s
+            </label>
+            <label className="flex items-center gap-2 font-sans text-sm text-ink">
+              <input
+                type="radio"
+                name="subject-voice"
+                checked={subjectVoice === "organization"}
+                onChange={() => setSubjectVoice("organization")}
+              />
+              An organization&apos;s
+            </label>
+          </div>
+        </div>
+
         <button
           type="button"
           onClick={requestFeedback}

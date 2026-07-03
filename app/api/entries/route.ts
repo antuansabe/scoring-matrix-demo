@@ -3,7 +3,8 @@ import { createSubject, getSubject } from "@/lib/db/subjects";
 import { createEntry } from "@/lib/db/entries";
 import { saveAnalysis } from "@/lib/db/analyses";
 import { MODEL_VERSION } from "@/lib/modelVersion";
-import { GENRE_WEIGHTS } from "@/lib/paradigm";
+import { GENRE_WEIGHTS, calculateEnactmentScore } from "@/lib/paradigm";
+import { getWeightVector } from "@/lib/scoring/weights";
 import type { MaterialGenre, Subject, SubjectType } from "@/lib/db/types";
 import type { DimensionKey, DimensionScore, FeedbackResult, GenreTag } from "@/lib/types";
 
@@ -180,10 +181,35 @@ export async function POST(request: Request): Promise<Response> {
       contextual_notes: payload.contextualNotes ?? null,
     });
 
+    // --- select the weight profile by subject type (Decision #5) ---
+    // The subject's type is only known here, at save time — the ephemeral
+    // analyzer scored with the default profile. Recompute with the type's
+    // profile so org weights take effect at this seam once Giselle's values
+    // land; today both profiles equal the default, so this is numerically
+    // identical to the client's value.
+    let enactmentScore = Math.round(payload.enactmentScore);
+    if (payload.effectiveGenreTag) {
+      const vector = getWeightVector(payload.effectiveGenreTag, subject.type);
+      const recomputed = calculateEnactmentScore(
+        payload.dimensions,
+        payload.effectiveGenreTag,
+        subject.type,
+      );
+      console.info(
+        `[api/entries] weight profile "${subject.type}" · genre ${payload.effectiveGenreTag} · vector [${vector.join(", ")}] → enactment ${recomputed} (client sent ${enactmentScore})`,
+      );
+      if (recomputed !== enactmentScore) {
+        console.warn(
+          `[api/entries] client enactmentScore (${enactmentScore}) differs from the "${subject.type}" profile recompute (${recomputed}); storing the server value.`,
+        );
+      }
+      enactmentScore = recomputed;
+    }
+
     // --- persist the analysis, stamped with the model version ---
     const analysis = await saveAnalysis({
       entry_id: entry.id,
-      enactment_score: Math.round(payload.enactmentScore),
+      enactment_score: enactmentScore,
       d1: payload.dimensions.D1.score,
       d2: payload.dimensions.D2.score,
       d3: payload.dimensions.D3.score,

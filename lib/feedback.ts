@@ -18,11 +18,19 @@ export class FeedbackParseError extends Error {
   }
 }
 
+/**
+ * Whose discourse the text is — steers the card's voice and address only
+ * (see the SUBJECT VOICE prompt section), never what is measured. Absent
+ * means individual, the instrument's original behavior.
+ */
+export type SubjectVoice = "individual" | "organization";
+
 export type GenerateFeedbackOpts = {
   text: string;
   scores: Record<DimensionKey, DimensionScore>;
   genre: GenreTag;
   crossGenreContext?: string;
+  subjectVoice?: SubjectVoice;
 };
 
 const DIMENSION_NAMES: Record<DimensionKey, string> = {
@@ -41,6 +49,7 @@ function buildUserMessage(
   scores: Record<DimensionKey, DimensionScore>,
   genre: GenreTag,
   crossGenreContext?: string,
+  subjectVoice?: SubjectVoice,
 ): string {
   const scoreLines = DIMENSION_ORDER.map((key) => {
     const d = scores[key];
@@ -57,12 +66,20 @@ function buildUserMessage(
     ? `\n\n---\n\nCROSS-GENRE CONTEXT:\n${crossGenreContext}`
     : "";
 
+  // Only injected for organizations, so the individual path's user message
+  // stays byte-identical to pre-Phase-6 behavior.
+  const voiceSection =
+    subjectVoice === "organization"
+      ? `\n\n---\n\nSUBJECT VOICE: ORGANIZATION — this text is institutional discourse issued in a collective voice; there is no individual narrator.`
+      : "";
+
   return (
     `TEXT (genre: ${genre}):\n${text}\n\n` +
     `---\n\n` +
     `SCORING RESULTS (anchor your feedback to these structural observations — ` +
     `do not reproduce them verbatim):\n${scoreLines}` +
     crossSection +
+    voiceSection +
     `\n\nGenerate the feedback analysis JSON.`
   );
 }
@@ -160,12 +177,12 @@ function parseFeedback(raw: string): FeedbackResult {
 export async function generateFeedback(
   opts: GenerateFeedbackOpts,
 ): Promise<FeedbackResult> {
-  const { text, scores, genre, crossGenreContext } = opts;
+  const { text, scores, genre, crossGenreContext, subjectVoice } = opts;
 
   const { text: rawJson } = await callClaudeWithCachedSystem({
     model: "claude-sonnet-4-6",
     systemPrompt: FEEDBACK_SYSTEM_PROMPT,
-    userMessage: buildUserMessage(text, scores, genre, crossGenreContext),
+    userMessage: buildUserMessage(text, scores, genre, crossGenreContext, subjectVoice),
     maxTokens: 2500,
     temperature: 0,
   });
