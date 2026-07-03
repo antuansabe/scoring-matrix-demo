@@ -33,11 +33,27 @@ export async function listAnalysesBySubject(subjectId: string): Promise<Analysis
   const { data, error } = await client
     .from("analyses")
     .select(
-      "id, entry_id, enactment_score, d1, d2, d3, d4, d5, each_orientation, lens_a_tag, lens_b_flag, feedback_card, model_version, created_at, entry:entries!inner(entry_date, genre, ashokan_name, contextual_notes)"
+      "id, entry_id, enactment_score, d1, d2, d3, d4, d5, each_orientation, lens_a_tag, lens_b_flag, feedback_card, model_version, created_at, entry:entries!inner(subject_id, entry_date, genre, ashokan_name, contextual_notes)"
     )
     .eq("entry.subject_id", subjectId)
     .order("entry_date", { foreignTable: "entry" });
 
   if (error) throw error;
   return (data ?? []) as unknown as AnalysisWithEntry[];
+}
+
+// Used by the entry detail page (Feedback Card link from the subject
+// timeline) to fetch a single analysis by its entry, joined with the entry.
+export async function getAnalysisByEntryId(entryId: string): Promise<AnalysisWithEntry | null> {
+  const client = getSupabaseClient();
+  const { data, error } = await client
+    .from("analyses")
+    .select(
+      "id, entry_id, enactment_score, d1, d2, d3, d4, d5, each_orientation, lens_a_tag, lens_b_flag, feedback_card, model_version, created_at, entry:entries!inner(subject_id, entry_date, genre, ashokan_name, contextual_notes)"
+    )
+    .eq("entry_id", entryId)
+    .maybeSingle();
+
+  if (error) throw error;
+  return (data as unknown as AnalysisWithEntry) ?? null;
 }

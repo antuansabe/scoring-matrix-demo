@@ -1,0 +1,74 @@
+import Link from "next/link";
+import { listSubjectsWithStats } from "@/lib/db/subjects";
+import { Reveal } from "@/components/Reveal";
+
+// Subjects and entries change independently of any build — never cache this list.
+export const dynamic = "force-dynamic";
+
+const SUBJECT_TYPE_LABELS: Record<string, string> = {
+  jj_partner: "JJ Partner",
+  ngl: "NGL",
+};
+
+function formatDate(iso: string | null): string {
+  return iso ?? "—";
+}
+
+export default async function SubjectsPage() {
+  const subjects = await listSubjectsWithStats();
+
+  return (
+    <main className="mx-auto max-w-4xl px-6 py-14 sm:py-20">
+      <Reveal>
+        <p className="font-mono text-xs uppercase tracking-widest text-accent-cta font-semibold">
+          Longitudinal Tracking
+        </p>
+        <h1 className="mt-5 font-display text-2xl font-normal leading-tight text-ink sm:text-3xl">
+          <span className="font-light italic text-accent">Subjects</span> under observation
+        </h1>
+        <p className="mt-4 max-w-prose font-sans text-sm leading-relaxed text-muted">
+          Every JJ Partner and NGL with at least one dated entry. A subject is only ever compared
+          to itself over time.
+        </p>
+      </Reveal>
+
+      {subjects.length === 0 ? (
+        <div className="mt-10 border border-border bg-surface p-8 text-center">
+          <p className="font-sans text-sm text-muted">
+            No subjects yet. Save an analysis as a dated entry from the{" "}
+            <Link href="/tool" className="text-accent hover:underline">
+              Scoring Tool
+            </Link>{" "}
+            to create the first one.
+          </p>
+        </div>
+      ) : (
+        <div className="mt-10 divide-y divide-border border-t border-b border-border">
+          {subjects.map((s) => (
+            <Link
+              key={s.id}
+              href={`/subjects/${s.id}`}
+              className="flex flex-wrap items-center justify-between gap-4 px-2 py-5 -mx-2 transition-colors hover:bg-surface"
+            >
+              <div>
+                <p className="font-display text-lg text-ink">{s.name}</p>
+                <p className="mt-1 font-mono text-xs uppercase tracking-widest text-muted">
+                  {SUBJECT_TYPE_LABELS[s.type] ?? s.type}
+                </p>
+              </div>
+              <div className="flex items-center gap-6">
+                <p className="font-mono text-xs uppercase tracking-widest text-muted">
+                  {s.entryCount} {s.entryCount === 1 ? "entry" : "entries"}
+                </p>
+                <p className="font-mono text-xs uppercase tracking-widest text-muted">
+                  Last · {formatDate(s.lastEntryDate)}
+                </p>
+                <span className="font-mono text-xs uppercase tracking-widest text-accent">View →</span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+    </main>
+  );
+}

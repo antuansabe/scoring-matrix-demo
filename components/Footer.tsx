@@ -7,6 +7,7 @@ const STRINGS = {
   nav: {
     home: "Home",
     tool: "Scoring Tool",
+    subjects: "Subjects",
     batch: "Batch Analysis",
     about: "About",
     badge: "Density Badge",
@@ -75,6 +76,11 @@ export function Footer() {
               <li>
                 <Link href="/tool" className="text-muted hover:text-accent transition-colors block">
                   {STRINGS.nav.tool}
+                </Link>
+              </li>
+              <li>
+                <Link href="/subjects" className="text-muted hover:text-accent transition-colors block">
+                  {STRINGS.nav.subjects}
                 </Link>
               </li>
               <li>

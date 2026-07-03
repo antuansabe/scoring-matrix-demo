@@ -85,9 +85,16 @@ export interface AnalysisInput {
 /** Joined analysis with entry data, used for timeline/comparisons. */
 export interface AnalysisWithEntry extends Analysis {
   entry: {
+    subject_id: string;
     entry_date: string;
     genre: MaterialGenre;
     ashokan_name: string;
     contextual_notes: string | null;
   };
+}
+
+/** Subject list row enriched with entry stats, used by /subjects. */
+export interface SubjectWithStats extends Subject {
+  entryCount: number;
+  lastEntryDate: string | null;
 }

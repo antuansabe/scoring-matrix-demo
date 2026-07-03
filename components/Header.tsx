@@ -11,6 +11,7 @@ const STRINGS = {
   batch: "Batch Analysis",
   about: "About",
   badge: "Density Badge",
+  subjects: "Subjects",
   brandName: "Changemaker Worldview",
 };
 
@@ -22,6 +23,7 @@ export function Header() {
     { href: "/", label: STRINGS.home, exact: true },
     { href: "/about", label: STRINGS.about, exact: false },
     { href: "/tool", label: STRINGS.tool, exact: false },
+    { href: "/subjects", label: STRINGS.subjects, exact: false },
     { href: "/batch", label: STRINGS.batch, exact: false },
     { href: "/badge", label: STRINGS.badge, exact: false },
   ];
