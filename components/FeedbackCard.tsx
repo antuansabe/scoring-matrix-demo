@@ -68,6 +68,7 @@ export function FeedbackCard({
   genre,
   initialState = "idle",
   data,
+  onLoaded,
 }: {
   text?: string;
   scores?: Record<DimensionKey, DimensionScore>;
@@ -76,6 +77,8 @@ export function FeedbackCard({
   initialState?: "idle" | "loaded";
   /** Required when initialState is "loaded". */
   data?: FeedbackResult;
+  /** Called once a live fetch (not the "loaded" prop path) succeeds. */
+  onLoaded?: (result: FeedbackResult) => void;
 }) {
   const [status, setStatus] = useState<FeedbackStatus>(
     initialState === "loaded" && data ? "done" : "idle",
@@ -124,8 +127,10 @@ export function FeedbackCard({
         return;
       }
 
-      setFeedbackResult(data as FeedbackResult);
+      const result = data as FeedbackResult;
+      setFeedbackResult(result);
       setStatus("done");
+      onLoaded?.(result);
     } catch {
       setErrorMsg("Could not connect to the feedback service.");
       setStatus("error");

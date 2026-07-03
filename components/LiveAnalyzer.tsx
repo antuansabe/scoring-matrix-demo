@@ -1,12 +1,14 @@
 "use client";
 
 import { useRef, useState } from "react";
-import type { ScoreResult, GenreTag } from "@/lib/types";
+import type { ScoreResult, GenreTag, FeedbackResult } from "@/lib/types";
+import type { Subject } from "@/lib/db/types";
 import { ScoreCard } from "@/components/ScoreCard";
 import { RadarProfile } from "@/components/RadarProfile";
 import { ScoreBreakdown } from "@/components/ScoreBreakdown";
 import { JustificationQuotes } from "@/components/JustificationQuotes";
 import { FeedbackCard } from "@/components/FeedbackCard";
+import { EntryIntakeForm } from "@/components/EntryIntakeForm";
 import { calculateEnactmentScore, resolveParadigmName, resolveEACHOrientation } from "@/lib/paradigm";
 
 const MIN_WORDS = 50;
@@ -40,11 +42,13 @@ function ResultSkeleton() {
 }
 
 /** Paste-your-own-text analyzer. The only path that hits the API. */
-export function LiveAnalyzer() {
+export function LiveAnalyzer({ initialSubjects = [] }: { initialSubjects?: Subject[] }) {
   const [text, setText] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [result, setResult] = useState<ScoreResult | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [subjects, setSubjects] = useState<Subject[]>(initialSubjects);
+  const [feedbackResult, setFeedbackResult] = useState<FeedbackResult | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const words = countWords(text);
@@ -69,6 +73,7 @@ export function LiveAnalyzer() {
     setStatus("loading");
     setErrorMsg(null);
     setResult(null);
+    setFeedbackResult(null);
     try {
       const res = await fetch("/api/score", {
         method: "POST",
@@ -136,6 +141,7 @@ export function LiveAnalyzer() {
     setText("");
     setResult(null);
     setErrorMsg(null);
+    setFeedbackResult(null);
     setStatus("idle");
     // Wait one frame so the textarea is mounted again before we scroll/focus.
     requestAnimationFrame(() => {
@@ -234,6 +240,19 @@ export function LiveAnalyzer() {
               text={text}
               scores={result.dimensions}
               genre={result.genreTag}
+              onLoaded={setFeedbackResult}
+            />
+          </div>
+
+          <div className="mt-8">
+            <EntryIntakeForm
+              subjects={subjects}
+              materialText={text}
+              score={result}
+              feedback={feedbackResult}
+              onSaved={(subject) =>
+                setSubjects((prev) => (prev.some((s) => s.id === subject.id) ? prev : [subject, ...prev]))
+              }
             />
           </div>
 

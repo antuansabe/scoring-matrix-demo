@@ -1,12 +1,26 @@
 import { LiveAnalyzer } from "@/components/LiveAnalyzer";
 import { Reveal } from "@/components/Reveal";
+import { listSubjects } from "@/lib/db/subjects";
+import type { Subject } from "@/lib/db/types";
 
 const STRINGS = {
   eyebrow: "TEST THE TOOL:",
   subtitle: "You will get an aggregate score, a score per dimension, and direct feedback regarding the framing and language you are using:",
 };
 
-export default function ToolPage() {
+// Always fresh — new subjects can be created from this page, so a cached
+// subjects list would silently go stale.
+export const dynamic = "force-dynamic";
+
+export default async function ToolPage() {
+  let subjects: Subject[] = [];
+  try {
+    subjects = await listSubjects();
+  } catch (err) {
+    // The ephemeral analyzer must keep working even if persistence is down.
+    console.error("[app/tool] Failed to load subjects:", err);
+  }
+
   return (
     <main className="mx-auto max-w-6xl px-6 py-14 sm:py-20">
       <section className="max-w-3xl mx-auto">
@@ -22,7 +36,7 @@ export default function ToolPage() {
             {STRINGS.subtitle}
           </p>
         </Reveal>
-        <LiveAnalyzer />
+        <LiveAnalyzer initialSubjects={subjects} />
       </section>
     </main>
   );
