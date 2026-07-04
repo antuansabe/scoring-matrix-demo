@@ -52,7 +52,7 @@ These were decided with Antonio. The agent treats them as given.
 
 If a phase hits one of these, stop and ask. Do not guess.
 
-- **Org weight values** (D1–D5 for `jj_partner`). Owner: Giselle.
+- **Org weight values** (D1–D5 for `jj_partner`). Owner: Giselle. **Note added post-Phase 6:** when these diverge from default, the ephemeral analyzer's on-screen score (computed pre-subject with default weights) will differ from the saved score (recomputed with the org profile at save time). The recompute seam and logging already exist; the pending decision is how the UI communicates that difference to the user. Decide alongside Giselle's values, before Phase 8 baselines.
 - **Can an NGL exist without a parent JJ Partner**, or is nesting mandatory? Owner: Giselle / Antonio.
 - **Access / auth model** for an internal Ashoka tool (who can open it). Likely Entra/Azure AD SSO eventually — governance + IT decision, not a Sept 1 blocker. For the pilot, gate behind a single shared access mechanism Antonio chooses.
 - **Export branding/template** for the comparative report. Owner: Antonio.
