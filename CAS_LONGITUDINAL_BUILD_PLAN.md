@@ -53,7 +53,7 @@ These were decided with Antonio. The agent treats them as given.
 If a phase hits one of these, stop and ask. Do not guess.
 
 - **Org weight values** (D1–D5 for `jj_partner`). Owner: Giselle. **Note added post-Phase 6:** when these diverge from default, the ephemeral analyzer's on-screen score (computed pre-subject with default weights) will differ from the saved score (recomputed with the org profile at save time). The recompute seam and logging already exist; the pending decision is how the UI communicates that difference to the user. Decide alongside Giselle's values, before Phase 8 baselines.
-- **`entry_date` semantics — analysis date vs material date.** Owner: Giselle. Her June 23 spec defines `entry_date` as the date the analysis is performed, NOT the source material's date. But the retrospective use case (e.g. analyzing a 2010 interview and a 2026 interview to tell a 16-year narrative arc) needs the *material's* date on the timeline — otherwise both entries carry 2026 and the longitudinal story is wrong. In practice the field is editable and users backdate it, which serves the use case but contradicts the spec's definition. Resolve: either officially redefine `entry_date` as the material/narrative date, or add a separate `material_date` column and decide which one drives the timeline and comparisons. Decide before Phase 8 baselines (retroactive relabeling is cheap now, expensive later).
+- **`entry_date` semantics — RESOLVED (Antonio delegated, decided 2026-07-03): `entry_date` officially means the MATERIAL/NARRATIVE date** (when the discourse was produced), not the analysis date. Rationale: the tool's purpose is narrative evolution, so the timeline axis must be when the narrative was produced; the analysis date is not lost — `entries.created_at` (automatic, immutable) already captures it, and cross-analysis comparability is protected by `model_version`, not by dates. No schema change needed; implementation is UI labels ("Material date") + glossary + docs, assigned to Phase 10. **Pending: one-line notification to Giselle** (this amends her June 23 spec's definition, in favor of her own retrospective use cases).
 - **Can an NGL exist without a parent JJ Partner**, or is nesting mandatory? Owner: Giselle / Antonio.
 - **Access / auth model** for an internal Ashoka tool (who can open it). Likely Entra/Azure AD SSO eventually — governance + IT decision, not a Sept 1 blocker. For the pilot, gate behind a single shared access mechanism Antonio chooses.
 - **Export branding/template** for the comparative report. Owner: Antonio.
@@ -380,13 +380,15 @@ create index on analyses (entry_id);
 
 ## Phase 10 — Subject-first workflows & batch intake  ·  P2
 
-**Goal:** A Giselle-type user can go to Subjects, click "New subject," create "Fundación Somos Amigos," add its 2010 interview and its 2026 interview as dated entries, and land on the comparison — without ever discovering that the "real" entry point was hidden at the bottom of the analyzer.
+**Goal:** Any non-technical user (Giselle, a board member, any Ashokan) can create ANY new subject of analysis — a Diamond org, a JJ Partner, an NGL, a thought leader, whatever Ashoka wants to measure — feed it dated materials from any era (a 2010 interview, a 2026 report), and reach the longitudinal comparison, all through a visible, guided, subject-first flow. The current entry point (hidden at the bottom of the analyzer, text-first) stays but stops being the only way in. Concrete acceptance example — NOT the scope, just one instance of it: create "Fundación Somos Amigos", add a 2010-dated interview and a 2026-dated one, land on the comparison.
 
 **Why:** Phase 2's intake is text-first (analyze → then attach a subject). Non-technical users think subject-first (create the org → feed it materials over time). Both flows are valid; only one exists. This phase adds the missing one without removing the existing one.
 
-**What this phase is NOT:** not a redesign; no schema changes (unless the `entry_date`/`material_date` open decision in §1b has been resolved by then — if it has, implement the resolution here); no changes to scoring or compare logic.
+**What this phase is NOT:** not a redesign; no schema changes; no changes to scoring or compare logic.
 
 **Steps:**
+
+0. **Implement the resolved `entry_date` semantics (§1b, decided 2026-07-03).** The field now officially means the MATERIAL/NARRATIVE date. No schema change — relabel every UI surface ("Material date", with helper text like "when this was written or said — not today's date"), update the glossary entry, and update docs (BOARD_DEMO.md / METHODOLOGY.md) where the old meaning appears. The intake form should stop defaulting the date to today silently — keep today as the default value but make the label make backdating obvious and natural.
 
 1. **"New subject" on `/subjects`.** A visible primary action: name, type (JJ Partner / NGL with parent-org picker per the nesting constraint), Ashoka internal ID, created_by. On create → land on the subject's (empty) detail page.
 2. **Empty state that teaches.** A subject with zero entries should say what to do next in one sentence ("Add its first material — a report, an interview, a public statement — to create the baseline") with an "Add entry" button. An empty state is a teaching surface, not a blank screen.
