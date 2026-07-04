@@ -26,6 +26,10 @@ Three deliberate choices, stated so they can be defended or revised:
 
 Genre weights (documented in `SCORING_MODEL.md`) exist for fairness across kinds of text: a reflective interview naturally affords more identity work than an annual report, so weights shift modestly by detected genre. Since Phase 6 the weighting mechanism also supports per-subject-type profiles (organization vs. individual); both currently share the default vector pending Framework Change's decision on org-specific values.
 
+## 2b. Date semantics: the timeline follows the material
+
+`entry_date` officially means the **material/narrative date** — when the text was written or said — not the day it was analyzed (resolved 2026-07-03, amending the June 23 spec definition in favor of its own retrospective use cases). A 2010 interview analyzed in 2026 sits at 2010 on the timeline, because the object of measurement is the narrative's evolution, not our reading schedule. Nothing is lost by this: the analysis moment is captured automatically and immutably in `created_at`, and cross-time comparability is protected by `model_version` (§3), not by dates. The UI labels this field "Material date" everywhere it is entered.
+
 ## 3. `model_version` and longitudinal comparability
 
 Every stored analysis is stamped with `model_version` (model id + prompt version). The rule, locked as Decision #3 of the build plan:

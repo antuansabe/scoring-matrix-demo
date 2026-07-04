@@ -22,7 +22,8 @@ export type GlossaryKey =
   | "eachOrientation"
   | "lensA"
   | "modelVersion"
-  | "radar";
+  | "radar"
+  | "materialDate";
 
 export type GlossaryEntry = {
   /** How the term reads where it appears in the UI. */
@@ -103,6 +104,13 @@ export const GLOSSARY: Record<GlossaryKey, GlossaryEntry> = {
       "Which version of the reading model produced this analysis. Scores are only compared over time when the version matches — otherwise a difference could come from the model changing, not the writing.",
     deeper:
       "Every stored analysis is stamped with its model and prompt version. The comparison view warns visibly whenever two readings don't share one.",
+  },
+  materialDate: {
+    label: "Material date",
+    plain:
+      "The date the text itself was written or said — not the day we analyzed it. The timeline follows the life of the narrative, so a 2010 interview sits at 2010 even if we read it today.",
+    deeper:
+      "The analysis date is recorded automatically behind the scenes, and every reading is stamped with the model version that produced it — so comparisons stay honest even when materials are analyzed years after they were written.",
   },
   radar: {
     label: "Radar Profile",

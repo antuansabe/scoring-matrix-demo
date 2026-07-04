@@ -31,7 +31,10 @@ export interface SubjectInput {
 export interface Entry {
   id: string;
   subject_id: string;
-  entry_date: string; // ISO date string YYYY-MM-DD
+  /** ISO date YYYY-MM-DD. MATERIAL/NARRATIVE date — when the text was
+      written or said, not when it was analyzed (§1b, resolved 2026-07-03).
+      The analysis moment lives in created_at. */
+  entry_date: string;
   material_text: string;
   material_source_url: string | null;
   genre: MaterialGenre;

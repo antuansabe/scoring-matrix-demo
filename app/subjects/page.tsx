@@ -38,9 +38,17 @@ export default async function SubjectsPage({
           <span className="font-light italic text-accent">Subjects</span> under observation
         </h1>
         <p className="mt-4 max-w-prose font-sans text-base leading-relaxed text-muted">
-          Every JJ Partner and NGL with at least one dated entry. A subject is only ever compared
-          to itself over time.
+          Every JJ Partner and NGL under observation. A subject is only ever compared to itself
+          over time.
         </p>
+        <div className="mt-6">
+          <Link
+            href="/subjects/new"
+            className="inline-block min-h-11 rounded-md bg-accent-cta px-6 py-3 font-mono text-sm uppercase tracking-widest text-white transition-all hover:bg-accent"
+          >
+            New subject →
+          </Link>
+        </div>
         {demoCount > 0 && (
           <p className="mt-3 font-mono text-xs uppercase tracking-widest">
             {showDemo ? (
@@ -57,14 +65,22 @@ export default async function SubjectsPage({
       </Reveal>
 
       {subjects.length === 0 ? (
-        <div className="mt-10 border border-border bg-surface p-8 text-center">
-          <p className="font-sans text-sm text-muted">
-            No subjects yet. Save an analysis as a dated entry from the{" "}
-            <Link href="/tool" className="text-accent hover:underline">
-              Scoring Tool
-            </Link>{" "}
-            to create the first one.
+        <div className="mt-10 border border-border bg-surface p-8">
+          <p className="font-sans text-base leading-relaxed text-ink">
+            No subjects yet. A subject is whoever you want to read over time — an organization
+            or a person. Create one, then feed it dated materials.
           </p>
+          <div className="mt-5 flex flex-wrap items-center gap-4">
+            <Link
+              href="/subjects/new"
+              className="min-h-11 rounded-md bg-accent-cta px-6 py-3 font-mono text-sm uppercase tracking-widest text-white transition-all hover:bg-accent"
+            >
+              Create the first subject →
+            </Link>
+            <Link href="/tool" className="font-mono text-xs uppercase tracking-widest text-muted hover:text-ink">
+              or start from a text in the Scoring Tool →
+            </Link>
+          </div>
         </div>
       ) : (
         <div className="mt-10 divide-y divide-border border-t border-b border-border">

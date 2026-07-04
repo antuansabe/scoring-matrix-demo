@@ -1,6 +1,6 @@
 import { LiveAnalyzer } from "@/components/LiveAnalyzer";
 import { Reveal } from "@/components/Reveal";
-import { listSubjects } from "@/lib/db/subjects";
+import { listSubjects, getSubject } from "@/lib/db/subjects";
 import type { Subject } from "@/lib/db/types";
 import { isDemoSubject } from "@/lib/demo";
 
@@ -13,12 +13,25 @@ const STRINGS = {
 // subjects list would silently go stale.
 export const dynamic = "force-dynamic";
 
-export default async function ToolPage() {
+export default async function ToolPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ subject?: string }>;
+}) {
+  const { subject: subjectParam } = await searchParams;
+
   let subjects: Subject[] = [];
+  let lockedSubject: Subject | undefined;
   try {
     // Demo subjects are excluded from intake — nobody should save real
     // entries onto the fictional example.
     subjects = (await listSubjects()).filter((s) => !isDemoSubject(s));
+    // Subject-first flow (Phase 10): ?subject=<id> locks the intake form.
+    // Demo subjects can't be locked either — same rule as the dropdown.
+    if (subjectParam) {
+      const found = await getSubject(subjectParam);
+      if (found && !isDemoSubject(found)) lockedSubject = found;
+    }
   } catch (err) {
     // The ephemeral analyzer must keep working even if persistence is down.
     console.error("[app/tool] Failed to load subjects:", err);
@@ -39,7 +52,20 @@ export default async function ToolPage() {
             {STRINGS.subtitle}
           </p>
         </Reveal>
-        <LiveAnalyzer initialSubjects={subjects} />
+        {lockedSubject && (
+          <div
+            className="mb-8 border border-border bg-surface px-5 py-4"
+            style={{ borderLeftWidth: 3, borderLeftColor: "var(--accent)" }}
+          >
+            <p className="font-mono text-xs uppercase tracking-widest text-accent">
+              Adding an entry to {lockedSubject.name}
+            </p>
+            <p className="mt-1 font-sans text-base leading-relaxed text-muted">
+              Paste the material below, run the reading, and save — the subject is already chosen.
+            </p>
+          </div>
+        )}
+        <LiveAnalyzer initialSubjects={subjects} lockedSubject={lockedSubject} />
       </section>
     </main>
   );

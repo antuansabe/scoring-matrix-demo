@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { Subject, SubjectType, MaterialGenre } from "@/lib/db/types";
 import type { ScoreResult, FeedbackResult } from "@/lib/types";
 import { detectMixedGenreHint } from "@/lib/text";
+import { Term } from "@/components/Term";
 
 const MATERIAL_GENRE_OPTIONS: { value: MaterialGenre; label: string }[] = [
   { value: "interview", label: "Interview" },
@@ -46,6 +47,7 @@ export function EntryIntakeForm({
   score,
   feedback,
   onSaved,
+  lockedSubject,
 }: {
   subjects: Subject[];
   materialText: string;
@@ -53,6 +55,9 @@ export function EntryIntakeForm({
   score: ScoreResult;
   feedback: FeedbackResult | null;
   onSaved?: (subject: Subject) => void;
+  /** Subject-first flow (Phase 10): arrived via "Add entry" on a subject
+      page — the subject is fixed, no pickers. */
+  lockedSubject?: Subject;
 }) {
   const jjPartners = useMemo(() => subjects.filter((s) => s.type === "jj_partner"), [subjects]);
   const mixedGenreHint = useMemo(() => detectMixedGenreHint(materialText), [materialText]);
@@ -71,9 +76,11 @@ export function EntryIntakeForm({
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [savedSubject, setSavedSubject] = useState<Subject | null>(null);
   const [savedEntryId, setSavedEntryId] = useState<string | null>(null);
+  const [savedEntryCount, setSavedEntryCount] = useState<number | null>(null);
 
-  const subjectValid =
-    mode === "existing"
+  const subjectValid = lockedSubject
+    ? true
+    : mode === "existing"
       ? selectedSubjectId.length > 0
       : newName.trim().length > 0 && (newType !== "ngl" || parentOrgId.length > 0);
 
@@ -95,15 +102,17 @@ export function EntryIntakeForm({
     const effectiveGenreTag = score.effectiveGenreTag ?? score.detectedGenreTag ?? score.genreTag;
 
     const payload = {
-      ...(mode === "existing"
-        ? { subjectId: selectedSubjectId }
-        : {
-            newSubject: {
-              name: newName.trim(),
-              type: newType,
-              parentOrgId: newType === "ngl" ? parentOrgId : null,
-            },
-          }),
+      ...(lockedSubject
+        ? { subjectId: lockedSubject.id }
+        : mode === "existing"
+          ? { subjectId: selectedSubjectId }
+          : {
+              newSubject: {
+                name: newName.trim(),
+                type: newType,
+                parentOrgId: newType === "ngl" ? parentOrgId : null,
+              },
+            }),
       entryDate,
       materialGenre,
       ashokanName: ashokanName.trim(),
@@ -139,9 +148,10 @@ export function EntryIntakeForm({
         return;
       }
 
-      const result = data as { subject: Subject; entry: { id: string } };
+      const result = data as { subject: Subject; entry: { id: string }; subjectEntryCount?: number };
       setSavedSubject(result.subject);
       setSavedEntryId(result.entry.id);
+      setSavedEntryCount(typeof result.subjectEntryCount === "number" ? result.subjectEntryCount : null);
       setStatus("done");
       onSaved?.(result.subject);
     } catch {
@@ -152,15 +162,29 @@ export function EntryIntakeForm({
 
   // --- DONE ---
   if (status === "done" && savedSubject) {
+    const comparisonReady = (savedEntryCount ?? 0) >= 2;
     return (
       <div className="border border-border bg-surface p-5 sm:p-6 lg:p-8" style={{ borderLeftWidth: 3, borderLeftColor: "var(--accent-2)" }}>
         <p className="font-mono text-xs uppercase tracking-widest text-accent-2">Entry Saved</p>
         <h2 className="mt-3 font-display text-xl font-normal leading-snug text-ink sm:text-2xl">
           Logged for <span className="font-light italic text-accent">{savedSubject.name}</span> — {entryDate}
         </h2>
-        <div className="mt-5 flex flex-wrap gap-4">
+        {comparisonReady && (
+          <p className="mt-3 max-w-[55ch] font-sans text-base leading-relaxed text-ink">
+            {savedSubject.name} now has {savedEntryCount} dated entries — the comparison is ready.
+          </p>
+        )}
+        <div className="mt-5 flex flex-wrap items-center gap-4">
+          {comparisonReady && (
+            <Link
+              href={`/subjects/${savedSubject.id}/compare`}
+              className="min-h-11 rounded-md bg-accent-cta px-6 py-3 font-mono text-sm uppercase tracking-widest text-white hover:bg-accent"
+            >
+              Compare two entries →
+            </Link>
+          )}
           <Link href={`/subjects/${savedSubject.id}`} className="font-mono text-xs uppercase tracking-widest text-accent hover:text-accent-cta transition-colors">
-            View subject history →
+            Back to {savedSubject.name} →
           </Link>
           {savedEntryId && (
             <Link
@@ -204,6 +228,18 @@ export function EntryIntakeForm({
 
       <fieldset disabled={feedback === null} className="mt-6 space-y-5 disabled:opacity-40">
         {/* Subject */}
+        {lockedSubject ? (
+          <div className="border-l-2 border-accent pl-4">
+            <p className={labelClass}>Subject</p>
+            <p className="mt-2 font-display text-lg text-ink">{lockedSubject.name}</p>
+            <p className="mt-1 font-sans text-base leading-relaxed text-muted">
+              Every analysis you save here becomes part of this subject&apos;s story.{" "}
+              <Link href="/subjects" className="text-accent hover:underline">
+                Not this subject? Choose another →
+              </Link>
+            </p>
+          </div>
+        ) : (
         <div>
           <p className={labelClass}>Subject</p>
           <div className="mt-2 flex gap-4">
@@ -274,12 +310,13 @@ export function EntryIntakeForm({
             </div>
           )}
         </div>
+        )}
 
-        {/* Entry date + genre */}
+        {/* Material date + genre */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label className={labelClass} htmlFor="entry-date">
-              Entry Date
+              <Term k="materialDate">Material date</Term>
             </label>
             <input
               id="entry-date"
@@ -288,6 +325,10 @@ export function EntryIntakeForm({
               onChange={(e) => setEntryDate(e.target.value)}
               className={`${inputClass} mt-2`}
             />
+            <p className="mt-1.5 font-sans text-sm leading-relaxed text-muted">
+              When this was written or said — not today&apos;s date. Backdating is expected: a 2010
+              interview belongs on the timeline in 2010.
+            </p>
           </div>
           <div>
             <label className={labelClass} htmlFor="material-genre">

@@ -71,18 +71,58 @@ export default async function SubjectDetailPage({
           <p className="font-mono text-xs uppercase tracking-widest text-muted">
             {analyses.length} {analyses.length === 1 ? "Entry" : "Entries"} · Chronological
           </p>
-          {analyses.length >= 2 && (
-            <Link
-              href={`/subjects/${subject.id}/compare`}
-              className="font-mono text-xs uppercase tracking-widest text-accent transition-colors hover:text-accent-cta"
-            >
-              Compare two entries →
-            </Link>
-          )}
+          <div className="flex flex-wrap items-center gap-4">
+            {!isDemoSubject(subject) && analyses.length > 0 && (
+              <>
+                <Link
+                  href={`/tool?subject=${subject.id}`}
+                  className="font-mono text-xs uppercase tracking-widest text-accent transition-colors hover:text-accent-cta"
+                >
+                  Add entry →
+                </Link>
+                <Link
+                  href={`/subjects/${subject.id}/add-batch`}
+                  className="font-mono text-xs uppercase tracking-widest text-muted transition-colors hover:text-ink"
+                >
+                  Add several at once →
+                </Link>
+              </>
+            )}
+            {analyses.length >= 2 && (
+              <Link
+                href={`/subjects/${subject.id}/compare`}
+                className="font-mono text-xs uppercase tracking-widest text-accent transition-colors hover:text-accent-cta"
+              >
+                Compare two entries →
+              </Link>
+            )}
+          </div>
         </div>
 
         {analyses.length === 0 ? (
-          <p className="mt-6 font-sans text-sm text-muted">No entries logged yet for this subject.</p>
+          <div className="mt-6 border border-border bg-surface p-6 sm:p-8">
+            <p className="max-w-[60ch] font-sans text-base leading-relaxed text-ink">
+              No entries yet. Add {subject.name}&apos;s first material — a report, an interview, a
+              public statement — and its date, to set the baseline this story will be measured
+              against.
+            </p>
+            {!isDemoSubject(subject) && (
+              <div className="mt-5 flex flex-wrap items-center gap-4">
+                <Link
+                  href={`/tool?subject=${subject.id}`}
+                  className="min-h-11 rounded-md bg-accent-cta px-6 py-3 font-mono text-sm uppercase tracking-widest text-white transition-all hover:bg-accent"
+                >
+                  Add its first entry →
+                </Link>
+                <Link
+                  href={`/subjects/${subject.id}/add-batch`}
+                  className="font-mono text-xs uppercase tracking-widest text-muted hover:text-ink"
+                >
+                  or add several at once →
+                </Link>
+              </div>
+            )}
+          </div>
         ) : (
           <ol className="mt-6 divide-y divide-border border-b border-border">
             {analyses.map((a) => (

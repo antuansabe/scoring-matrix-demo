@@ -43,7 +43,14 @@ function ResultSkeleton() {
 }
 
 /** Paste-your-own-text analyzer. The only path that hits the API. */
-export function LiveAnalyzer({ initialSubjects = [] }: { initialSubjects?: Subject[] }) {
+export function LiveAnalyzer({
+  initialSubjects = [],
+  lockedSubject,
+}: {
+  initialSubjects?: Subject[];
+  /** Subject-first flow (Phase 10): the intake form is locked to this subject. */
+  lockedSubject?: Subject;
+}) {
   const [text, setText] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [result, setResult] = useState<ScoreResult | null>(null);
@@ -252,6 +259,7 @@ export function LiveAnalyzer({ initialSubjects = [] }: { initialSubjects?: Subje
           <div className="mt-8">
             <EntryIntakeForm
               subjects={subjects}
+              lockedSubject={lockedSubject}
               materialText={text}
               score={result}
               feedback={feedbackResult}

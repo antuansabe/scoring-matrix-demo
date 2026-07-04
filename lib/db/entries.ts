@@ -21,6 +21,17 @@ export async function createEntry(input: EntryInput): Promise<Entry> {
   return data as Entry;
 }
 
+export async function countEntriesBySubject(subjectId: string): Promise<number> {
+  const client = getSupabaseClient();
+  const { count, error } = await client
+    .from("entries")
+    .select("id", { count: "exact", head: true })
+    .eq("subject_id", subjectId);
+
+  if (error) throw error;
+  return count ?? 0;
+}
+
 export async function listEntriesBySubject(subjectId: string): Promise<Entry[]> {
   const client = getSupabaseClient();
   const { data, error } = await client

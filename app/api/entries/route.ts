@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createSubject, getSubject } from "@/lib/db/subjects";
-import { createEntry } from "@/lib/db/entries";
+import { createEntry, countEntriesBySubject } from "@/lib/db/entries";
 import { saveAnalysis } from "@/lib/db/analyses";
 import { MODEL_VERSION } from "@/lib/modelVersion";
 import { GENRE_WEIGHTS, calculateEnactmentScore } from "@/lib/paradigm";
@@ -223,7 +223,11 @@ export async function POST(request: Request): Promise<Response> {
       model_version: MODEL_VERSION,
     });
 
-    return NextResponse.json({ subject, entry, analysis }, { status: 201 });
+    // How many entries the subject now has — lets the save-confirmation
+    // surface the compare CTA the moment the second entry lands (Phase 10).
+    const subjectEntryCount = await countEntriesBySubject(subject.id);
+
+    return NextResponse.json({ subject, entry, analysis, subjectEntryCount }, { status: 201 });
   } catch (err: unknown) {
     const { message, code } = describeError(err);
     if (code === "23514") {
