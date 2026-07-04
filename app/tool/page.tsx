@@ -5,8 +5,8 @@ import type { Subject } from "@/lib/db/types";
 import { isDemoSubject } from "@/lib/demo";
 
 const STRINGS = {
-  eyebrow: "TEST THE TOOL:",
-  subtitle: "You will get an aggregate score, a score per dimension, and direct feedback regarding the framing and language you are using:",
+  eyebrow: "The Scoring Tool",
+  subtitle: "You'll get the reading in three layers: what it says, the scores behind it, and specific guidance to strengthen it.",
 };
 
 // Always fresh — new subjects can be created from this page, so a cached
@@ -45,10 +45,11 @@ export default async function ToolPage({
             {STRINGS.eyebrow}
           </p>
           <h1 className="mt-5 font-display text-2xl font-normal leading-relaxed text-ink sm:text-3xl max-w-2xl">
-            Choose a text where you speak about your work, your role, or a reflection on{" "}
-            <span className="font-light italic text-accent">how you see the world</span>. You can choose any piece of your own writing or a transcript from a video or interview where you speak.
+            Choose an honest piece of text — something a person or an organization actually wrote
+            or said: an interview, a page from a report, a speech —{" "}
+            <span className="font-light italic text-accent">the work in its own words</span>.
           </h1>
-          <p className="mt-5 mb-10 max-w-prose font-sans text-sm leading-relaxed text-muted">
+          <p className="mt-5 mb-10 max-w-prose font-sans text-base leading-relaxed text-muted">
             {STRINGS.subtitle}
           </p>
         </Reveal>

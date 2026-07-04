@@ -32,7 +32,8 @@ export function Footer() {
               </span>
             </div>
             <p className="font-sans text-xs text-muted leading-relaxed max-w-sm">
-              An analytical AI framework designed to measure, calibrate, and understand the discursive enactment of agency and leadership in language.
+              Built by Ashoka to understand the stories behind its partnerships — an instrument
+              that reads how texts talk about change, and how that changes over time.
             </p>
           </div>
 

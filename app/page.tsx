@@ -1,20 +1,25 @@
 import { Hero } from "@/components/Hero";
 import { Reveal } from "@/components/Reveal";
 import { DIMENSIONS } from "@/lib/paradigm";
+import { DEMO_ORG_ID } from "@/lib/demo";
 import Link from "next/link";
 
 const STRINGS = {
-  explainerEyebrow: "ABOUT MEASURING CHANGEMAKER DISCURSIVE ENACTMENT",
-  explainerTitle: "The Five Dimensions of Discursive Enactment",
-  explainerParagraph1: "This tool does not only care about what you say. It's designed to look for how you narrate actions, how you position yourself, and how you describe your relationships and context.",
-  explainerParagraph2: "Specifically, it measures the degree to which the architecture of language aligns with what Ashoka calls \u201cthe Everyone a Changemaker Framework\u201d.",
-  explainerParagraph3: "We are not ranking changemakers; we are reading the traces the worldview leaves — or does not leave — in language. We do so in five dimensions:",
-  learnMoreButton: "Learn more about the model →",
-  ctaEyebrow: "LIVE SCORER",
-  ctaTitlePart1: "Ready to score your ",
-  ctaTitlePart2: "own text",
-  ctaSubtitle: "Analyze your text across the five dimensions using our live parser powered by Ashoka IA.",
-  ctaButton: "Open Live Analyzer →",
+  explainerEyebrow: "What the instrument reads",
+  explainerTitlePart1: "The ",
+  explainerTitlePart2: "five dimensions",
+  explainerTitlePart3: " every reading rests on",
+  explainerParagraph1: "The instrument doesn't ask what a text claims. It reads what the language does: who appears as the subject of the verbs, where problems are located, whether other people's perspectives visibly change anything.",
+  explainerParagraph2: "That architecture is read against what Ashoka calls the Everyone a Changemaker framework — the conviction that change works best when everyone has the standing to make it.",
+  explainerParagraph3: "We are not ranking changemakers. We are reading the traces a worldview leaves — or doesn't leave — in language, across five dimensions:",
+  learnMoreButton: "How the model was built →",
+  ctaEyebrow: "Try it",
+  ctaTitlePart1: "Read one ",
+  ctaTitlePart2: "text",
+  ctaTitlePart3: " — or follow a whole story",
+  ctaSubtitle: "Paste something a person or an organization actually wrote or said, and get the full reading in about a minute. Or start with the fictional demo — a complete story, already told over time — to see where this leads.",
+  ctaButton: "Open the Scoring Tool →",
+  ctaDemoLink: "See the demo story →",
 };
 
 export default function Home() {
@@ -29,7 +34,9 @@ export default function Home() {
             {STRINGS.explainerEyebrow}
           </p>
           <h2 className="mt-4 font-display text-2xl font-normal leading-tight text-ink sm:text-3xl lg:text-4xl max-w-2xl">
-            {STRINGS.explainerTitle}
+            {STRINGS.explainerTitlePart1}
+            <span className="font-light italic text-accent">{STRINGS.explainerTitlePart2}</span>
+            {STRINGS.explainerTitlePart3}
           </h2>
         </Reveal>
         <Reveal delay={90}>
@@ -95,13 +102,20 @@ export default function Home() {
             <h3 className="mt-5 font-display text-2xl font-normal leading-snug text-ink sm:text-3xl">
               {STRINGS.ctaTitlePart1}
               <span className="font-light italic text-accent">{STRINGS.ctaTitlePart2}</span>
+              {STRINGS.ctaTitlePart3}
             </h3>
-            <p className="mt-4 max-w-[50ch] font-sans text-sm leading-relaxed text-muted">
+            <p className="mt-4 max-w-[55ch] font-sans text-base leading-relaxed text-muted">
               {STRINGS.ctaSubtitle}
             </p>
-            <div className="mt-8">
+            <div className="mt-8 flex flex-wrap items-center gap-5">
               <Link href="/tool" className="btn-primary">
                 {STRINGS.ctaButton}
+              </Link>
+              <Link
+                href={`/subjects/${DEMO_ORG_ID}`}
+                className="font-mono text-xs uppercase tracking-widest text-accent hover:text-accent-cta transition-colors"
+              >
+                {STRINGS.ctaDemoLink}
               </Link>
             </div>
           </div>
