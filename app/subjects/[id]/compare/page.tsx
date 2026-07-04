@@ -4,6 +4,8 @@ import { getSubject } from "@/lib/db/subjects";
 import { listAnalysesBySubject } from "@/lib/db/analyses";
 import { CompareView } from "@/components/CompareView";
 import { Reveal } from "@/components/Reveal";
+import { DemoBanner } from "@/components/DemoBanner";
+import { isDemoSubject } from "@/lib/demo";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +27,11 @@ export default async function ComparePage({
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-14 sm:py-20">
+      {isDemoSubject(subject) && (
+        <div className="mb-8">
+          <DemoBanner />
+        </div>
+      )}
       <Reveal>
         <Link
           href={`/subjects/${id}`}

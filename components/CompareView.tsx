@@ -14,6 +14,9 @@ import {
 } from "@/lib/compare";
 import { CompareRadar } from "@/components/CompareRadar";
 import { ChangeNarrativeCard } from "@/components/ChangeNarrativeCard";
+import { Disclosure } from "@/components/Disclosure";
+import { Term } from "@/components/Term";
+import type { GlossaryKey } from "@/lib/copy/glossary";
 
 const GENRE_LABELS: Record<string, string> = {
   interview: "Interview",
@@ -144,9 +147,17 @@ export function CompareView({
         </div>
       )}
 
+      {/* Story first (Phase 9): the narrated shift leads; deltas and radar
+          support it one labeled click below. The mismatch guardrail above is
+          deliberately NOT inside the disclosure — it must be unmissable. */}
+      <ChangeNarrativeCard key={`${t1.entry_id}-${t2.entry_id}`} entryId1={t1.entry_id} entryId2={t2.entry_id} />
+
+      <Disclosure showLabel="See the numbers behind this reading" hideLabel="Hide the numbers">
       {/* Enactment score delta + narrative direction */}
       <div className="border border-border bg-surface p-5 sm:p-6 lg:p-8">
-        <p className="font-mono text-xs uppercase tracking-widest text-muted">Enactment Score Delta</p>
+        <p className="font-mono text-xs uppercase tracking-widest text-muted">
+          <Term k="enactmentScore">Enactment Score</Term> Delta
+        </p>
         <div className="mt-3 flex flex-wrap items-baseline gap-3">
           <span className="font-display text-[56px] font-normal leading-none text-ink sm:text-[64px]">
             {formatSigned(enactmentDelta)}
@@ -179,7 +190,9 @@ export function CompareView({
               <li key={d.key} className="border-l-4 pl-4" style={{ borderLeftColor: d.color }}>
                 <div className="flex flex-wrap items-baseline justify-between gap-x-4">
                   <span className="font-mono text-xs uppercase tracking-widest text-ink">
-                    {d.key} · {d.fullName}
+                    <Term k={d.key.toLowerCase() as GlossaryKey}>
+                      {d.key} · {d.fullName}
+                    </Term>
                   </span>
                   <span className="font-display text-2xl text-ink">{formatSigned(delta)}</span>
                 </div>
@@ -204,29 +217,26 @@ export function CompareView({
       <div className="grid grid-cols-1 gap-6 border border-border bg-surface p-5 sm:grid-cols-2 sm:p-6 lg:p-8">
         <div>
           <p className="font-mono text-xs uppercase tracking-widest text-muted">t1 · {t1.entry.entry_date}</p>
-          <p className="mt-2 font-sans text-sm text-ink">
-            {GENRE_LABELS[t1.entry.genre] ?? t1.entry.genre} · Lens A: {t1.lens_a_tag ?? "—"} · logged by{" "}
-            {t1.entry.ashokan_name}
+          <p className="mt-2 font-sans text-base text-ink">
+            {GENRE_LABELS[t1.entry.genre] ?? t1.entry.genre} · <Term k="lensA">Lens A</Term>:{" "}
+            {t1.lens_a_tag ?? "—"} · logged by {t1.entry.ashokan_name}
           </p>
           <p className="mt-1 font-mono text-[0.65rem] uppercase tracking-widest text-muted/70">
-            Model · {t1.model_version}
+            <Term k="modelVersion">Model</Term> · {t1.model_version}
           </p>
         </div>
         <div>
           <p className="font-mono text-xs uppercase tracking-widest text-muted">t2 · {t2.entry.entry_date}</p>
-          <p className="mt-2 font-sans text-sm text-ink">
-            {GENRE_LABELS[t2.entry.genre] ?? t2.entry.genre} · Lens A: {t2.lens_a_tag ?? "—"} · logged by{" "}
-            {t2.entry.ashokan_name}
+          <p className="mt-2 font-sans text-base text-ink">
+            {GENRE_LABELS[t2.entry.genre] ?? t2.entry.genre} · <Term k="lensA">Lens A</Term>:{" "}
+            {t2.lens_a_tag ?? "—"} · logged by {t2.entry.ashokan_name}
           </p>
           <p className="mt-1 font-mono text-[0.65rem] uppercase tracking-widest text-muted/70">
-            Model · {t2.model_version}
+            <Term k="modelVersion">Model</Term> · {t2.model_version}
           </p>
         </div>
       </div>
-
-      {/* Part D — Change Over Time. Keyed so switching the pair fully resets
-          the card instead of showing a stale narrative for the old pair. */}
-      <ChangeNarrativeCard key={`${t1.entry_id}-${t2.entry_id}`} entryId1={t1.entry_id} entryId2={t2.entry_id} />
+      </Disclosure>
     </div>
   );
 }

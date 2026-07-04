@@ -65,11 +65,14 @@ export function CompareRadar({
                 tick={{ fill: "#486581", fontSize: 9 }}
                 axisLine={false}
               />
+              {/* t1 dashed so the two series are distinguishable by line
+                  style as well as color (Phase 9: no color-only encoding). */}
               <Radar
                 name={t1Label}
                 dataKey="t1"
                 stroke={T1_COLOR}
                 strokeWidth={2}
+                strokeDasharray="6 4"
                 fill={T1_COLOR}
                 fillOpacity={0.12}
                 dot={{ r: 2.5, fill: T1_COLOR, strokeWidth: 0 }}

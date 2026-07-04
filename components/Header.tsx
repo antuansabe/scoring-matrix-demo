@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
+import { OPEN_TOUR_EVENT } from "@/components/Walkthrough";
 
 const STRINGS = {
   home: "Home",
@@ -12,6 +13,7 @@ const STRINGS = {
   about: "About",
   badge: "Density Badge",
   subjects: "Subjects",
+  tour: "Start here",
   brandName: "Changemaker Worldview",
 };
 
@@ -74,6 +76,13 @@ export function Header() {
               </Link>
             );
           })}
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent(OPEN_TOUR_EVENT))}
+            className="cursor-pointer font-mono text-xs uppercase tracking-widest py-1 border-b-2 border-transparent text-accent hover:text-accent-cta"
+          >
+            {STRINGS.tour}
+          </button>
         </nav>
 
         {/* Right Side: Hamburger Button for Mobile */}
@@ -112,6 +121,16 @@ export function Header() {
                 </Link>
               );
             })}
+            <button
+              type="button"
+              onClick={() => {
+                setIsOpen(false);
+                window.dispatchEvent(new CustomEvent(OPEN_TOUR_EVENT));
+              }}
+              className="cursor-pointer text-left font-mono text-xs uppercase tracking-widest py-2.5 px-4 rounded-md border-l-4 border-transparent text-accent hover:bg-border/20"
+            >
+              {STRINGS.tour}
+            </button>
           </nav>
         </div>
       )}

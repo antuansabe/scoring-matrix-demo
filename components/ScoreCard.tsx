@@ -1,6 +1,7 @@
 import { PARADIGM_NAMES, getGenreWeightExplanation, GENRE_WEIGHTS } from "@/lib/paradigm";
 import type { ScoreResult, GenreTag } from "@/lib/types";
 import { CountUpNumber } from "@/components/CountUpNumber";
+import { Term } from "@/components/Term";
 
 /**
  * Headline of a result: Enactment Score (large, Fraunces), paradigm name and
@@ -35,7 +36,7 @@ export function ScoreCard({
         {onGenreChange ? (
           <div className="flex flex-wrap items-center gap-3">
             <span className="font-mono text-xs uppercase tracking-widest text-muted">
-              Genre Tag:
+              <Term k="lensA">Genre Tag</Term>:
             </span>
             <select
               value={activeGenre}
@@ -86,7 +87,7 @@ export function ScoreCard({
         <span className="font-mono text-sm text-muted">/ 100</span>
       </div>
       <p className="mt-1 font-mono text-xs uppercase tracking-widest text-muted">
-        Enactment Score
+        <Term k="enactmentScore">Enactment Score</Term>
       </p>
 
       <p className="mt-3 font-display text-2xl font-normal leading-tight text-ink sm:text-3xl">
@@ -100,7 +101,7 @@ export function ScoreCard({
 
       <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-border pt-4">
         <span className="font-mono text-xs uppercase tracking-widest text-muted">
-          EACH Orientation
+          <Term k="eachOrientation">EACH Orientation</Term>
         </span>
         <span
           className="border px-3 py-1 font-mono text-xs uppercase tracking-widest text-ink"

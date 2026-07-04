@@ -77,9 +77,10 @@ export function ChangeNarrativeCard({ entryId1, entryId2 }: { entryId1: string; 
         <h2 className="mt-3 font-display text-xl font-normal leading-snug text-ink sm:text-2xl">
           Read the <span className="font-light italic text-accent">shift</span> between these two entries
         </h2>
-        <p className="mt-2 max-w-[55ch] font-sans text-sm leading-relaxed text-muted">
-          A grounded paragraph explaining the pattern above — which dimensions moved, and a plausible
-          reading of why, drawn from both entries&apos; material.
+        <p className="mt-2 max-w-[55ch] font-sans text-base leading-relaxed text-muted">
+          A short, grounded paragraph telling the story of what changed between these two dates —
+          which dimensions moved, and a plausible reading of why, drawn from both entries&apos;
+          material. The numbers that support it are one click below.
         </p>
         <button
           type="button"

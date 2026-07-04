@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { listSubjectsWithStats } from "@/lib/db/subjects";
 import { Reveal } from "@/components/Reveal";
+import { isDemoSubject } from "@/lib/demo";
 
 // Subjects and entries change independently of any build — never cache this list.
 export const dynamic = "force-dynamic";
@@ -14,8 +15,18 @@ function formatDate(iso: string | null): string {
   return iso ?? "—";
 }
 
-export default async function SubjectsPage() {
-  const subjects = await listSubjectsWithStats();
+export default async function SubjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ demo?: string }>;
+}) {
+  const { demo } = await searchParams;
+  const showDemo = demo === "1";
+  const all = await listSubjectsWithStats();
+  // Demo rows are excluded from the real list by default (Phase 9) — they
+  // exist for guided demonstrations, not as data.
+  const subjects = showDemo ? all : all.filter((s) => !isDemoSubject(s));
+  const demoCount = all.length - all.filter((s) => !isDemoSubject(s)).length;
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-14 sm:py-20">
@@ -26,10 +37,23 @@ export default async function SubjectsPage() {
         <h1 className="mt-5 font-display text-2xl font-normal leading-tight text-ink sm:text-3xl">
           <span className="font-light italic text-accent">Subjects</span> under observation
         </h1>
-        <p className="mt-4 max-w-prose font-sans text-sm leading-relaxed text-muted">
+        <p className="mt-4 max-w-prose font-sans text-base leading-relaxed text-muted">
           Every JJ Partner and NGL with at least one dated entry. A subject is only ever compared
           to itself over time.
         </p>
+        {demoCount > 0 && (
+          <p className="mt-3 font-mono text-xs uppercase tracking-widest">
+            {showDemo ? (
+              <Link href="/subjects" className="text-accent hover:text-accent-cta">
+                Hide the demo example
+              </Link>
+            ) : (
+              <Link href="/subjects?demo=1" className="text-muted hover:text-ink">
+                Show the demo example →
+              </Link>
+            )}
+          </p>
+        )}
       </Reveal>
 
       {subjects.length === 0 ? (
@@ -54,6 +78,11 @@ export default async function SubjectsPage() {
                 <p className="font-display text-lg text-ink">{s.name}</p>
                 <p className="mt-1 font-mono text-xs uppercase tracking-widest text-muted">
                   {SUBJECT_TYPE_LABELS[s.type] ?? s.type}
+                  {isDemoSubject(s) && (
+                    <span className="ml-2 border border-accent px-2 py-0.5 font-bold text-accent">
+                      Demo · fictional
+                    </span>
+                  )}
                 </p>
               </div>
               <div className="flex items-center gap-6">

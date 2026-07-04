@@ -5,6 +5,10 @@ import { getAnalysisByEntryId } from "@/lib/db/analyses";
 import { resolveParadigmName } from "@/lib/paradigm";
 import { FeedbackCard } from "@/components/FeedbackCard";
 import { Reveal } from "@/components/Reveal";
+import { DemoBanner } from "@/components/DemoBanner";
+import { isDemoSubject } from "@/lib/demo";
+import { Term } from "@/components/Term";
+import { PARADIGM_MEANINGS, NOT_A_VERDICT, type GlossaryKey } from "@/lib/copy/glossary";
 
 export const dynamic = "force-dynamic";
 
@@ -37,6 +41,11 @@ export default async function EntryDetailPage({
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-14 sm:py-20">
+      {isDemoSubject(subject) && (
+        <div className="mb-8">
+          <DemoBanner />
+        </div>
+      )}
       <Reveal>
         <Link
           href={`/subjects/${subject.id}`}
@@ -63,11 +72,19 @@ export default async function EntryDetailPage({
           </span>
           <span className="font-mono text-sm text-muted">/ 100</span>
         </div>
-        <p className="mt-1 font-mono text-xs uppercase tracking-widest text-muted">Enactment Score</p>
+        <p className="mt-1 font-mono text-xs uppercase tracking-widest text-muted">
+          <Term k="enactmentScore">Enactment Score</Term>
+        </p>
         <p className="mt-3 font-display text-xl text-ink">{resolveParadigmName(analysis.enactment_score)}</p>
+        <p className="mt-2 max-w-[60ch] font-sans text-base leading-relaxed text-muted">
+          {PARADIGM_MEANINGS[resolveParadigmName(analysis.enactment_score)]}
+        </p>
+        <p className="mt-2 font-sans text-base italic leading-relaxed text-muted">{NOT_A_VERDICT}</p>
 
         <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-border pt-4">
-          <span className="font-mono text-xs uppercase tracking-widest text-muted">EACH Orientation</span>
+          <span className="font-mono text-xs uppercase tracking-widest text-muted">
+            <Term k="eachOrientation">EACH Orientation</Term>
+          </span>
           <span className="border border-accent px-3 py-1 font-mono text-xs uppercase tracking-widest text-ink">
             {analysis.each_orientation}
           </span>
@@ -76,7 +93,9 @@ export default async function EntryDetailPage({
         <div className="mt-5 grid grid-cols-2 gap-4 border-t border-border pt-4 sm:grid-cols-5">
           {DIMENSION_LABELS.map((d) => (
             <div key={d.key}>
-              <p className="font-mono text-xs uppercase tracking-widest text-muted">{d.label.split(" · ")[0]}</p>
+              <p className="font-mono text-xs uppercase tracking-widest text-muted">
+                <Term k={d.key as GlossaryKey}>{d.label.split(" · ")[0]}</Term>
+              </p>
               <p className="font-display text-2xl text-ink">
                 {analysis[d.key]}
                 <span className="text-sm text-muted">/4</span>
@@ -86,7 +105,7 @@ export default async function EntryDetailPage({
         </div>
 
         <p className="mt-5 border-t border-border pt-4 font-mono text-[0.65rem] uppercase tracking-widest text-muted/70">
-          Model version · {analysis.model_version}
+          <Term k="modelVersion">Model version</Term> · {analysis.model_version}
         </p>
       </div>
 

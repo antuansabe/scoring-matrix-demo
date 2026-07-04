@@ -168,7 +168,7 @@ export function FeedbackCard({
           </span>{" "}
           at your text
         </h2>
-        <p className="mt-2 max-w-[55ch] font-sans text-sm leading-relaxed text-muted">
+        <p className="mt-2 max-w-[55ch] font-sans text-base leading-relaxed text-muted">
           A structured reading of what your text says and does, with specific
           guidance to strengthen it.
         </p>
@@ -178,7 +178,7 @@ export function FeedbackCard({
             Whose voice is this text?
           </p>
           <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2">
-            <label className="flex items-center gap-2 font-sans text-sm text-ink">
+            <label className="flex items-center gap-2 font-sans text-base text-ink">
               <input
                 type="radio"
                 name="subject-voice"
@@ -187,7 +187,7 @@ export function FeedbackCard({
               />
               An individual&apos;s
             </label>
-            <label className="flex items-center gap-2 font-sans text-sm text-ink">
+            <label className="flex items-center gap-2 font-sans text-base text-ink">
               <input
                 type="radio"
                 name="subject-voice"
@@ -231,7 +231,7 @@ export function FeedbackCard({
           />
           <div>
             <p
-              className="font-sans text-sm leading-relaxed text-ink"
+              className="font-sans text-base leading-relaxed text-ink"
               aria-live="polite"
             >
               {LOADING_MESSAGES[msgIdx]}
@@ -259,7 +259,7 @@ export function FeedbackCard({
         >
           Feedback Unavailable
         </p>
-        <p className="mt-2 font-sans text-sm leading-relaxed text-ink">
+        <p className="mt-2 font-sans text-base leading-relaxed text-ink">
           {errorMsg ?? "Something went wrong. Please try again."}
         </p>
         <button
@@ -312,7 +312,7 @@ export function FeedbackCard({
             {summaryFields.map(({ label, value }) => (
               <div key={label}>
                 <FieldLabel>{label}</FieldLabel>
-                <p className="font-sans text-sm leading-relaxed text-ink">
+                <p className="font-sans text-base leading-relaxed text-ink">
                   {value}
                 </p>
               </div>
@@ -331,12 +331,12 @@ export function FeedbackCard({
               <ul className="space-y-5">
                 {feedbackResult.feedback.whatWorksWell.map((item, i) => (
                   <li key={i}>
-                    <p className="font-sans text-sm leading-relaxed text-ink">
+                    <p className="font-sans text-base leading-relaxed text-ink">
                       {item.observation}
                     </p>
                     {item.textAnchor && (
                       <p
-                        className="mt-2 border-l-2 pl-4 font-sans text-sm italic leading-relaxed text-muted"
+                        className="mt-2 border-l-2 pl-4 font-sans text-base italic leading-relaxed text-muted"
                         style={{ borderColor: TEAL }}
                       >
                         &ldquo;{item.textAnchor}&rdquo;
@@ -355,14 +355,14 @@ export function FeedbackCard({
               <ul className="space-y-6">
                 {feedbackResult.feedback.howToStrengthen.map((item, i) => (
                   <li key={i} className="space-y-2">
-                    <p className="font-sans text-sm font-semibold leading-snug text-ink">
+                    <p className="font-sans text-base font-semibold leading-snug text-ink">
                       {item.gap}
                     </p>
-                    <p className="font-sans text-sm leading-relaxed text-muted">
+                    <p className="font-sans text-base leading-relaxed text-muted">
                       {item.whyItMatters}
                     </p>
                     <div
-                      className="rounded-sm border px-4 py-3 font-sans text-sm leading-relaxed text-ink"
+                      className="rounded-sm border px-4 py-3 font-sans text-base leading-relaxed text-ink"
                       style={{
                         backgroundColor: `${TERRACOTTA}0A`,
                         borderColor: `${TERRACOTTA}28`,

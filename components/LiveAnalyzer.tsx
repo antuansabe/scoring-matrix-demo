@@ -4,11 +4,12 @@ import { useRef, useState } from "react";
 import type { ScoreResult, GenreTag, FeedbackResult } from "@/lib/types";
 import type { Subject } from "@/lib/db/types";
 import { ScoreCard } from "@/components/ScoreCard";
-import { RadarProfile } from "@/components/RadarProfile";
 import { ScoreBreakdown } from "@/components/ScoreBreakdown";
 import { JustificationQuotes } from "@/components/JustificationQuotes";
 import { FeedbackCard } from "@/components/FeedbackCard";
 import { EntryIntakeForm } from "@/components/EntryIntakeForm";
+import { ResultStory } from "@/components/ResultStory";
+import { Disclosure } from "@/components/Disclosure";
 import { calculateEnactmentScore, resolveParadigmName, resolveEACHOrientation } from "@/lib/paradigm";
 
 const MIN_WORDS = 50;
@@ -222,18 +223,22 @@ export function LiveAnalyzer({ initialSubjects = [] }: { initialSubjects?: Subje
 
       {status === "done" && result && (
         <div className="space-y-8">
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-10">
-            <div className="space-y-8">
-              <ScoreCard result={result} onGenreChange={handleGenreChange} />
-              <RadarProfile result={result} />
+          {/* Story first (Phase 9): what the reading means, then the radar.
+              The full expert detail — numbers, weights, justifications —
+              is one labeled click away and loses nothing. */}
+          <ResultStory result={result} />
+
+          <Disclosure showLabel="See the full reading" hideLabel="Hide the full reading">
+            <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-10">
+              <div>
+                <ScoreCard result={result} onGenreChange={handleGenreChange} />
+              </div>
+              <div>
+                <ScoreBreakdown result={result} />
+              </div>
             </div>
-            <div>
-              <ScoreBreakdown result={result} />
-            </div>
-          </div>
-          <div className="mt-8">
             <JustificationQuotes result={result} />
-          </div>
+          </Disclosure>
 
           <div className="mt-8">
             <FeedbackCard

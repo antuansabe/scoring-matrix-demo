@@ -26,6 +26,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ScrollProgress } from "@/components/ScrollProgress";
+import { Walkthrough } from "@/components/Walkthrough";
 
 const SITE_TITLE = "Changemaker Worldview Scoring Matrix — Demo";
 const SITE_DESCRIPTION =
@@ -47,8 +48,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    // lang: the UI copy is English (audited Phase 9); "es" made screen
+    // readers mispronounce the whole interface. Analyzed TEXTS may still be
+    // Spanish — that's content, not UI chrome. Full i18n is a separate,
+    // flagged decision for Antonio.
     <html
-      lang="es"
+      lang="en"
       className={`${fraunces.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
       <body className="min-h-full">
@@ -56,6 +61,7 @@ export default function RootLayout({
         <Header />
         {children}
         <Footer />
+        <Walkthrough />
       </body>
     </html>
   );

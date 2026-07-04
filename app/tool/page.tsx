@@ -2,6 +2,7 @@ import { LiveAnalyzer } from "@/components/LiveAnalyzer";
 import { Reveal } from "@/components/Reveal";
 import { listSubjects } from "@/lib/db/subjects";
 import type { Subject } from "@/lib/db/types";
+import { isDemoSubject } from "@/lib/demo";
 
 const STRINGS = {
   eyebrow: "TEST THE TOOL:",
@@ -15,7 +16,9 @@ export const dynamic = "force-dynamic";
 export default async function ToolPage() {
   let subjects: Subject[] = [];
   try {
-    subjects = await listSubjects();
+    // Demo subjects are excluded from intake — nobody should save real
+    // entries onto the fictional example.
+    subjects = (await listSubjects()).filter((s) => !isDemoSubject(s));
   } catch (err) {
     // The ephemeral analyzer must keep working even if persistence is down.
     console.error("[app/tool] Failed to load subjects:", err);

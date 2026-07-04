@@ -1,5 +1,7 @@
 import { DIMENSIONS, GENRE_WEIGHTS } from "@/lib/paradigm";
 import type { ScoreResult } from "@/lib/types";
+import { Term } from "@/components/Term";
+import type { GlossaryKey } from "@/lib/copy/glossary";
 
 // A dimension's individual 0–4 score carries the same paradigm naming as the
 // overall band (docs/SCORING_MODEL.md).
@@ -45,7 +47,9 @@ export function ScoreBreakdown({
             <li key={d.key}>
               <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
                 <span className="font-mono text-xs uppercase tracking-widest text-ink">
-                  {d.key} · {d.fullName}
+                  <Term k={d.key.toLowerCase() as GlossaryKey}>
+                    {d.key} · {d.fullName}
+                  </Term>
                 </span>
                 <span className="shrink-0 font-mono text-xs text-muted">
                   weight {weightPct}% · +{contribution.toFixed(1)} pts
