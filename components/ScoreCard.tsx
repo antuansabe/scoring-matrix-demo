@@ -2,6 +2,7 @@ import { PARADIGM_NAMES, getGenreWeightExplanation, GENRE_WEIGHTS } from "@/lib/
 import type { ScoreResult, GenreTag } from "@/lib/types";
 import { CountUpNumber } from "@/components/CountUpNumber";
 import { Term } from "@/components/Term";
+import { useTranslations, useLocale } from "next-intl";
 
 /**
  * Headline of a result: Enactment Score (large, Fraunces), paradigm name and
@@ -20,6 +21,8 @@ export function ScoreCard({
   animateScore?: boolean;
   onGenreChange?: (genre: GenreTag) => void;
 }) {
+  const t = useTranslations("scorecard");
+  const locale = useLocale();
   const paradigm = PARADIGM_NAMES.find((p) => p.name === result.paradigmName);
   const hasFlags =
     result.wordCountWarnings.length > 0 || result.confidenceFlags.length > 0;
@@ -36,7 +39,7 @@ export function ScoreCard({
         {onGenreChange ? (
           <div className="flex flex-wrap items-center gap-3">
             <span className="font-mono text-xs uppercase tracking-widest text-muted">
-              <Term k="lensA">Genre Tag</Term>:
+              <Term k="lensA">{t("genreTag")}</Term>:
             </span>
             <select
               value={activeGenre}
@@ -52,7 +55,7 @@ export function ScoreCard({
           </div>
         ) : (
           <span className="font-mono text-xs uppercase tracking-widest text-muted">
-            Genre · {result.genreTag}
+            {t("genreTag")} · {result.genreTag}
           </span>
         )}
 
@@ -60,22 +63,22 @@ export function ScoreCard({
           {result.genreOverridden ? (
             <>
               <span className="line-through text-muted/60 font-mono text-xs uppercase tracking-widest">
-                Detected: {result.detectedGenreTag}
+                {t("detected", { genre: result.detectedGenreTag ?? "" })}
               </span>
               <span className="font-mono text-[0.65rem] uppercase tracking-widest bg-accent-light text-accent border border-accent-2/60 px-2.5 py-0.5 font-medium rounded-full">
-                Genre adjusted by user
+                {t("adjusted")}
               </span>
             </>
           ) : (
             <span className="font-mono text-xs uppercase tracking-widest text-muted/60">
-              Detected: {result.detectedGenreTag || result.genreTag}
+              {t("detected", { genre: result.detectedGenreTag || result.genreTag })}
             </span>
           )}
         </div>
       </div>
 
       <p className="font-sans text-xs text-muted italic -mt-2 mb-4">
-        {getGenreWeightExplanation(activeGenre, "en")}
+        {getGenreWeightExplanation(activeGenre, locale === "es" ? "es" : "en")}
       </p>
 
       <div className="mt-2 flex items-baseline gap-2">
@@ -114,7 +117,7 @@ export function ScoreCard({
       {hasFlags && (
         <div className="mt-4 space-y-1.5 border-t border-border pt-4">
           <p className="font-mono text-xs uppercase tracking-widest text-muted">
-            Flags
+            {t("flags")}
           </p>
           {result.wordCountWarnings.length > 0 && (
             <p className="font-mono text-xs uppercase tracking-widest text-ink">
@@ -123,7 +126,7 @@ export function ScoreCard({
                 style={{ backgroundColor: accentColor }}
                 aria-hidden="true"
               />
-              Below threshold on: {result.wordCountWarnings.join(", ")}
+              {t("belowThreshold", { dims: result.wordCountWarnings.join(", ") })}
             </p>
           )}
           {result.confidenceFlags.map((flag, i) => (

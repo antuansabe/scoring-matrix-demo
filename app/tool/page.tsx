@@ -1,13 +1,11 @@
+import { getTranslations } from "next-intl/server";
 import { LiveAnalyzer } from "@/components/LiveAnalyzer";
 import { Reveal } from "@/components/Reveal";
 import { listSubjects, getSubject } from "@/lib/db/subjects";
 import type { Subject } from "@/lib/db/types";
 import { isDemoSubject } from "@/lib/demo";
 
-const STRINGS = {
-  eyebrow: "The Scoring Tool",
-  subtitle: "You'll get the reading in three layers: what it says, the scores behind it, and specific guidance to strengthen it.",
-};
+
 
 // Always fresh — new subjects can be created from this page, so a cached
 // subjects list would silently go stale.
@@ -19,6 +17,7 @@ export default async function ToolPage({
   searchParams: Promise<{ subject?: string }>;
 }) {
   const { subject: subjectParam } = await searchParams;
+  const t = await getTranslations("tool");
 
   let subjects: Subject[] = [];
   let lockedSubject: Subject | undefined;
@@ -42,15 +41,15 @@ export default async function ToolPage({
       <section className="max-w-3xl mx-auto">
         <Reveal>
           <p className="font-mono text-xs uppercase tracking-widest text-accent-cta font-semibold">
-            {STRINGS.eyebrow}
+            {t("eyebrow")}
           </p>
           <h1 className="mt-5 font-display text-2xl font-normal leading-relaxed text-ink sm:text-3xl max-w-2xl">
-            Choose an honest piece of text — something a person or an organization actually wrote
-            or said: an interview, a page from a report, a speech —{" "}
-            <span className="font-light italic text-accent">the work in its own words</span>.
+            {t("h1Part1")}
+            <span className="font-light italic text-accent">{t("h1Part2")}</span>
+            {t("h1Part3")}
           </h1>
           <p className="mt-5 mb-10 max-w-prose font-sans text-base leading-relaxed text-muted">
-            {STRINGS.subtitle}
+            {t("subtitle")}
           </p>
         </Reveal>
         {lockedSubject && (
@@ -59,11 +58,9 @@ export default async function ToolPage({
             style={{ borderLeftWidth: 3, borderLeftColor: "var(--accent)" }}
           >
             <p className="font-mono text-xs uppercase tracking-widest text-accent">
-              Adding an entry to {lockedSubject.name}
+              {t("lockedTitle", { name: lockedSubject.name })}
             </p>
-            <p className="mt-1 font-sans text-base leading-relaxed text-muted">
-              Paste the material below, run the reading, and save — the subject is already chosen.
-            </p>
+            <p className="mt-1 font-sans text-base leading-relaxed text-muted">{t("lockedBody")}</p>
           </div>
         )}
         <LiveAnalyzer initialSubjects={subjects} lockedSubject={lockedSubject} />

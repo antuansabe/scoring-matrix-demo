@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { DIMENSIONS } from "@/lib/paradigm";
+import { useTranslations } from "next-intl";
 import type { DimensionKey } from "@/lib/types";
 
 // t1 in Ashoka Blue (--ink), t2 in Ashoka Orange (--accent) — the palette's
@@ -37,6 +38,7 @@ export function CompareRadar({
   t2Label: string;
   t2Scores: SeriesScores;
 }) {
+  const t = useTranslations("compare");
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -46,12 +48,12 @@ export function CompareRadar({
     t2: t2Scores[d.key],
   }));
 
-  const ariaLabel = `Overlaid radar profile comparing ${t1Label} and ${t2Label} across the five dimensions, scale 0 to 4.`;
+  const ariaLabel = t("radarAria", { t1: t1Label, t2: t2Label });
 
   return (
     <div className="border border-border bg-surface p-4 sm:p-6 lg:p-8">
       <p className="mb-2 font-mono text-xs uppercase tracking-widest text-muted">
-        Overlaid Radar Profile · D1–D5 · 0–4
+        {t("radarTitle")}
       </p>
       <div role="img" aria-label={ariaLabel} className="h-[300px] w-full sm:h-[340px] lg:h-[380px]">
         {mounted && (

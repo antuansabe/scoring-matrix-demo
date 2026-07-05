@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import type { Subject, AnalysisWithEntry } from "@/lib/db/types";
 import { DIMENSIONS, resolveParadigmName } from "@/lib/paradigm";
 import {
@@ -10,22 +11,12 @@ import {
   getDimensionScore,
   resolveNarrativeDirection,
   orderChronologically,
-  NARRATIVE_DIRECTION_LABELS,
 } from "@/lib/compare";
 import { CompareRadar } from "@/components/CompareRadar";
 import { ChangeNarrativeCard } from "@/components/ChangeNarrativeCard";
 import { Disclosure } from "@/components/Disclosure";
 import { Term } from "@/components/Term";
 import type { GlossaryKey } from "@/lib/copy/glossary";
-
-const GENRE_LABELS: Record<string, string> = {
-  interview: "Interview",
-  article: "Article",
-  website: "Website",
-  report: "Report",
-  social: "Social Media",
-  other: "Other",
-};
 
 const DIRECTION_GLYPH: Record<string, string> = {
   higher: "↑",
@@ -50,6 +41,8 @@ export function CompareView({
   subject: Subject;
   analyses: AnalysisWithEntry[];
 }) {
+  const t = useTranslations("compare");
+  const tg = useTranslations("genres");
   const [entryAId, setEntryAId] = useState(analyses[0].entry_id);
   const [entryBId, setEntryBId] = useState(analyses[analyses.length - 1].entry_id);
 
@@ -79,12 +72,12 @@ export function CompareView({
       {/* Entry selector — both options lists are `analyses`, this subject only */}
       <div className="border border-border bg-surface p-5 sm:p-6 lg:p-8">
         <p className="font-mono text-xs uppercase tracking-widest text-muted">
-          Comparing entries for <span className="text-ink">{subject.name}</span>
+          {t.rich("comparing", { name: () => <span className="text-ink">{subject.name}</span> })}
         </p>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label className="font-mono text-xs uppercase tracking-widest text-muted" htmlFor="entry-a">
-              Entry A
+              {t("entryA")}
             </label>
             <select
               id="entry-a"
@@ -94,14 +87,14 @@ export function CompareView({
             >
               {analyses.map((a) => (
                 <option key={a.entry_id} value={a.entry_id} disabled={a.entry_id === entryBId}>
-                  {a.entry.entry_date} · {a.enactment_score}/100 · {GENRE_LABELS[a.entry.genre] ?? a.entry.genre}
+                  {a.entry.entry_date} · {a.enactment_score}/100 · {tg(a.entry.genre)}
                 </option>
               ))}
             </select>
           </div>
           <div>
             <label className="font-mono text-xs uppercase tracking-widest text-muted" htmlFor="entry-b">
-              Entry B
+              {t("entryB")}
             </label>
             <select
               id="entry-b"
@@ -111,14 +104,14 @@ export function CompareView({
             >
               {analyses.map((a) => (
                 <option key={a.entry_id} value={a.entry_id} disabled={a.entry_id === entryAId}>
-                  {a.entry.entry_date} · {a.enactment_score}/100 · {GENRE_LABELS[a.entry.genre] ?? a.entry.genre}
+                  {a.entry.entry_date} · {a.enactment_score}/100 · {tg(a.entry.genre)}
                 </option>
               ))}
             </select>
           </div>
         </div>
         <p className="mt-3 font-mono text-[0.65rem] uppercase tracking-widest text-muted/70">
-          Read chronologically regardless of slot — t1 {t1.entry.entry_date} → t2 {t2.entry.entry_date}
+          {t("chronoNote", { t1: t1.entry.entry_date, t2: t2.entry.entry_date })}
         </p>
       </div>
 
@@ -135,14 +128,17 @@ export function CompareView({
               style={{ backgroundColor: "#E87722" }}
               aria-hidden="true"
             />
-            Model Version Mismatch
+            {t("mismatchTitle")}
           </p>
           <p className="mt-2 font-sans text-base leading-relaxed text-ink">
-            t1 ({t1.entry.entry_date}) was scored with <strong>{t1.model_version}</strong>; t2 (
-            {t2.entry.entry_date}) was scored with <strong>{t2.model_version}</strong>. The deltas
-            below may reflect a change in the scoring model or prompt — not a real shift in{" "}
-            {subject.name}&apos;s narrative. Longitudinal comparison is only strictly valid when both
-            points share a model version.
+            {t.rich("mismatchBody", {
+              t1Date: t1.entry.entry_date,
+              t2Date: t2.entry.entry_date,
+              t1Version: t1.model_version,
+              t2Version: t2.model_version,
+              name: subject.name,
+              b: (chunks) => <strong>{chunks}</strong>,
+            })}
           </p>
         </div>
       )}
@@ -152,19 +148,23 @@ export function CompareView({
           deliberately NOT inside the disclosure — it must be unmissable. */}
       <ChangeNarrativeCard key={`${t1.entry_id}-${t2.entry_id}`} entryId1={t1.entry_id} entryId2={t2.entry_id} />
 
-      <Disclosure showLabel="See the numbers behind this reading" hideLabel="Hide the numbers">
+      <Disclosure showLabel={t("seeNumbers")} hideLabel={t("hideNumbers")}>
       {/* Enactment score delta + narrative direction */}
       <div className="border border-border bg-surface p-5 sm:p-6 lg:p-8">
         <p className="font-mono text-xs uppercase tracking-widest text-muted">
-          <Term k="enactmentScore">Enactment Score</Term> Delta
+          {t.rich("deltaEyebrow", { term: (chunks) => <Term k="enactmentScore">{chunks}</Term> })}
         </p>
         <div className="mt-3 flex flex-wrap items-baseline gap-3">
           <span className="font-display text-[56px] font-normal leading-none text-ink sm:text-[64px]">
             {formatSigned(enactmentDelta)}
           </span>
           <span className="font-mono text-sm text-muted">
-            pts · t1 {t1.enactment_score} ({resolveParadigmName(t1.enactment_score)}) → t2{" "}
-            {t2.enactment_score} ({resolveParadigmName(t2.enactment_score)})
+            {t("deltaLine", {
+              t1Score: t1.enactment_score,
+              t1Paradigm: resolveParadigmName(t1.enactment_score),
+              t2Score: t2.enactment_score,
+              t2Paradigm: resolveParadigmName(t2.enactment_score),
+            })}
           </span>
         </div>
         <div className="mt-4 flex items-center gap-3 border-t border-border pt-4">
@@ -172,17 +172,17 @@ export function CompareView({
             {DIRECTION_GLYPH[direction]}
           </span>
           <span className="font-mono text-sm font-semibold uppercase tracking-widest text-ink">
-            {NARRATIVE_DIRECTION_LABELS[direction]}
+            {t(`direction_${direction}`)}
           </span>
         </div>
         <p className="mt-2 font-mono text-[0.65rem] uppercase tracking-widest text-muted/70">
-          Movement threshold ±{STABLE_THRESHOLD} pts — smaller shifts are read as stable, not signal.
+          {t("thresholdNote", { threshold: STABLE_THRESHOLD })}
         </p>
       </div>
 
       {/* Per-dimension delta */}
       <div className="border border-border bg-surface p-5 sm:p-6 lg:p-8">
-        <p className="mb-5 font-mono text-xs uppercase tracking-widest text-muted">Per-Dimension Delta</p>
+        <p className="mb-5 font-mono text-xs uppercase tracking-widest text-muted">{t("perDimension")}</p>
         <ul className="space-y-4">
           {DIMENSIONS.map((d) => {
             const delta = dimensionDeltas[d.key];
@@ -197,7 +197,7 @@ export function CompareView({
                   <span className="font-display text-2xl text-ink">{formatSigned(delta)}</span>
                 </div>
                 <p className="mt-1 font-sans text-xs text-muted">
-                  t1: {t1Scores[d.key]}/4 → t2: {t2Scores[d.key]}/4
+                  {t("dimLine", { t1: t1Scores[d.key], t2: t2Scores[d.key] })}
                 </p>
               </li>
             );
@@ -218,21 +218,21 @@ export function CompareView({
         <div>
           <p className="font-mono text-xs uppercase tracking-widest text-muted">t1 · {t1.entry.entry_date}</p>
           <p className="mt-2 font-sans text-base text-ink">
-            {GENRE_LABELS[t1.entry.genre] ?? t1.entry.genre} · <Term k="lensA">Lens A</Term>:{" "}
-            {t1.lens_a_tag ?? "—"} · logged by {t1.entry.ashokan_name}
+            {tg(t1.entry.genre)} · <Term k="lensA">Lens A</Term>: {t1.lens_a_tag ?? "—"} ·{" "}
+            {t("loggedBy", { name: t1.entry.ashokan_name })}
           </p>
           <p className="mt-1 font-mono text-[0.65rem] uppercase tracking-widest text-muted/70">
-            <Term k="modelVersion">Model</Term> · {t1.model_version}
+            <Term k="modelVersion">{t("model")}</Term> · {t1.model_version}
           </p>
         </div>
         <div>
           <p className="font-mono text-xs uppercase tracking-widest text-muted">t2 · {t2.entry.entry_date}</p>
           <p className="mt-2 font-sans text-base text-ink">
-            {GENRE_LABELS[t2.entry.genre] ?? t2.entry.genre} · <Term k="lensA">Lens A</Term>:{" "}
-            {t2.lens_a_tag ?? "—"} · logged by {t2.entry.ashokan_name}
+            {tg(t2.entry.genre)} · <Term k="lensA">Lens A</Term>: {t2.lens_a_tag ?? "—"} ·{" "}
+            {t("loggedBy", { name: t2.entry.ashokan_name })}
           </p>
           <p className="mt-1 font-mono text-[0.65rem] uppercase tracking-widest text-muted/70">
-            <Term k="modelVersion">Model</Term> · {t2.model_version}
+            <Term k="modelVersion">{t("model")}</Term> · {t2.model_version}
           </p>
         </div>
       </div>

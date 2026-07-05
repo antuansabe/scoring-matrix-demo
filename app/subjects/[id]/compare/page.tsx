@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { getSubject } from "@/lib/db/subjects";
 import { listAnalysesBySubject } from "@/lib/db/analyses";
@@ -9,17 +10,13 @@ import { isDemoSubject } from "@/lib/demo";
 
 export const dynamic = "force-dynamic";
 
-const SUBJECT_TYPE_LABELS: Record<string, string> = {
-  jj_partner: "JJ Partner",
-  ngl: "NGL",
-};
-
 export default async function ComparePage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const t = await getTranslations();
   const subject = await getSubject(id);
   if (!subject) notFound();
 
@@ -40,14 +37,14 @@ export default async function ComparePage({
           ← {subject.name}
         </Link>
         <p className="mt-5 font-mono text-xs uppercase tracking-widest text-accent-cta font-semibold">
-          {SUBJECT_TYPE_LABELS[subject.type] ?? subject.type}
+          {t(`subjectTypes.${subject.type}`)}
         </p>
         <h1 className="mt-2 font-display text-2xl font-normal leading-tight text-ink sm:text-3xl">
-          Compare <span className="font-light italic text-accent">two entries</span>
+          {t("compare.titlePart1")}
+          <span className="font-light italic text-accent">{t("compare.titlePart2")}</span>
         </h1>
         <p className="mt-3 max-w-prose font-sans text-sm leading-relaxed text-muted">
-          A subject is only ever compared to itself over time — never to another subject, and never
-          silently across a model version change.
+          {t("compare.intro")}
         </p>
       </Reveal>
 
@@ -55,11 +52,14 @@ export default async function ComparePage({
         {analyses.length < 2 ? (
           <div className="border border-border bg-surface p-8 text-center">
             <p className="font-sans text-sm text-muted">
-              {subject.name} needs at least two dated entries to compare. Log another entry from the{" "}
-              <Link href="/tool" className="text-accent hover:underline">
-                Scoring Tool
-              </Link>
-              .
+              {t.rich("compare.needTwo", {
+                name: subject.name,
+                link: (chunks) => (
+                  <Link href="/tool" className="text-accent hover:underline">
+                    {chunks}
+                  </Link>
+                ),
+              })}
             </p>
           </div>
         ) : (

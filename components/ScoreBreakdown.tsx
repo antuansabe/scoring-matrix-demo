@@ -2,6 +2,7 @@ import { DIMENSIONS, GENRE_WEIGHTS } from "@/lib/paradigm";
 import type { ScoreResult } from "@/lib/types";
 import { Term } from "@/components/Term";
 import type { GlossaryKey } from "@/lib/copy/glossary";
+import { useTranslations } from "next-intl";
 
 // A dimension's individual 0–4 score carries the same paradigm naming as the
 // overall band (docs/SCORING_MODEL.md).
@@ -24,6 +25,7 @@ export function ScoreBreakdown({
   result: ScoreResult;
   accentColor?: string;
 }) {
+  const t = useTranslations("breakdown");
   const weights = GENRE_WEIGHTS[result.genreTag];
   const formulaScore = Math.round(
     DIMENSIONS.reduce(
@@ -35,7 +37,7 @@ export function ScoreBreakdown({
   return (
     <div className="border border-border bg-surface p-5 sm:p-6 lg:p-8">
       <p className="mb-5 font-mono text-xs uppercase tracking-widest text-muted">
-        Score Breakdown · weights for {result.genreTag}
+        {t("title", { genre: result.genreTag })}
       </p>
       <ul className="space-y-5">
         {DIMENSIONS.map((d, i) => {
@@ -52,7 +54,7 @@ export function ScoreBreakdown({
                   </Term>
                 </span>
                 <span className="shrink-0 font-mono text-xs text-muted">
-                  weight {weightPct}% · +{contribution.toFixed(1)} pts
+                  {t("weightLine", { pct: weightPct, pts: contribution.toFixed(1) })}
                 </span>
               </div>
               <div className="mt-2 flex items-center gap-3 sm:gap-4">
@@ -87,14 +89,12 @@ export function ScoreBreakdown({
       <div className="mt-5 space-y-2 border-t border-border pt-4">
         <p className="font-mono text-[0.7rem] uppercase tracking-widest text-muted">
           {formulaScore === result.enactmentScore
-            ? `Formula yields ${formulaScore}`
-            : `Formula yields ${formulaScore} · Expert score: ${result.enactmentScore}`}
+            ? t("formulaYields", { score: formulaScore })
+            : t("formulaVsExpert", { score: formulaScore, expert: result.enactmentScore })}
         </p>
         {formulaScore !== result.enactmentScore && (
           <p className="font-mono text-[0.7rem] leading-relaxed text-muted">
-            Expert pre-scores reflect qualitative judgment beyond the weighted
-            formula. The divergence is intentional and is one of the open
-            methodological questions for v0.2.
+            {t("expertNote")}
           </p>
         )}
       </div>

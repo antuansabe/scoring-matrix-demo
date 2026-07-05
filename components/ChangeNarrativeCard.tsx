@@ -1,16 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { DIMENSIONS } from "@/lib/paradigm";
 import type { ChangeSummary, DimensionMovement } from "@/lib/changeNarrative";
 
 type Status = "idle" | "loading" | "done" | "error";
-
-const MOVEMENT_LABELS: Record<DimensionMovement, string> = {
-  improved: "Improved",
-  regressed: "Regressed",
-  stable: "Stable",
-};
 
 function groupByMovement(dimensionMovement: ChangeSummary["dimensionMovement"]): Record<DimensionMovement, string[]> {
   const groups: Record<DimensionMovement, string[]> = { improved: [], regressed: [], stable: [] };
@@ -31,6 +26,7 @@ function groupByMovement(dimensionMovement: ChangeSummary["dimensionMovement"]):
  * guaranteed to match what's displayed above, by construction.
  */
 export function ChangeNarrativeCard({ entryId1, entryId2 }: { entryId1: string; entryId2: string }) {
+  const t = useTranslations("partD");
   const [status, setStatus] = useState<Status>("idle");
   const [summary, setSummary] = useState<ChangeSummary | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -55,7 +51,7 @@ export function ChangeNarrativeCard({ entryId1, entryId2 }: { entryId1: string; 
           "error" in data &&
           typeof (data as { error: unknown }).error === "string"
             ? (data as { error: string }).error
-            : "An unexpected error occurred while generating the change narrative.";
+            : t("errorUnexpected");
         setErrorMsg(msg);
         setStatus("error");
         return;
@@ -64,7 +60,7 @@ export function ChangeNarrativeCard({ entryId1, entryId2 }: { entryId1: string; 
       setSummary(data as ChangeSummary);
       setStatus("done");
     } catch {
-      setErrorMsg("Could not connect to the narrative service.");
+      setErrorMsg(t("errorConnect"));
       setStatus("error");
     }
   }
@@ -73,21 +69,21 @@ export function ChangeNarrativeCard({ entryId1, entryId2 }: { entryId1: string; 
   if (status === "idle") {
     return (
       <div className="border border-border bg-surface p-5 sm:p-6 lg:p-8">
-        <p className="font-mono text-xs uppercase tracking-widest text-accent">Part D — Change Over Time</p>
+        <p className="font-mono text-xs uppercase tracking-widest text-accent">{t("eyebrow")}</p>
         <h2 className="mt-3 font-display text-xl font-normal leading-snug text-ink sm:text-2xl">
-          Read the <span className="font-light italic text-accent">shift</span> between these two entries
+          {t("idleTitlePart1")}
+          <span className="font-light italic text-accent">{t("idleTitlePart2")}</span>
+          {t("idleTitlePart3")}
         </h2>
         <p className="mt-2 max-w-[55ch] font-sans text-base leading-relaxed text-muted">
-          A short, grounded paragraph telling the story of what changed between these two dates —
-          which dimensions moved, and a plausible reading of why, drawn from both entries&apos;
-          material. The numbers that support it are one click below.
+          {t("idleBody")}
         </p>
         <button
           type="button"
           onClick={requestNarrative}
           className="mt-6 rounded-md bg-accent-cta px-6 py-2.5 font-mono text-sm uppercase tracking-widest text-white transition-all hover:bg-accent hover:shadow-md"
         >
-          Generate Change Narrative
+          {t("generate")}
         </button>
       </div>
     );
@@ -97,7 +93,7 @@ export function ChangeNarrativeCard({ entryId1, entryId2 }: { entryId1: string; 
   if (status === "loading") {
     return (
       <div className="border border-border bg-surface p-5 sm:p-6 lg:p-8">
-        <p className="font-mono text-xs uppercase tracking-widest text-accent">Part D — Change Over Time</p>
+        <p className="font-mono text-xs uppercase tracking-widest text-accent">{t("eyebrow")}</p>
         <div className="mt-6 flex items-start gap-4">
           <div
             className="mt-0.5 h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-border"
@@ -105,10 +101,10 @@ export function ChangeNarrativeCard({ entryId1, entryId2 }: { entryId1: string; 
           />
           <div>
             <p className="font-sans text-sm leading-relaxed text-ink" aria-live="polite">
-              Reading the shift between these two entries…
+              {t("loading")}
             </p>
             <p className="mt-1 font-mono text-xs uppercase tracking-widest text-muted">
-              This usually takes 5–15 seconds.
+              {t("loadingTime")}
             </p>
           </div>
         </div>
@@ -124,16 +120,16 @@ export function ChangeNarrativeCard({ entryId1, entryId2 }: { entryId1: string; 
         style={{ borderLeftWidth: 3, borderLeftColor: "#E87722" }}
         role="alert"
       >
-        <p className="font-mono text-xs uppercase tracking-widest text-accent">Part D — Change Over Time</p>
+        <p className="font-mono text-xs uppercase tracking-widest text-accent">{t("eyebrow")}</p>
         <p className="mt-2 font-sans text-sm leading-relaxed text-ink">
-          {errorMsg ?? "Something went wrong. Please try again."}
+          {errorMsg ?? t("errorFallback")}
         </p>
         <button
           type="button"
           onClick={requestNarrative}
           className="mt-4 rounded-md border border-border px-5 py-2 font-mono text-xs uppercase tracking-widest text-muted transition-colors hover:border-ink hover:text-ink"
         >
-          ↻ Retry
+          {t("retry")}
         </button>
       </div>
     );
@@ -145,9 +141,10 @@ export function ChangeNarrativeCard({ entryId1, entryId2 }: { entryId1: string; 
 
   return (
     <div className="border border-border bg-surface p-5 sm:p-6 lg:p-8">
-      <p className="font-mono text-xs uppercase tracking-widest text-accent">Part D — Change Over Time</p>
+      <p className="font-mono text-xs uppercase tracking-widest text-accent">{t("eyebrow")}</p>
       <h2 className="mt-2 font-display text-xl font-normal leading-snug text-ink sm:text-2xl">
-        What changed between <span className="font-light italic text-accent">t1 and t2</span>
+        {t("doneTitlePart1")}
+        <span className="font-light italic text-accent">{t("doneTitlePart2")}</span>
       </h2>
 
       <p className="mt-4 font-sans text-base leading-relaxed text-ink">{summary.narrative}</p>
@@ -156,7 +153,7 @@ export function ChangeNarrativeCard({ entryId1, entryId2 }: { entryId1: string; 
         {(["improved", "regressed", "stable"] as DimensionMovement[]).map((movement) =>
           movementGroups[movement].length > 0 ? (
             <p key={movement} className="font-mono text-xs uppercase tracking-widest text-muted">
-              {MOVEMENT_LABELS[movement]}:{" "}
+              {t(`movement_${movement}`)}:{" "}
               <span className="text-ink">{movementGroups[movement].join(", ")}</span>
             </p>
           ) : null,

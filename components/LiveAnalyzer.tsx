@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import type { ScoreResult, GenreTag, FeedbackResult } from "@/lib/types";
 import type { Subject } from "@/lib/db/types";
 import { ScoreCard } from "@/components/ScoreCard";
@@ -51,6 +52,7 @@ export function LiveAnalyzer({
   /** Subject-first flow (Phase 10): the intake form is locked to this subject. */
   lockedSubject?: Subject;
 }) {
+  const t = useTranslations("analyzer");
   const [text, setText] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [result, setResult] = useState<ScoreResult | null>(null);
@@ -65,14 +67,12 @@ export function LiveAnalyzer({
   const showInput = !(status === "done" && result);
 
   let wordCountLabel: string;
-  if (words === 0) {
-    wordCountLabel = "0 words";
-  } else if (words < MIN_WORDS) {
-    wordCountLabel = `${words} ${words === 1 ? "word" : "words"} · minimum ${MIN_WORDS}`;
+  if (words < MIN_WORDS && words > 0) {
+    wordCountLabel = t("wordsMin", { count: words, min: MIN_WORDS });
   } else if (words > MAX_WORDS) {
-    wordCountLabel = `${words} words · maximum ${MAX_WORDS}`;
+    wordCountLabel = t("wordsMax", { count: words, max: MAX_WORDS });
   } else {
-    wordCountLabel = `${words} words`;
+    wordCountLabel = t("words", { count: words });
   }
   const wordCountIsWarning = words > 0 && outOfRange;
 
@@ -96,7 +96,7 @@ export function LiveAnalyzer({
           "error" in data &&
           typeof (data as { error: unknown }).error === "string"
             ? (data as { error: string }).error
-            : "An unexpected error occurred while analyzing the text.";
+            : t("errorUnexpected");
         setErrorMsg(msg);
         setStatus("error");
         return;
@@ -110,7 +110,7 @@ export function LiveAnalyzer({
       });
       setStatus("done");
     } catch {
-      setErrorMsg("Could not connect to the analysis service.");
+      setErrorMsg(t("errorConnect"));
       setStatus("error");
     }
   }
@@ -167,14 +167,14 @@ export function LiveAnalyzer({
       {showInput && (
         <>
           <label htmlFor="analyzer-text" className="sr-only">
-            Text to analyze
+            {t("textLabel")}
           </label>
           <textarea
             id="analyzer-text"
             ref={textareaRef}
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Paste any text to analyze (minimum 50 words, maximum 7000). The instrument works in English and Spanish."
+            placeholder={t("placeholder", { min: MIN_WORDS, max: MAX_WORDS })}
             rows={10}
             spellCheck={false}
             className="block min-h-[15rem] w-full resize-y border border-border bg-surface p-4 font-sans text-base leading-relaxed text-ink placeholder:text-muted focus:ring-2 focus:ring-accent/20 focus:border-accent focus:outline-none transition-all duration-300 rounded-md"
@@ -194,7 +194,7 @@ export function LiveAnalyzer({
               disabled={!canSubmit}
               className="bg-accent-cta px-6 py-2.5 font-mono text-sm uppercase tracking-widest text-white rounded-md transition-all hover:bg-accent hover:shadow-md disabled:cursor-not-allowed disabled:opacity-40"
             >
-              {status === "loading" ? "Analyzing…" : "Analyze"}
+              {status === "loading" ? t("analyzing") : t("analyze")}
             </button>
           </div>
         </>
@@ -203,7 +203,7 @@ export function LiveAnalyzer({
       {status === "loading" && (
         <>
           <p className="mt-8 font-mono text-sm text-muted" aria-live="polite">
-            Analyzing
+            {t("analyzingLive")}
             <span className="ml-0.5 inline-block animate-pulse">▍</span>
           </p>
           <ResultSkeleton />
@@ -222,7 +222,7 @@ export function LiveAnalyzer({
               style={{ backgroundColor: "#E87722" }}
               aria-hidden="true"
             />
-            Couldn&apos;t analyze
+            {t("errorTitle")}
           </p>
           <p className="mt-2 font-sans text-base text-ink">{errorMsg}</p>
         </div>
@@ -235,7 +235,7 @@ export function LiveAnalyzer({
               is one labeled click away and loses nothing. */}
           <ResultStory result={result} />
 
-          <Disclosure showLabel="See the full reading" hideLabel="Hide the full reading">
+          <Disclosure showLabel={t("seeFullReading")} hideLabel={t("hideFullReading")}>
             <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-10">
               <div>
                 <ScoreCard result={result} onGenreChange={handleGenreChange} />
@@ -280,7 +280,7 @@ export function LiveAnalyzer({
               <span className="mr-2" aria-hidden="true">
                 ↻
               </span>
-              Try another text
+              {t("tryAnother")}
             </button>
           </div>
         </div>

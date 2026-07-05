@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLocale } from "next-intl";
 import {
   DIMENSIONS,
   GENRE_WEIGHTS,
@@ -15,7 +16,7 @@ const STRINGS = {
   outputsHeader: "CALCULATED OUTPUTS",
   genreLabel: "TEXT GENRE",
   formulaHeader: "ACTIVE FORMULA",
-  explainerHeading: "METHODOLOGY EXPLAINER · GUÍA METODOLÓGICA",
+  explainerHeading: "Methodology Explainer · Guía metodológica",
   explainerSub: "Understand how the matrix processes language architecture / Comprendiendo el procesamiento de la arquitectura del lenguaje",
 };
 
@@ -65,7 +66,10 @@ function getParadigmColor(name: string): string {
 
 export function CalculatorWidget() {
   const [genre, setGenre] = useState<GenreTag>("free-form-interview");
-  const [lang, setLang] = useState<"en" | "es">("en");
+  // Phase 11a: the methodology explainer follows the GLOBAL locale switcher
+  // (its reviewed ES text stays local to this expert surface).
+  const locale = useLocale();
+  const lang: "en" | "es" = locale === "es" ? "es" : "en";
   const [scores, setScores] = useState<Record<DimensionKey, number>>({
     D1: 3,
     D2: 2,
@@ -236,29 +240,7 @@ export function CalculatorWidget() {
               {STRINGS.explainerSub}
             </p>
           </div>
-          {/* Language Toggle buttons */}
-          <div className="inline-flex rounded-lg p-1 bg-border/40 border border-border/50 shrink-0 self-start sm:self-center">
-            <button
-              onClick={() => setLang("en")}
-              className={`px-4 py-1.5 font-mono text-xs uppercase tracking-widest rounded-md transition-all duration-200 cursor-pointer ${
-                lang === "en"
-                  ? "bg-surface text-ink font-semibold shadow-sm"
-                  : "text-muted hover:text-ink"
-              }`}
-            >
-              English
-            </button>
-            <button
-              onClick={() => setLang("es")}
-              className={`px-4 py-1.5 font-mono text-xs uppercase tracking-widest rounded-md transition-all duration-200 cursor-pointer ${
-                lang === "es"
-                  ? "bg-surface text-ink font-semibold shadow-sm"
-                  : "text-muted hover:text-ink"
-              }`}
-            >
-              Español
-            </button>
-          </div>
+
         </div>
 
         <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">

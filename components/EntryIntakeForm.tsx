@@ -6,20 +6,10 @@ import type { Subject, SubjectType, MaterialGenre } from "@/lib/db/types";
 import type { ScoreResult, FeedbackResult } from "@/lib/types";
 import { detectMixedGenreHint } from "@/lib/text";
 import { Term } from "@/components/Term";
+import { useTranslations } from "next-intl";
 
-const MATERIAL_GENRE_OPTIONS: { value: MaterialGenre; label: string }[] = [
-  { value: "interview", label: "Interview" },
-  { value: "article", label: "Article" },
-  { value: "website", label: "Website" },
-  { value: "report", label: "Report" },
-  { value: "social", label: "Social Media" },
-  { value: "other", label: "Other" },
-];
-
-const SUBJECT_TYPE_OPTIONS: { value: SubjectType; label: string }[] = [
-  { value: "jj_partner", label: "JJ Partner" },
-  { value: "ngl", label: "NGL" },
-];
+const MATERIAL_GENRES: MaterialGenre[] = ["interview", "article", "website", "report", "social", "other"];
+const SUBJECT_TYPE_VALUES: SubjectType[] = ["jj_partner", "ngl"];
 
 function todayISO(): string {
   const now = new Date();
@@ -59,6 +49,9 @@ export function EntryIntakeForm({
       page — the subject is fixed, no pickers. */
   lockedSubject?: Subject;
 }) {
+  const t = useTranslations("intake");
+  const tg = useTranslations("genres");
+  const ts = useTranslations("subjectTypes");
   const jjPartners = useMemo(() => subjects.filter((s) => s.type === "jj_partner"), [subjects]);
   const mixedGenreHint = useMemo(() => detectMixedGenreHint(materialText), [materialText]);
 
@@ -142,7 +135,7 @@ export function EntryIntakeForm({
           "error" in data &&
           typeof (data as { error: unknown }).error === "string"
             ? (data as { error: string }).error
-            : "Could not save this entry.";
+            : t("errorFallback");
         setErrorMsg(msg);
         setStatus("error");
         return;
@@ -155,7 +148,7 @@ export function EntryIntakeForm({
       setStatus("done");
       onSaved?.(result.subject);
     } catch {
-      setErrorMsg("Could not connect to the save service.");
+      setErrorMsg(t("errorConnect"));
       setStatus("error");
     }
   }
@@ -165,13 +158,16 @@ export function EntryIntakeForm({
     const comparisonReady = (savedEntryCount ?? 0) >= 2;
     return (
       <div className="border border-border bg-surface p-5 sm:p-6 lg:p-8" style={{ borderLeftWidth: 3, borderLeftColor: "var(--accent-2)" }}>
-        <p className="font-mono text-xs uppercase tracking-widest text-accent-2">Entry Saved</p>
+        <p className="font-mono text-xs uppercase tracking-widest text-accent-2">{t("savedEyebrow")}</p>
         <h2 className="mt-3 font-display text-xl font-normal leading-snug text-ink sm:text-2xl">
-          Logged for <span className="font-light italic text-accent">{savedSubject.name}</span> — {entryDate}
+          {t.rich("savedTitle", {
+            date: entryDate,
+            name: () => <span className="font-light italic text-accent">{savedSubject.name}</span>,
+          })}
         </h2>
         {comparisonReady && (
           <p className="mt-3 max-w-[55ch] font-sans text-base leading-relaxed text-ink">
-            {savedSubject.name} now has {savedEntryCount} dated entries — the comparison is ready.
+            {t("payoff", { name: savedSubject.name, count: savedEntryCount ?? 0 })}
           </p>
         )}
         <div className="mt-5 flex flex-wrap items-center gap-4">
@@ -180,18 +176,18 @@ export function EntryIntakeForm({
               href={`/subjects/${savedSubject.id}/compare`}
               className="min-h-11 rounded-md bg-accent-cta px-6 py-3 font-mono text-sm uppercase tracking-widest text-white hover:bg-accent"
             >
-              Compare two entries →
+              {t("compareCta")}
             </Link>
           )}
           <Link href={`/subjects/${savedSubject.id}`} className="font-mono text-xs uppercase tracking-widest text-accent hover:text-accent-cta transition-colors">
-            Back to {savedSubject.name} →
+            {t("backTo", { name: savedSubject.name })}
           </Link>
           {savedEntryId && (
             <Link
               href={`/subjects/${savedSubject.id}/entries/${savedEntryId}`}
               className="font-mono text-xs uppercase tracking-widest text-muted hover:text-ink transition-colors"
             >
-              View this entry's Feedback Card →
+              {t("viewCard")}
             </Link>
           )}
         </div>
@@ -201,18 +197,18 @@ export function EntryIntakeForm({
 
   return (
     <div className="border border-border bg-surface p-5 sm:p-6 lg:p-8">
-      <p className="font-mono text-xs uppercase tracking-widest text-muted">Longitudinal Tracking</p>
+      <p className="font-mono text-xs uppercase tracking-widest text-muted">{t("eyebrow")}</p>
       <h2 className="mt-3 font-display text-xl font-normal leading-snug text-ink sm:text-2xl">
-        Save as a <span className="font-light italic text-accent">dated entry</span>
+        {t("titlePart1")}
+        <span className="font-light italic text-accent">{t("titlePart2")}</span>
       </h2>
       <p className="mt-2 max-w-[55ch] font-sans text-sm leading-relaxed text-muted">
-        Ties this analysis to a subject so it can be compared over time. Requires the Deeper Reading
-        feedback above — it becomes part of the saved record.
+        {t("body")}
       </p>
 
       {feedback === null && (
         <p className="mt-5 border-l-2 border-border pl-4 font-sans text-sm text-muted">
-          Get the Deeper Reading feedback above first, then this form unlocks.
+          {t("unlockHint")}
         </p>
       )}
 
@@ -230,18 +226,18 @@ export function EntryIntakeForm({
         {/* Subject */}
         {lockedSubject ? (
           <div className="border-l-2 border-accent pl-4">
-            <p className={labelClass}>Subject</p>
+            <p className={labelClass}>{t("subject")}</p>
             <p className="mt-2 font-display text-lg text-ink">{lockedSubject.name}</p>
             <p className="mt-1 font-sans text-base leading-relaxed text-muted">
-              Every analysis you save here becomes part of this subject&apos;s story.{" "}
+              {t("lockedNote")}{" "}
               <Link href="/subjects" className="text-accent hover:underline">
-                Not this subject? Choose another →
+                {t("notThisSubject")}
               </Link>
             </p>
           </div>
         ) : (
         <div>
-          <p className={labelClass}>Subject</p>
+          <p className={labelClass}>{t("subject")}</p>
           <div className="mt-2 flex gap-4">
             <label className="flex items-center gap-2 font-sans text-sm text-ink">
               <input
@@ -251,11 +247,11 @@ export function EntryIntakeForm({
                 onChange={() => setMode("existing")}
                 disabled={subjects.length === 0}
               />
-              Existing
+              {t("existing")}
             </label>
             <label className="flex items-center gap-2 font-sans text-sm text-ink">
               <input type="radio" name="subject-mode" checked={mode === "new"} onChange={() => setMode("new")} />
-              New
+              {t("new")}
             </label>
           </div>
 
@@ -268,12 +264,12 @@ export function EntryIntakeForm({
               >
                 {subjects.map((s) => (
                   <option key={s.id} value={s.id}>
-                    {s.name} · {s.type === "jj_partner" ? "JJ Partner" : "NGL"}
+                    {s.name} · {ts(s.type)}
                   </option>
                 ))}
               </select>
             ) : (
-              <p className="mt-3 font-sans text-sm text-muted">No subjects yet — create one below.</p>
+              <p className="mt-3 font-sans text-sm text-muted">{t("noSubjects")}</p>
             )
           ) : (
             <div className="mt-3 space-y-3">
@@ -281,20 +277,20 @@ export function EntryIntakeForm({
                 type="text"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
-                placeholder="Subject name"
+                placeholder={t("subjectNamePlaceholder")}
                 className={inputClass}
               />
               <select value={newType} onChange={(e) => setNewType(e.target.value as SubjectType)} className={inputClass}>
-                {SUBJECT_TYPE_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
+                {SUBJECT_TYPE_VALUES.map((v) => (
+                  <option key={v} value={v}>
+                    {ts(v)}
                   </option>
                 ))}
               </select>
               {newType === "ngl" && (
                 jjPartners.length > 0 ? (
                   <select value={parentOrgId} onChange={(e) => setParentOrgId(e.target.value)} className={inputClass}>
-                    <option value="">Select parent JJ Partner…</option>
+                    <option value="">{t("selectParent")}</option>
                     {jjPartners.map((p) => (
                       <option key={p.id} value={p.id}>
                         {p.name}
@@ -303,7 +299,7 @@ export function EntryIntakeForm({
                   </select>
                 ) : (
                   <p className="font-sans text-sm text-muted">
-                    An NGL must nest under a JJ Partner. Create a JJ Partner subject first.
+                    {t("nglNeedsParent")}
                   </p>
                 )
               )}
@@ -316,7 +312,7 @@ export function EntryIntakeForm({
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label className={labelClass} htmlFor="entry-date">
-              <Term k="materialDate">Material date</Term>
+              <Term k="materialDate">{t("materialDate")}</Term>
             </label>
             <input
               id="entry-date"
@@ -326,13 +322,12 @@ export function EntryIntakeForm({
               className={`${inputClass} mt-2`}
             />
             <p className="mt-1.5 font-sans text-sm leading-relaxed text-muted">
-              When this was written or said — not today&apos;s date. Backdating is expected: a 2010
-              interview belongs on the timeline in 2010.
+              {t("materialDateHelp")}
             </p>
           </div>
           <div>
             <label className={labelClass} htmlFor="material-genre">
-              Genre
+              {t("genre")}
             </label>
             <select
               id="material-genre"
@@ -340,10 +335,10 @@ export function EntryIntakeForm({
               onChange={(e) => setMaterialGenre(e.target.value as MaterialGenre)}
               className={`${inputClass} mt-2`}
             >
-              <option value="">Select a genre…</option>
-              {MATERIAL_GENRE_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
+              <option value="">{t("selectGenre")}</option>
+              {MATERIAL_GENRES.map((g) => (
+                <option key={g} value={g}>
+                  {tg(g)}
                 </option>
               ))}
             </select>
@@ -353,14 +348,14 @@ export function EntryIntakeForm({
         {/* Ashokan name */}
         <div>
           <label className={labelClass} htmlFor="ashokan-name">
-            Ashokan Name
+            {t("ashokanName")}
           </label>
           <input
             id="ashokan-name"
             type="text"
             value={ashokanName}
             onChange={(e) => setAshokanName(e.target.value)}
-            placeholder="Who is logging this entry"
+            placeholder={t("ashokanPlaceholder")}
             className={`${inputClass} mt-2`}
           />
         </div>
@@ -368,7 +363,7 @@ export function EntryIntakeForm({
         {/* Contextual notes */}
         <div>
           <label className={labelClass} htmlFor="contextual-notes">
-            Contextual Notes <span className="normal-case text-muted/70">(optional, not scored)</span>
+            {t("notes")} <span className="normal-case text-muted/70">{t("notesOptional")}</span>
           </label>
           <textarea
             id="contextual-notes"
@@ -385,7 +380,7 @@ export function EntryIntakeForm({
           disabled={!canSave}
           className="bg-accent-cta px-6 py-2.5 font-mono text-sm uppercase tracking-widest text-white rounded-md transition-all hover:bg-accent hover:shadow-md disabled:cursor-not-allowed disabled:opacity-40"
         >
-          {status === "saving" ? "Saving…" : "Save Entry"}
+          {status === "saving" ? t("saving") : t("save")}
         </button>
       </fieldset>
 

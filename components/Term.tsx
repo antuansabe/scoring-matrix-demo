@@ -1,13 +1,14 @@
 "use client";
 
 import { useId, useState, type ReactNode } from "react";
-import { GLOSSARY, type GlossaryKey } from "@/lib/copy/glossary";
+import { useTranslations } from "next-intl";
+import type { GlossaryKey } from "@/lib/copy/glossary";
 
 /**
  * Plain-language affordance for a term of art (Phase 9). The term itself is
  * a button (dotted underline); one tap opens the plain explanation, with the
- * deeper grounding one more tap down. Click — not hover-only — so it works
- * for touch and for older readers; Escape or the close link dismisses it.
+ * deeper grounding one more tap down. Copy comes from the message catalogs
+ * (Phase 11a) and follows the active language.
  */
 export function Term({
   k,
@@ -19,10 +20,11 @@ export function Term({
   children?: ReactNode;
   className?: string;
 }) {
+  const t = useTranslations("glossary");
+  const tc = useTranslations("term");
   const [open, setOpen] = useState(false);
   const [deeper, setDeeper] = useState(false);
   const panelId = useId();
-  const entry = GLOSSARY[k];
 
   return (
     <span className={`relative inline-block ${className}`}>
@@ -38,9 +40,9 @@ export function Term({
           if (e.key === "Escape") setOpen(false);
         }}
         className="cursor-pointer border-b border-dotted border-muted text-inherit hover:border-accent hover:text-accent"
-        title="What does this mean?"
+        title={tc("hint")}
       >
-        {children ?? entry.label}
+        {children ?? t(`${k}.label`)}
       </button>
       {open && (
         <span
@@ -49,14 +51,14 @@ export function Term({
           className="absolute left-0 top-full z-30 mt-2 block w-80 max-w-[82vw] border border-border bg-surface p-4 text-left normal-case tracking-normal"
         >
           <span className="block font-mono text-xs uppercase tracking-widest text-accent">
-            {entry.label}
+            {t(`${k}.label`)}
           </span>
           <span className="mt-2 block font-sans text-base leading-relaxed text-ink">
-            {entry.plain}
+            {t(`${k}.plain`)}
           </span>
           {deeper ? (
             <span className="mt-3 block border-t border-border pt-3 font-sans text-base leading-relaxed text-muted">
-              {entry.deeper}
+              {t(`${k}.deeper`)}
             </span>
           ) : (
             <button
@@ -64,7 +66,7 @@ export function Term({
               onClick={() => setDeeper(true)}
               className="mt-3 block cursor-pointer font-mono text-xs uppercase tracking-widest text-muted hover:text-ink"
             >
-              More detail →
+              {tc("more")}
             </button>
           )}
           <button
@@ -72,7 +74,7 @@ export function Term({
             onClick={() => setOpen(false)}
             className="mt-3 block cursor-pointer font-mono text-xs uppercase tracking-widest text-muted hover:text-ink"
           >
-            Close
+            {tc("close")}
           </button>
         </span>
       )}

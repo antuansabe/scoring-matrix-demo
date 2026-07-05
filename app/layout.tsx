@@ -23,6 +23,8 @@ const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-plex-mono",
 });
 
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ScrollProgress } from "@/components/ScrollProgress";
@@ -42,26 +44,29 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Phase 11a: lang follows the persisted locale preference (cookie, no
+  // locale routing). English is canonical; the header switcher sets ES.
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    // lang: the UI copy is English (audited Phase 9); "es" made screen
-    // readers mispronounce the whole interface. Analyzed TEXTS may still be
-    // Spanish — that's content, not UI chrome. Full i18n is a separate,
-    // flagged decision for Antonio.
     <html
-      lang="en"
+      lang={locale}
       className={`${fraunces.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
       <body className="min-h-full">
-        <ScrollProgress />
-        <Header />
-        {children}
-        <Footer />
-        <Walkthrough />
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <ScrollProgress />
+          <Header />
+          {children}
+          <Footer />
+          <Walkthrough />
+        </NextIntlClientProvider>
       </body>
     </html>
   );

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { getSubject } from "@/lib/db/subjects";
 import { listAnalysesBySubject } from "@/lib/db/analyses";
@@ -9,25 +10,13 @@ import { isDemoSubject } from "@/lib/demo";
 
 export const dynamic = "force-dynamic";
 
-const SUBJECT_TYPE_LABELS: Record<string, string> = {
-  jj_partner: "JJ Partner",
-  ngl: "NGL",
-};
-const GENRE_LABELS: Record<string, string> = {
-  interview: "Interview",
-  article: "Article",
-  website: "Website",
-  report: "Report",
-  social: "Social Media",
-  other: "Other",
-};
-
 export default async function SubjectDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const t = await getTranslations();
   const subject = await getSubject(id);
   if (!subject) notFound();
 
@@ -48,17 +37,17 @@ export default async function SubjectDetailPage({
           href="/subjects"
           className="font-mono text-xs uppercase tracking-widest text-muted transition-colors hover:text-ink"
         >
-          ← All subjects
+          {t("subjectDetail.back")}
         </Link>
         <p className="mt-5 font-mono text-xs uppercase tracking-widest text-accent-cta font-semibold">
-          {SUBJECT_TYPE_LABELS[subject.type] ?? subject.type}
+          {t(`subjectTypes.${subject.type}`)}
         </p>
         <h1 className="mt-2 font-display text-2xl font-normal leading-tight text-ink sm:text-3xl">
           {subject.name}
         </h1>
         {parent && (
           <p className="mt-2 font-sans text-sm text-muted">
-            NGL of{" "}
+            {t("subjectDetail.nglOf")}{" "}
             <Link href={`/subjects/${parent.id}`} className="text-accent hover:underline">
               {parent.name}
             </Link>
@@ -69,7 +58,7 @@ export default async function SubjectDetailPage({
       <div className="mt-10 border-t border-border pt-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <p className="font-mono text-xs uppercase tracking-widest text-muted">
-            {analyses.length} {analyses.length === 1 ? "Entry" : "Entries"} · Chronological
+            {t("subjectDetail.entriesChronological", { count: analyses.length })}
           </p>
           <div className="flex flex-wrap items-center gap-4">
             {!isDemoSubject(subject) && analyses.length > 0 && (
@@ -78,13 +67,13 @@ export default async function SubjectDetailPage({
                   href={`/tool?subject=${subject.id}`}
                   className="font-mono text-xs uppercase tracking-widest text-accent transition-colors hover:text-accent-cta"
                 >
-                  Add entry →
+                  {t("subjectDetail.addEntry")}
                 </Link>
                 <Link
                   href={`/subjects/${subject.id}/add-batch`}
                   className="font-mono text-xs uppercase tracking-widest text-muted transition-colors hover:text-ink"
                 >
-                  Add several at once →
+                  {t("subjectDetail.addBatch")}
                 </Link>
               </>
             )}
@@ -93,7 +82,7 @@ export default async function SubjectDetailPage({
                 href={`/subjects/${subject.id}/compare`}
                 className="font-mono text-xs uppercase tracking-widest text-accent transition-colors hover:text-accent-cta"
               >
-                Compare two entries →
+                {t("subjectDetail.compare")}
               </Link>
             )}
           </div>
@@ -102,9 +91,7 @@ export default async function SubjectDetailPage({
         {analyses.length === 0 ? (
           <div className="mt-6 border border-border bg-surface p-6 sm:p-8">
             <p className="max-w-[60ch] font-sans text-base leading-relaxed text-ink">
-              No entries yet. Add {subject.name}&apos;s first material — a report, an interview, a
-              public statement — and its date, to set the baseline this story will be measured
-              against.
+              {t("subjectDetail.emptyBody", { name: subject.name })}
             </p>
             {!isDemoSubject(subject) && (
               <div className="mt-5 flex flex-wrap items-center gap-4">
@@ -112,13 +99,13 @@ export default async function SubjectDetailPage({
                   href={`/tool?subject=${subject.id}`}
                   className="min-h-11 rounded-md bg-accent-cta px-6 py-3 font-mono text-sm uppercase tracking-widest text-white transition-all hover:bg-accent"
                 >
-                  Add its first entry →
+                  {t("subjectDetail.addFirst")}
                 </Link>
                 <Link
                   href={`/subjects/${subject.id}/add-batch`}
                   className="font-mono text-xs uppercase tracking-widest text-muted hover:text-ink"
                 >
-                  or add several at once →
+                  {t("subjectDetail.orSeveral")}
                 </Link>
               </div>
             )}
@@ -130,13 +117,12 @@ export default async function SubjectDetailPage({
                 <div className="flex flex-wrap items-baseline justify-between gap-4">
                   <div>
                     <p className="font-mono text-xs uppercase tracking-widest text-muted">
-                      {a.entry.entry_date} · {GENRE_LABELS[a.entry.genre] ?? a.entry.genre} · logged by{" "}
-                      {a.entry.ashokan_name}
+                      {t("subjectDetail.entryMeta", { date: a.entry.entry_date, genre: t(`genres.${a.entry.genre}`), name: a.entry.ashokan_name })}
                     </p>
                     <p className="mt-2 font-display text-xl text-ink">
                       {a.enactment_score}{" "}
                       <span className="font-sans text-sm text-muted">
-                        / 100 — {resolveParadigmName(a.enactment_score)}
+                        {t("subjectDetail.outOf100", { paradigm: resolveParadigmName(a.enactment_score) })}
                       </span>
                     </p>
                     <p className="mt-1 font-mono text-xs uppercase tracking-widest text-accent">
@@ -147,7 +133,7 @@ export default async function SubjectDetailPage({
                     href={`/subjects/${subject.id}/entries/${a.entry_id}`}
                     className="whitespace-nowrap font-mono text-xs uppercase tracking-widest text-accent transition-colors hover:text-accent-cta"
                   >
-                    View Feedback Card →
+                    {t("subjectDetail.viewCard")}
                   </Link>
                 </div>
                 {a.entry.contextual_notes && (

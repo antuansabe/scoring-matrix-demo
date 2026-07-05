@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { notFound, redirect } from "next/navigation";
 import { getSubject } from "@/lib/db/subjects";
 import { isDemoSubject } from "@/lib/demo";
@@ -13,6 +14,7 @@ export default async function AddBatchPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const t = await getTranslations("addBatch");
   const subject = await getSubject(id);
   if (!subject) notFound();
   // The demo is a display piece — nothing gets added to it.
@@ -28,15 +30,14 @@ export default async function AddBatchPage({
           ← {subject.name}
         </Link>
         <p className="mt-5 font-mono text-xs uppercase tracking-widest text-accent-cta font-semibold">
-          Batch Intake
+          {t("eyebrow")}
         </p>
         <h1 className="mt-2 font-display text-2xl font-normal leading-tight text-ink sm:text-3xl">
-          Add several materials to <span className="font-light italic text-accent">{subject.name}</span>
+          {t("titlePart1")}
+          <span className="font-light italic text-accent">{subject.name}</span>
         </h1>
         <p className="mt-4 max-w-prose font-sans text-base leading-relaxed text-muted">
-          Paste each text with its own material date and genre — a decade of reports in one
-          sitting, if you have them. Each one is analyzed and saved as its own dated entry on this
-          subject&apos;s timeline.
+          {t("intro")}
         </p>
       </Reveal>
 

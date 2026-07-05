@@ -7,18 +7,12 @@ import type { Subject, MaterialGenre } from "@/lib/db/types";
 import type { ScoreResult, FeedbackResult } from "@/lib/types";
 import { countWords, detectMixedGenreHint } from "@/lib/text";
 import { Term } from "@/components/Term";
+import { useTranslations } from "next-intl";
 
 const MIN_WORDS = 50;
 const MAX_WORDS = 7000;
 
-const GENRE_OPTIONS: { value: MaterialGenre; label: string }[] = [
-  { value: "interview", label: "Interview" },
-  { value: "article", label: "Article" },
-  { value: "website", label: "Website" },
-  { value: "report", label: "Report" },
-  { value: "social", label: "Social Media" },
-  { value: "other", label: "Other" },
-];
+const MATERIAL_GENRES: MaterialGenre[] = ["interview", "article", "website", "report", "social", "other"];
 
 function todayISO(): string {
   const now = new Date();
@@ -44,15 +38,6 @@ type BatchItem = {
   savedParadigm?: string;
 };
 
-const STATUS_LABELS: Record<ItemStatus, string> = {
-  pending: "queued",
-  scoring: "scoring…",
-  reading: "writing the deeper reading…",
-  saving: "saving…",
-  done: "saved",
-  failed: "failed",
-};
-
 function itemName(item: BatchItem): string {
   return item.label || `${item.materialDate} · ${item.genre}`;
 }
@@ -65,6 +50,8 @@ function itemName(item: BatchItem): string {
  * never aborts the rest.
  */
 export function SubjectBatchIntake({ subject }: { subject: Subject }) {
+  const t = useTranslations("addBatch");
+  const tg = useTranslations("genres");
   const [items, setItems] = useState<BatchItem[]>([]);
   const [phase, setPhase] = useState<"adding" | "processing" | "done">("adding");
   const [ashokanName, setAshokanName] = useState("");
@@ -222,14 +209,14 @@ export function SubjectBatchIntake({ subject }: { subject: Subject }) {
       {/* Batch-level: who is logging */}
       <div className="border border-border bg-surface p-6 sm:p-8">
         <label className={labelClass} htmlFor="batch-ashokan">
-          Your name
+          {t("yourName")}
         </label>
         <input
           id="batch-ashokan"
           type="text"
           value={ashokanName}
           onChange={(e) => setAshokanName(e.target.value)}
-          placeholder="Recorded on every entry in this batch"
+          placeholder={t("yourNamePlaceholder")}
           className={`${inputClass} mt-2 max-w-md`}
           disabled={phase === "processing"}
         />
@@ -238,25 +225,25 @@ export function SubjectBatchIntake({ subject }: { subject: Subject }) {
       {/* Add-to-queue form */}
       {phase !== "processing" && (
         <form onSubmit={addItem} className="border border-border bg-surface p-6 sm:p-8 space-y-5">
-          <p className={labelClass}>Add a material to the queue</p>
+          <p className={labelClass}>{t("addMaterial")}</p>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div>
               <label className={labelClass} htmlFor="item-label">
-                Label <span className="normal-case text-muted/70">(optional)</span>
+                {t("label")} <span className="normal-case text-muted/70">{t("labelOptional")}</span>
               </label>
               <input
                 id="item-label"
                 type="text"
                 value={label}
                 onChange={(e) => setLabel(e.target.value)}
-                placeholder="e.g. 2010 founding interview"
+                placeholder={t("labelPlaceholder")}
                 className={`${inputClass} mt-2`}
               />
             </div>
             <div>
               <label className={labelClass} htmlFor="item-date">
-                <Term k="materialDate">Material date</Term>
+                <Term k="materialDate">{t("materialDate")}</Term>
               </label>
               <input
                 id="item-date"
@@ -268,7 +255,7 @@ export function SubjectBatchIntake({ subject }: { subject: Subject }) {
             </div>
             <div>
               <label className={labelClass} htmlFor="item-genre">
-                Genre
+                {t("genreLabel")}
               </label>
               <select
                 id="item-genre"
@@ -276,23 +263,22 @@ export function SubjectBatchIntake({ subject }: { subject: Subject }) {
                 onChange={(e) => setGenre(e.target.value as MaterialGenre)}
                 className={`${inputClass} mt-2`}
               >
-                <option value="">Select…</option>
-                {GENRE_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
+                <option value="">{t("select")}</option>
+                {MATERIAL_GENRES.map((g) => (
+                  <option key={g} value={g}>
+                    {tg(g)}
                   </option>
                 ))}
               </select>
             </div>
           </div>
           <p className="font-sans text-sm leading-relaxed text-muted -mt-1">
-            The material date is when this was written or said — not today&apos;s date. A decade of
-            reports can enter in one sitting, each on its own point of the timeline.
+            {t("dateNote")}
           </p>
 
           <div>
             <label className={labelClass} htmlFor="item-text">
-              Text
+              {t("text")}
             </label>
             <textarea
               id="item-text"
@@ -300,11 +286,11 @@ export function SubjectBatchIntake({ subject }: { subject: Subject }) {
               onChange={(e) => setText(e.target.value)}
               rows={7}
               spellCheck={false}
-              placeholder={`Paste one material (${MIN_WORDS}–${MAX_WORDS} words)…`}
+              placeholder={t("textPlaceholder", { min: MIN_WORDS, max: MAX_WORDS })}
               className={`${inputClass} mt-2 min-h-[10rem] resize-y`}
             />
             <p className={`mt-1.5 font-mono text-xs uppercase tracking-widest ${wordsOutOfRange ? "text-accent" : "text-muted"}`}>
-              {wordCount} words{wordsOutOfRange ? ` · needs ${MIN_WORDS}–${MAX_WORDS}` : ""}
+              {wordsOutOfRange ? t("wordsNeeds", { count: wordCount, min: MIN_WORDS, max: MAX_WORDS }) : t("words", { count: wordCount })}
             </p>
             {mixedHint && (
               <p className="mt-2 border-l-2 border-accent pl-3 font-sans text-sm leading-relaxed text-ink">
@@ -318,7 +304,7 @@ export function SubjectBatchIntake({ subject }: { subject: Subject }) {
             disabled={!canAdd}
             className="min-h-11 rounded-md border border-accent px-6 py-2.5 font-mono text-sm uppercase tracking-widest text-accent transition-all hover:bg-accent hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
           >
-            Add to queue →
+            {t("addToQueue")}
           </button>
         </form>
       )}
@@ -326,9 +312,7 @@ export function SubjectBatchIntake({ subject }: { subject: Subject }) {
       {/* Queue */}
       {items.length > 0 && (
         <div className="border border-border bg-surface p-6 sm:p-8">
-          <p className={labelClass}>
-            Queue · {items.length} {items.length === 1 ? "material" : "materials"}
-          </p>
+          <p className={labelClass}>{t("queue", { count: items.length })}</p>
           <ul className="mt-4 divide-y divide-border">
             {items.map((item) => (
               <li key={item.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
@@ -337,7 +321,7 @@ export function SubjectBatchIntake({ subject }: { subject: Subject }) {
                   <p className="mt-0.5 font-mono text-xs uppercase tracking-widest text-muted">
                     {item.materialDate} · {item.genre} · {item.wordCount} words ·{" "}
                     <span className={item.status === "failed" ? "text-accent" : ""}>
-                      {STATUS_LABELS[item.status]}
+                      {t(`status_${item.status}`)}
                       {item.status === "done" && item.savedScore !== undefined
                         ? ` · ${item.savedScore}/100`
                         : ""}
@@ -352,7 +336,7 @@ export function SubjectBatchIntake({ subject }: { subject: Subject }) {
                     type="button"
                     onClick={() => removeItem(item.id)}
                     className="cursor-pointer px-2 font-mono text-lg text-muted hover:text-accent"
-                    title="Remove from queue"
+                    title={t("remove")}
                   >
                     ×
                   </button>
@@ -363,7 +347,7 @@ export function SubjectBatchIntake({ subject }: { subject: Subject }) {
                     onClick={() => retryItem(item.id)}
                     className="min-h-11 cursor-pointer border border-accent px-4 py-1.5 font-mono text-xs uppercase tracking-widest text-accent hover:bg-accent hover:text-white"
                   >
-                    Retry →
+                    {t("retry")}
                   </button>
                 )}
               </li>
@@ -372,8 +356,7 @@ export function SubjectBatchIntake({ subject }: { subject: Subject }) {
 
           {phase === "processing" && (
             <p className="mt-4 font-sans text-base leading-relaxed text-muted" aria-live="polite">
-              Each text takes 30–60 seconds — scoring, then the deeper reading, then saving. Keep
-              this tab open.
+              {t("processingNote")}
             </p>
           )}
 
@@ -385,11 +368,11 @@ export function SubjectBatchIntake({ subject }: { subject: Subject }) {
                 disabled={!ashokanName.trim()}
                 className="min-h-11 w-full cursor-pointer rounded-md bg-accent-cta px-6 py-3.5 font-mono text-sm uppercase tracking-widest text-white transition-all hover:bg-accent disabled:cursor-not-allowed disabled:opacity-40"
               >
-                Analyze &amp; save {pendingCount} {pendingCount === 1 ? "entry" : "entries"} →
+                {t("analyzeSave", { count: pendingCount })}
               </button>
               {!ashokanName.trim() && (
                 <p className="mt-2 font-sans text-sm text-muted">
-                  Add your name above first — it&apos;s recorded on every entry.
+                  {t("nameFirst")}
                 </p>
               )}
             </div>
@@ -403,20 +386,21 @@ export function SubjectBatchIntake({ subject }: { subject: Subject }) {
           className="border border-border bg-surface p-6 sm:p-8"
           style={{ borderLeftWidth: 3, borderLeftColor: "var(--accent-2)" }}
         >
-          <p className="font-mono text-xs uppercase tracking-widest text-accent-2">Batch complete</p>
+          <p className="font-mono text-xs uppercase tracking-widest text-accent-2">{t("completeEyebrow")}</p>
           <h2 className="mt-3 font-display text-xl font-normal leading-snug text-ink sm:text-2xl">
-            {doneCount} {doneCount === 1 ? "entry" : "entries"} saved to{" "}
-            <span className="font-light italic text-accent">{subject.name}</span>
+            {t.rich("savedTitle", {
+              count: doneCount,
+              name: () => <span className="font-light italic text-accent">{subject.name}</span>,
+            })}
           </h2>
           {failedCount > 0 && (
             <p className="mt-2 font-sans text-base leading-relaxed text-muted">
-              {failedCount} couldn&apos;t be saved — retry {failedCount === 1 ? "it" : "them"} above;
-              nothing else in the batch was affected.
+              {t("failedNote", { count: failedCount })}
             </p>
           )}
           {comparisonReady && (
             <p className="mt-3 max-w-[55ch] font-sans text-base leading-relaxed text-ink">
-              {subject.name} now has {finalEntryCount} dated entries — the comparison is ready.
+              {t("payoff", { name: subject.name, count: finalEntryCount ?? 0 })}
             </p>
           )}
           <div className="mt-5 flex flex-wrap items-center gap-4">
@@ -425,14 +409,14 @@ export function SubjectBatchIntake({ subject }: { subject: Subject }) {
                 href={`/subjects/${subject.id}/compare`}
                 className="min-h-11 rounded-md bg-accent-cta px-6 py-3 font-mono text-sm uppercase tracking-widest text-white hover:bg-accent"
               >
-                Compare two entries →
+                {t("compareCta")}
               </Link>
             )}
             <Link
               href={`/subjects/${subject.id}`}
               className="font-mono text-xs uppercase tracking-widest text-accent hover:text-accent-cta"
             >
-              View {subject.name}&apos;s timeline →
+              {t("viewTimeline", { name: subject.name })}
             </Link>
           </div>
         </div>

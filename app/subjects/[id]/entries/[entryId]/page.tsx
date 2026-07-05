@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { getSubject } from "@/lib/db/subjects";
 import { getAnalysisByEntryId } from "@/lib/db/analyses";
@@ -8,18 +9,9 @@ import { Reveal } from "@/components/Reveal";
 import { DemoBanner } from "@/components/DemoBanner";
 import { isDemoSubject } from "@/lib/demo";
 import { Term } from "@/components/Term";
-import { PARADIGM_MEANINGS, NOT_A_VERDICT, type GlossaryKey } from "@/lib/copy/glossary";
+import type { GlossaryKey } from "@/lib/copy/glossary";
 
 export const dynamic = "force-dynamic";
-
-const GENRE_LABELS: Record<string, string> = {
-  interview: "Interview",
-  article: "Article",
-  website: "Website",
-  report: "Report",
-  social: "Social Media",
-  other: "Other",
-};
 
 const DIMENSION_LABELS: { key: "d1" | "d2" | "d3" | "d4" | "d5"; label: string }[] = [
   { key: "d1", label: "D1 · Agency & Contribution" },
@@ -35,6 +27,7 @@ export default async function EntryDetailPage({
   params: Promise<{ id: string; entryId: string }>;
 }) {
   const { id, entryId } = await params;
+  const t = await getTranslations();
   const [subject, analysis] = await Promise.all([getSubject(id), getAnalysisByEntryId(entryId)]);
 
   if (!subject || !analysis || analysis.entry.subject_id !== id) notFound();
@@ -54,8 +47,7 @@ export default async function EntryDetailPage({
           ← {subject.name}
         </Link>
         <p className="mt-5 font-mono text-xs uppercase tracking-widest text-muted">
-          {analysis.entry.entry_date} · {GENRE_LABELS[analysis.entry.genre] ?? analysis.entry.genre} · logged
-          by {analysis.entry.ashokan_name}
+          {t("entryDetail.meta", { date: analysis.entry.entry_date, genre: t(`genres.${analysis.entry.genre}`), name: analysis.entry.ashokan_name })}
         </p>
         <h1 className="mt-2 font-display text-2xl font-normal leading-tight text-ink sm:text-3xl">
           {subject.name}
@@ -77,9 +69,9 @@ export default async function EntryDetailPage({
         </p>
         <p className="mt-3 font-display text-xl text-ink">{resolveParadigmName(analysis.enactment_score)}</p>
         <p className="mt-2 max-w-[60ch] font-sans text-base leading-relaxed text-muted">
-          {PARADIGM_MEANINGS[resolveParadigmName(analysis.enactment_score)]}
+          {t(`paradigmMeanings.${resolveParadigmName(analysis.enactment_score)}`)}
         </p>
-        <p className="mt-2 font-sans text-base italic leading-relaxed text-muted">{NOT_A_VERDICT}</p>
+        <p className="mt-2 font-sans text-base italic leading-relaxed text-muted">{t("notAVerdict")}</p>
 
         <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-border pt-4">
           <span className="font-mono text-xs uppercase tracking-widest text-muted">

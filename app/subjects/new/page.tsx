@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { listSubjects } from "@/lib/db/subjects";
 import { isDemoSubject } from "@/lib/demo";
 import { NewSubjectForm } from "@/components/NewSubjectForm";
@@ -7,6 +8,7 @@ import { Reveal } from "@/components/Reveal";
 export const dynamic = "force-dynamic";
 
 export default async function NewSubjectPage() {
+  const t = await getTranslations("newSubject");
   // Parent-org picker options: real JJ Partners only (never the demo).
   const jjPartners = (await listSubjects()).filter(
     (s) => s.type === "jj_partner" && !isDemoSubject(s),
@@ -19,18 +21,18 @@ export default async function NewSubjectPage() {
           href="/subjects"
           className="font-mono text-xs uppercase tracking-widest text-muted transition-colors hover:text-ink"
         >
-          ← All subjects
+          {t("back")}
         </Link>
         <p className="mt-5 font-mono text-xs uppercase tracking-widest text-accent-cta font-semibold">
-          Longitudinal Tracking
+          {t("eyebrow")}
         </p>
         <h1 className="mt-2 font-display text-2xl font-normal leading-tight text-ink sm:text-3xl">
-          A new <span className="font-light italic text-accent">subject</span> of observation
+          {t("titlePart1")}
+          <span className="font-light italic text-accent">{t("titlePart2")}</span>
+          {t("titlePart3")}
         </h1>
         <p className="mt-4 max-w-prose font-sans text-base leading-relaxed text-muted">
-          A subject is whoever you want to read over time — a partner organization, a young
-          leader, any voice Ashoka wants to follow. You create it once; every dated material you
-          add afterward builds its story.
+          {t("intro")}
         </p>
       </Reveal>
 
