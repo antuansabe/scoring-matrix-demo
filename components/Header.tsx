@@ -40,6 +40,8 @@ export function Header() {
           <img
             src="/logo.png"
             alt="Ashoka Logo"
+            width={132}
+            height={120}
             className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
           />
           <div className="h-6 w-px bg-border/60 hidden sm:block" />

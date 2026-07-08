@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import type { Subject, AnalysisWithEntry } from "@/lib/db/types";
 import { DIMENSIONS, resolveParadigmName } from "@/lib/paradigm";
@@ -12,11 +13,27 @@ import {
   resolveNarrativeDirection,
   orderChronologically,
 } from "@/lib/compare";
-import { CompareRadar } from "@/components/CompareRadar";
 import { ChangeNarrativeCard } from "@/components/ChangeNarrativeCard";
 import { Disclosure } from "@/components/Disclosure";
 import { Term } from "@/components/Term";
 import type { GlossaryKey } from "@/lib/copy/glossary";
+
+// Recharts (~316KB chunk) loads only when the overlaid radar renders — it was
+// already mount-gated inside CompareRadar, so ssr:false is behavior-identical
+// (Phase 11b, justified by docs/PERFORMANCE.md baseline). The placeholder
+// mirrors the chart card's box so nothing shifts when the chunk arrives.
+const CompareRadar = dynamic(
+  () => import("@/components/CompareRadar").then((m) => m.CompareRadar),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="border border-border bg-surface p-4 sm:p-6 lg:p-8">
+        <p className="mb-2 font-mono text-xs uppercase tracking-widest text-muted">&nbsp;</p>
+        <div className="h-[300px] w-full sm:h-[340px] lg:h-[380px]" />
+      </div>
+    ),
+  },
+);
 
 const DIRECTION_GLYPH: Record<string, string> = {
   higher: "↑",

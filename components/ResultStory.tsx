@@ -1,10 +1,27 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import type { ScoreResult } from "@/lib/types";
 import { PARADIGM_NAMES } from "@/lib/paradigm";
 import { Term } from "@/components/Term";
-import { RadarProfile } from "@/components/RadarProfile";
+
+// Recharts (~316KB chunk) loads only when a result actually renders — it was
+// already mount-gated inside RadarProfile, so ssr:false is behavior-identical
+// (Phase 11b, justified by docs/PERFORMANCE.md baseline). The placeholder
+// mirrors the chart card's box so nothing shifts when the chunk arrives.
+const RadarProfile = dynamic(
+  () => import("@/components/RadarProfile").then((m) => m.RadarProfile),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="border border-border bg-surface p-4 sm:p-6 lg:p-8">
+        <p className="mb-2 font-mono text-xs uppercase tracking-widest text-muted">&nbsp;</p>
+        <div className="h-[280px] w-full sm:h-[320px] lg:h-[340px]" />
+      </div>
+    ),
+  },
+);
 
 /**
  * Story-first lead for an analysis result (Phase 9, progressive disclosure).
