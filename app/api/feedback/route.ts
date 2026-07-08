@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { generateFeedback, FeedbackParseError, type SubjectVoice } from "@/lib/feedback";
+import type { AppLocale } from "@/i18n/config";
 import { AnthropicConfigError } from "@/lib/anthropic";
 import type { DimensionKey, DimensionScore, GenreTag } from "@/lib/types";
 
@@ -68,12 +69,15 @@ export async function POST(request: Request): Promise<Response> {
 
   // --- call feedback generator ---
   try {
+    // Generated content follows the active UI language (§1b, 2026-07-07).
+    const locale = (await getLocale()) as AppLocale;
     const result = await generateFeedback({
       text,
       scores: b.scores as Record<DimensionKey, DimensionScore>,
       genre,
       crossGenreContext,
       subjectVoice,
+      locale,
     });
     return NextResponse.json(result, { status: 200 });
   } catch (err) {

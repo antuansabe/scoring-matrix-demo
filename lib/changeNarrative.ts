@@ -12,6 +12,7 @@ import {
   type NarrativeDirection,
 } from "@/lib/compare";
 import type { AnalysisWithMaterialText } from "@/lib/db/types";
+import type { AppLocale } from "@/i18n/config";
 import type { DimensionKey } from "@/lib/types";
 
 // Thrown when the model response cannot be parsed into a narrative string.
@@ -34,6 +35,8 @@ export type ChangeSummary = {
   dimensionDeltas: Record<DimensionKey, number>;
   dimensionMovement: Record<DimensionKey, DimensionMovement>;
   narrative: string;
+  /** UI locale the narrative prose was generated in (Part D is ephemeral — never stored). */
+  language: AppLocale;
 };
 
 // Movement is a direct, deterministic read of the sign of an already-computed
@@ -53,6 +56,7 @@ function buildUserMessage(
   dimensionDeltas: Record<DimensionKey, number>,
   enactmentDelta: number,
   directionLabel: string,
+  locale: AppLocale = "en",
 ): string {
   const dimensionLines = DIMENSIONS.map((d) => {
     const delta = dimensionDeltas[d.key];
@@ -63,6 +67,13 @@ function buildUserMessage(
   }).join("\n");
   const enactmentSign = enactmentDelta > 0 ? "+" : "";
 
+  // Only injected for Spanish, so all English traffic stays byte-identical
+  // to the pre-wiring behavior (§1b decision — mirrors lib/feedback.ts).
+  const languageSection =
+    locale === "es"
+      ? `\n\nOUTPUT LANGUAGE: Spanish. Write the narrative in natural Latin American Spanish. Keep the JSON key in English exactly as specified. Keep the instrument's terms of art in English (Enactment Score, the D1–D5 dimension names, paradigm names). Any phrases quoted from the excerpts MUST remain verbatim in their original language — never translate quotes.`
+      : "";
+
   return (
     `COMPUTED DELTAS (already final — do not recompute, do not contradict):\n` +
     `${dimensionLines}\n` +
@@ -70,8 +81,9 @@ function buildUserMessage(
     `Overall direction: ${directionLabel}\n\n` +
     `---\n\n` +
     `t1 — ${t1.entry.entry_date} (genre: ${t1.entry.genre}):\n"${excerpt(t1.entry.material_text)}"\n\n` +
-    `t2 — ${t2.entry.entry_date} (genre: ${t2.entry.genre}):\n"${excerpt(t2.entry.material_text)}"\n\n` +
-    `Generate the change narrative JSON.`
+    `t2 — ${t2.entry.entry_date} (genre: ${t2.entry.genre}):\n"${excerpt(t2.entry.material_text)}"` +
+    languageSection +
+    `\n\nGenerate the change narrative JSON.`
   );
 }
 
@@ -111,6 +123,7 @@ function parseNarrative(raw: string): string {
 export async function generateChangeSummary(
   entryA: AnalysisWithMaterialText,
   entryB: AnalysisWithMaterialText,
+  locale: AppLocale = "en",
 ): Promise<ChangeSummary> {
   const [t1, t2] = orderChronologically(entryA, entryB);
 
@@ -126,7 +139,7 @@ export async function generateChangeSummary(
   const { text: rawJson } = await callClaudeWithCachedSystem({
     model: "claude-sonnet-4-6",
     systemPrompt: CHANGE_NARRATIVE_SYSTEM_PROMPT,
-    userMessage: buildUserMessage(t1, t2, dimensionDeltas, enactmentDelta, NARRATIVE_DIRECTION_LABELS[direction]),
+    userMessage: buildUserMessage(t1, t2, dimensionDeltas, enactmentDelta, NARRATIVE_DIRECTION_LABELS[direction], locale),
     maxTokens: 1000,
     temperature: 0,
   });
@@ -142,5 +155,6 @@ export async function generateChangeSummary(
     dimensionDeltas,
     dimensionMovement,
     narrative,
+    language: locale,
   };
 }

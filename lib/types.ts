@@ -201,6 +201,13 @@ export type FeedbackResult = {
   question: string;
   /** Populated only in batch mode when crossGenreContext is provided. */
   crossGenre: string | null;
+  /**
+   * UI locale the card was generated in (§1b decision, resolved 2026-07-07:
+   * generated content follows the active UI language). Optional and additive —
+   * cards stored before the wiring have no field and parse unchanged; it
+   * rides inside the feedback_card JSONB with no schema change.
+   */
+  language?: "en" | "es";
 };
 
 

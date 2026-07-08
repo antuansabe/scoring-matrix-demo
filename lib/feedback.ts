@@ -1,5 +1,6 @@
 import { callClaudeWithCachedSystem } from "@/lib/anthropic";
 import { FEEDBACK_SYSTEM_PROMPT } from "@/lib/prompts/feedback";
+import type { AppLocale } from "@/i18n/config";
 import type {
   DimensionKey,
   DimensionScore,
@@ -31,6 +32,13 @@ export type GenerateFeedbackOpts = {
   genre: GenreTag;
   crossGenreContext?: string;
   subjectVoice?: SubjectVoice;
+  /**
+   * UI locale the card should be written in (§1b, resolved 2026-07-07).
+   * Defaults to "en", which keeps the user message byte-identical to the
+   * pre-wiring behavior — the directive is only injected for "es". The
+   * system prompt (cached) never changes.
+   */
+  locale?: AppLocale;
 };
 
 const DIMENSION_NAMES: Record<DimensionKey, string> = {
@@ -50,6 +58,7 @@ function buildUserMessage(
   genre: GenreTag,
   crossGenreContext?: string,
   subjectVoice?: SubjectVoice,
+  locale: AppLocale = "en",
 ): string {
   const scoreLines = DIMENSION_ORDER.map((key) => {
     const d = scores[key];
@@ -73,6 +82,15 @@ function buildUserMessage(
       ? `\n\n---\n\nSUBJECT VOICE: ORGANIZATION — this text is institutional discourse issued in a collective voice; there is no individual narrator.`
       : "";
 
+  // Only injected for Spanish, so all English traffic stays byte-identical
+  // to the pre-wiring behavior (same precedent as voiceSection). The
+  // textAnchor clause is load-bearing: quotes must stay verbatim in the
+  // analyzed text's own language, never translated.
+  const languageSection =
+    locale === "es"
+      ? `\n\n---\n\nOUTPUT LANGUAGE: Spanish. Write every JSON string value in natural Latin American Spanish. Keep the JSON keys in English exactly as specified. Keep the instrument's terms of art in English (Enactment Score, the D1–D5 dimension names, paradigm names, EACH values, Lens A). textAnchor values and any quoted phrases MUST remain verbatim from the analyzed text, in the text's original language — never translate quotes.`
+      : "";
+
   return (
     `TEXT (genre: ${genre}):\n${text}\n\n` +
     `---\n\n` +
@@ -80,6 +98,7 @@ function buildUserMessage(
     `do not reproduce them verbatim):\n${scoreLines}` +
     crossSection +
     voiceSection +
+    languageSection +
     `\n\nGenerate the feedback analysis JSON.`
   );
 }
@@ -177,15 +196,15 @@ function parseFeedback(raw: string): FeedbackResult {
 export async function generateFeedback(
   opts: GenerateFeedbackOpts,
 ): Promise<FeedbackResult> {
-  const { text, scores, genre, crossGenreContext, subjectVoice } = opts;
+  const { text, scores, genre, crossGenreContext, subjectVoice, locale = "en" } = opts;
 
   const { text: rawJson } = await callClaudeWithCachedSystem({
     model: "claude-sonnet-4-6",
     systemPrompt: FEEDBACK_SYSTEM_PROMPT,
-    userMessage: buildUserMessage(text, scores, genre, crossGenreContext, subjectVoice),
+    userMessage: buildUserMessage(text, scores, genre, crossGenreContext, subjectVoice, locale),
     maxTokens: 2500,
     temperature: 0,
   });
 
-  return parseFeedback(rawJson);
+  return { ...parseFeedback(rawJson), language: locale };
 }

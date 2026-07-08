@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getAnalysisWithMaterialTextByEntryId } from "@/lib/db/analyses";
+import type { AppLocale } from "@/i18n/config";
 import { generateChangeSummary, ChangeNarrativeParseError } from "@/lib/changeNarrative";
 import { AnthropicConfigError } from "@/lib/anthropic";
 
@@ -47,7 +48,9 @@ export async function POST(request: Request): Promise<Response> {
       return NextResponse.json({ error: t("narrative.crossSubject") }, { status: 400 });
     }
 
-    const summary = await generateChangeSummary(entryA, entryB);
+    // Generated content follows the active UI language (§1b, 2026-07-07).
+    const locale = (await getLocale()) as AppLocale;
+    const summary = await generateChangeSummary(entryA, entryB, locale);
     return NextResponse.json(summary, { status: 200 });
   } catch (err) {
     if (err instanceof AnthropicConfigError) {
