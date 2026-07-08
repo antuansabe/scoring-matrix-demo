@@ -330,7 +330,12 @@
     "entryMeta": "{date} · {genre} · logged by {name}",
     "outOf100": "/ 100 — {paradigm}",
     "viewCard": "View Feedback Card →",
-    "noEntries": "No entries logged yet for this subject."
+    "noEntries": "No entries logged yet for this subject.",
+    "monthEntryCount": "{count, plural, one {# entry} other {# entries}}",
+    "monthOutOf100": "/ 100 avg — {paradigm}",
+    "monthAvgDims": "Avg dimensions",
+    "monthMixedModels": "Entries this month were scored with different model versions ({versions}). The monthly average mixes scoring models — read it with caution.",
+    "monthUnknown": "Undated"
   },
   "addBatch": {
     "eyebrow": "Batch Intake",
