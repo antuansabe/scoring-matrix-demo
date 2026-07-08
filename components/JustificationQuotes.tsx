@@ -15,6 +15,7 @@ export function JustificationQuotes({
   accentColor?: string;
 }) {
   const t = useTranslations("justifications");
+  const td = useTranslations("dimensions");
   return (
     <div className="border border-border bg-surface p-5 sm:p-6 lg:p-8">
       <p className="mb-6 font-mono text-xs uppercase tracking-widest text-muted">
@@ -26,7 +27,7 @@ export function JustificationQuotes({
           return (
             <div key={d.key}>
               <p className="font-mono text-xs uppercase tracking-widest text-ink">
-                {t("scoreLine", { key: d.key, name: d.fullName, score })}
+                {t("scoreLine", { key: d.key, name: td(`${d.key}.full`), score })}
               </p>
               <p className="mt-2 font-sans text-sm leading-relaxed text-ink">
                 {justification}

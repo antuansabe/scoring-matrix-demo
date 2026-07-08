@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { createSubject } from "@/lib/db/subjects";
 import { DEMO_FLAG } from "@/lib/demo";
 import type { SubjectType } from "@/lib/db/types";
@@ -16,29 +17,32 @@ function describeError(err: unknown): { message: string; code?: string } {
 }
 
 export async function POST(request: Request): Promise<Response> {
+  // Error messages follow the caller's locale (cw.locale cookie).
+  const t = await getTranslations("apiErrors");
+
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Request body is not valid JSON." }, { status: 400 });
+    return NextResponse.json({ error: t("common.badJson") }, { status: 400 });
   }
   if (typeof body !== "object" || body === null) {
-    return NextResponse.json({ error: "Request body must be a JSON object." }, { status: 400 });
+    return NextResponse.json({ error: t("common.notObject") }, { status: 400 });
   }
   const b = body as Record<string, unknown>;
 
   const name = typeof b.name === "string" ? b.name.trim() : "";
   if (!name) {
-    return NextResponse.json({ error: "`name` is required." }, { status: 400 });
+    return NextResponse.json({ error: t("subjects.nameRequired") }, { status: 400 });
   }
   if (!VALID_SUBJECT_TYPES.includes(b.type as SubjectType)) {
-    return NextResponse.json({ error: "`type` must be 'jj_partner' or 'ngl'." }, { status: 400 });
+    return NextResponse.json({ error: t("subjects.badType") }, { status: 400 });
   }
   const type = b.type as SubjectType;
   const parentOrgId = typeof b.parentOrgId === "string" && b.parentOrgId ? b.parentOrgId : null;
   if (type === "ngl" && !parentOrgId) {
     return NextResponse.json(
-      { error: "An NGL always belongs to a partner organization — `parentOrgId` is required." },
+      { error: t("subjects.nglNeedsParent") },
       { status: 400 },
     );
   }
@@ -50,7 +54,7 @@ export async function POST(request: Request): Promise<Response> {
   // subject must never be able to masquerade as (or hide like) demo data.
   if (ashokaInternalId === DEMO_FLAG) {
     return NextResponse.json(
-      { error: `"${DEMO_FLAG}" is reserved for the built-in demo example.` },
+      { error: t("subjects.demoReserved", { flag: DEMO_FLAG }) },
       { status: 400 },
     );
   }
@@ -68,9 +72,9 @@ export async function POST(request: Request): Promise<Response> {
   } catch (err: unknown) {
     const { message, code } = describeError(err);
     if (code === "23514") {
-      return NextResponse.json({ error: `The database rejected this subject: ${message}` }, { status: 400 });
+      return NextResponse.json({ error: t("subjects.dbRejected", { message }) }, { status: 400 });
     }
     console.error("[api/subjects] Failed to create subject:", err);
-    return NextResponse.json({ error: "Could not create the subject. Please try again." }, { status: 500 });
+    return NextResponse.json({ error: t("subjects.createFailed") }, { status: 500 });
   }
 }

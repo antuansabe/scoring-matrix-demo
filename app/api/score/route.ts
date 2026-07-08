@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { callClaudeWithCachedSystem, AnthropicConfigError } from "@/lib/anthropic";
 import { SCORER_SYSTEM_PROMPT } from "@/lib/prompts/scorer";
 import { validateAndComputeScore } from "@/lib/scoring";
@@ -13,15 +14,16 @@ const MIN_WORDS = 50;
 const MAX_WORDS = 7000;
 
 export async function POST(request: Request): Promise<Response> {
+  // Error messages follow the caller's locale (cw.locale cookie, same-origin
+  // fetch sends it automatically); clients render `error` verbatim.
+  const t = await getTranslations("apiErrors");
+
   // --- parse the request body ---
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json(
-      { error: "Request body is not valid JSON." },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: t("common.badJson") }, { status: 400 });
   }
   const text =
     typeof body === "object" && body !== null && "text" in body
@@ -29,7 +31,7 @@ export async function POST(request: Request): Promise<Response> {
       : undefined;
   if (typeof text !== "string") {
     return NextResponse.json(
-      { error: "Missing «text» field (must be a string)." },
+      { error: t("score.missingText") },
       { status: 400 },
     );
   }
@@ -38,19 +40,13 @@ export async function POST(request: Request): Promise<Response> {
   const words = countWords(text);
   if (words < MIN_WORDS) {
     return NextResponse.json(
-      {
-        error: `Text is too short: ${words} ${
-          words === 1 ? "word" : "words"
-        }. Minimum ${MIN_WORDS} words required.`,
-      },
+      { error: t("score.tooShort", { words, min: MIN_WORDS }) },
       { status: 400 },
     );
   }
   if (words > MAX_WORDS) {
     return NextResponse.json(
-      {
-        error: `Text is too long: ${words} words. Maximum ${MAX_WORDS} words.`,
-      },
+      { error: t("score.tooLong", { words, max: MAX_WORDS }) },
       { status: 400 },
     );
   }
@@ -70,13 +66,13 @@ export async function POST(request: Request): Promise<Response> {
     if (err instanceof AnthropicConfigError) {
       console.error("[api/score] ANTHROPIC_API_KEY is not configured.");
       return NextResponse.json(
-        { error: "The analysis service is not available right now." },
+        { error: t("score.unavailable") },
         { status: 500 },
       );
     }
     console.error("[api/score] Error calling Anthropic:", err);
     return NextResponse.json(
-      { error: "Could not complete the analysis. Please try again." },
+      { error: t("score.callFailed") },
       { status: 502 },
     );
   }
@@ -84,8 +80,14 @@ export async function POST(request: Request): Promise<Response> {
   // --- validate and compute score ---
   const validated = validateAndComputeScore(rawJson, words);
   if (!validated.ok) {
+    // "scorerRejected" carries the scorer's own verbatim message (frozen
+    // prompt — untranslatable); everything else maps to the catalog.
+    const message =
+      validated.errorCode === "scorerRejected" && validated.detail
+        ? validated.detail
+        : t(`score.${validated.errorCode}`);
     return NextResponse.json(
-      { error: validated.error },
+      { error: message },
       { status: validated.status },
     );
   }

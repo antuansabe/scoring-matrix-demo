@@ -427,5 +427,274 @@
     "enactmentScore": "Enactment Score",
     "eachOrientation": "EACH Orientation",
     "modelVersion": "Model version"
+  },
+  "metadata": {
+    "title": "Changemaker Worldview Scoring Matrix — Demo",
+    "description": "An interactive demo of Ashoka's Changemaker Worldview Scoring Matrix — reading the architecture of a text across five dimensions."
+  },
+  "dimensions": {
+    "D1": {
+      "full": "Agency & Contribution",
+      "short": "Agency",
+      "blurb": "Who acts in this text, who is acted upon, and who gets to contribute? This dimension tests whether agency is concentrated in institutions and adults — or distributed universally, and in the present tense."
+    },
+    "D2": {
+      "full": "Systemic & Architectural Framing",
+      "short": "Systemic Framing",
+      "blurb": "Does the text locate problems and solutions at the level of rules, structures, and social architectures — or at the level of individuals and programs?"
+    },
+    "D3": {
+      "full": "Empathy Enactment",
+      "short": "Empathy",
+      "blurb": "Does the text demonstrate the practice of conscious empathy — the capacity to be aware of and understand our own and others' perspectives, and to guide one's actions to contribute to the common good — or does it stop at emotional solidarity?"
+    },
+    "D4": {
+      "full": "Collaboration & Leadership",
+      "short": "Collaboration",
+      "blurb": "Does the text enact distributed, fluid leadership that shares power and knowledge across hierarchies — including across generations?"
+    },
+    "D5": {
+      "full": "Identity Embodiment",
+      "short": "Identity",
+      "blurb": "Does the narrator position themselves as a changemaker through the structure of their language — or do they merely claim the label? This dimension tests the gap between stated identity (\"I am a changemaker\") and enacted identity: language that demonstrates the worldview without requiring the vocabulary, consistently across contexts and over time. It tests reflexivity."
+    }
+  },
+  "paradigmDescriptors": {
+    "Spectator": "Change happens elsewhere, authored by others.",
+    "Sympathizer": "Change is recognized and valued, but still understood as someone else's job.",
+    "Contributor": "Agency enters the picture. The narrator sees themselves as a contributor, though the framing remains partial.",
+    "Changemaker": "I am creating change. Change is owned, built, and driven from within.",
+    "System Architect": "We are rewriting the rules. Agency is distributed, structures are named and challenged."
+  },
+  "genreTags": {
+    "free-form-interview": "Free-form Interview",
+    "structured-profile": "Structured Profile",
+    "social-media-post": "Social Media Post",
+    "institutional-report": "Institutional Report",
+    "speech-public-address": "Speech / Public Address",
+    "fundraising-copy": "Fundraising Copy"
+  },
+  "samples": {
+    "sectionTitle": "Expert Anchor Samples",
+    "titles": {
+      "a-spectator": "Holiday campaign copy",
+      "b-sympathizer": "Institutional self-description",
+      "c-changemaker": "Community organizer interview",
+      "d-system-architect": "Education reform interview"
+    },
+    "excerptMeta": "Paradigm {level} · {name} · {genre}",
+    "excerptWords": "Excerpt · {count, plural, one {# word} other {# words}}",
+    "switcherGroupAria": "Select a sample paradigm",
+    "switcherChipAria": "Paradigm {level}: {name}"
+  },
+  "foundations": {
+    "origin": {
+      "eyebrow": "How was the model built?",
+      "titlePart1": "Built on the Gap Between What Language ",
+      "titleSays": "Says",
+      "titlePart2": " and What It ",
+      "titleDoes": "Does",
+      "p1": "At a board meeting two years ago, three entrepreneurs within Ashoka shared ideas that constituted a breakthrough for the EACH movement. These are the Changemaking Measures — The Changemaker Index (Diana Wells), the Changemaker Density Rate (Bob Spoer), and the Jujitsu dashboards (Claire Fallender).",
+      "p2": "The Changemaker Density Rate (CMDR) faced a roadblock with Bob's death. As Ashoka looks for new leadership for this Measure, Giselle Kuri from the Framework Change team found inspiration in the work of colleague Antonio Fernández, who built the first Spanish-language dataset capable of detecting machismo in language.",
+      "p3": "That insight opened a question: if machismo — a deeply embedded worldview — could be detected through language structure, why not changemaking or EACH? And if enough people used a tool to examine their own worldview, could we identify changemaker density within geographies or organizations?",
+      "p4": "The model is built on the gap between surface discourse — what someone says — and enacted Discourse — what their language actually does. As Van Dijk demonstrates, paternalist mental models routinely use empowerment vocabulary. As Gee shows, this gap is only detectable through structural analysis."
+    },
+    "theory": {
+      "eyebrow": "The theory behind the model",
+      "titlePart1": "Five Dimensions. ",
+      "titlePart2": "Two Lenses.",
+      "intro": "The five dimensions were designed at the intersection of external sociolinguistic scholarship and the EACH Framework developed by Ashoka over decades of learning from changemakers."
+    },
+    "dims": {
+      "D1": "Draws on De Fina's narrative positioning theory and Van Dijk's Ideological Square to detect who is grammatically constructed as an agent — who acts, who is acted upon, and who is systematically absent from contribution.",
+      "D2": "Draws on Lakoff's conceptual metaphor analysis and Entman's framing functions — particularly his absence audit — to determine whether problems and solutions are located at the level of deep structures or individual programs, and what the text systematically leaves out.",
+      "D3": "Applies De Fina's second and third levels of narrative positioning alongside Wodak's nomination and predication strategies to distinguish empathy that is stated from empathy that is enacted — perspectives that visibly change the narrator's approach and reveal structural patterns.",
+      "D4": "Draws on Fairclough's orders of discourse and De Fina's positioning levels to test whether power is genuinely distributed across a text's relational architecture, or merely delegated downward within a fixed hierarchy.",
+      "D5": "The most theoretically integrated dimension — brings together De Fina's narratives-as-practice tradition, Gee's enacted Discourse, and Tajfel's social identity theory to test whether changemaker identity is performed through language structure consistently across time and context, rather than activated only when the label is explicitly invoked."
+    },
+    "lensesLabel": "Contextual lenses",
+    "lenses": {
+      "genreTag": {
+        "name": "Genre Tag",
+        "desc": "Every text is identified by its genre before scoring begins, so the model's interpretive ceiling for each dimension shifts accordingly — reading what the text can structurally evidence given its context of production, rather than penalizing it for what its genre structurally cannot carry."
+      },
+      "coherence": {
+        "name": "Cross-Genre Coherence Flag",
+        "desc": "Tracks whether deeper structural patterns — the attribution of agency, the framing of problems, the positioning of self and other — hold across genre adaptations or collapse under them.",
+        "badge": "Batch Analysis only"
+      }
+    },
+    "each": {
+      "eyebrow": "The EACH Framework",
+      "titlePart1": "Everyone a ",
+      "titlePart2": "Changemaker",
+      "intro": "The Everyone a Changemaker (EACH) Framework is built on the insight that lasting systems change requires both individual and collective transformation. At the personal level, four core skills. At the societal level, three large-scale shifts in decision-making.",
+      "skillsLabel": "The four skills",
+      "shiftsLabel": "The three societal shifts",
+      "fromLabel": "From:",
+      "toLabel": "To:"
+    },
+    "skills": {
+      "s1": {
+        "name": "Nurturing Conscious Empathy",
+        "desc": "The ability to be aware of and understand our own and others' (human and non-human) perspectives, and to use that understanding to guide one's actions to contribute to the common good."
+      },
+      "s2": {
+        "name": "Organizing Open, Fluid & Integrated Teams",
+        "desc": "The ability to contribute to and thrive beyond your traditional role and team. Seek to be part of an ecosystem of teams that mobilize around new problems or opportunities."
+      },
+      "s3": {
+        "name": "Developing Changemaking Leadership",
+        "desc": "The capacity, as a leader, to envision, enable, and ensure that every team member is an initiator and understands the big picture behind the purpose."
+      },
+      "s4": {
+        "name": "Practicing Changemaking Action",
+        "desc": "The process of creating a novel solution to a social problem that is more effective, efficient, sustainable, or just than existing solutions — and for which the value created accrues primarily to society."
+      }
+    },
+    "shifts": {
+      "s1": {
+        "index": "Shift 1",
+        "name": "Empathy-based Societies",
+        "from": "self-interest and disconnection",
+        "to": "conscious empathy",
+        "desc": "Where most systems are built on transactions, rules, and incentives, empathy-based societies are built on the capacity to genuinely understand and be moved by another person's reality. Empathy is learnable, practicable, and scalable."
+      },
+      "s2": {
+        "index": "Shift 2",
+        "name": "Lifelong Contribution",
+        "from": "contribution at a specific age or stage",
+        "to": "lifelong generative power",
+        "desc": "Every stage of life holds agency and unique generative power. The grandmother, the recently arrived migrant, the teenager with no credentials, the retiree with decades of knowledge — all have agency and can practice their contribution."
+      },
+      "s3": {
+        "index": "Shift 3",
+        "name": "Changemaker Networks",
+        "from": "hierarchical, siloed structures",
+        "to": "collective intelligence in motion",
+        "desc": "No single changemaker changes a system alone. The unit of transformation is not the heroic individual — it is the network. A living web of people who trust each other, share knowledge across boundaries, and hold a common direction even without a common blueprint."
+      }
+    },
+    "table": {
+      "narrative": "Narrative",
+      "cultivates": "What it cultivates",
+      "challenges": "What it challenges",
+      "rows": {
+        "r1": {
+          "narrative": "Empathy-Based Societies",
+          "cultivates": "The connective tissue with others",
+          "challenges": "Transactional, fear-based systems"
+        },
+        "r2": {
+          "narrative": "Lifelong Contribution",
+          "cultivates": "The will to give throughout a lifetime",
+          "challenges": "Age-limited, exclusionary structures"
+        },
+        "r3": {
+          "narrative": "Changemaker Networks",
+          "cultivates": "The collective power to shift systems",
+          "challenges": "The myth of the lone hero"
+        }
+      }
+    },
+    "ashoka": {
+      "eyebrow": "About Ashoka",
+      "p1": "Ashoka exists to enable the conditions so that people can step into their power to give. For more than 45 years we have been learning from systems-changing social entrepreneurs to understand how the decisions that people make change the rules of society.",
+      "p2": "Our bet is that changemakers can ensure better futures."
+    }
+  },
+  "calculator": {
+    "eyebrow": "Methodology",
+    "titlePart1": "Interactive ",
+    "titlePart2": "Score Calculator",
+    "subtitle": "Explore how the weights, genres, and dimension scores interact in the Changemaker Worldview model.",
+    "inputsHeader": "Scoring Profile",
+    "outputsHeader": "Calculated Outputs",
+    "genreLabel": "Text Genre",
+    "formulaHeader": "Active Formula",
+    "weight": "weight {pct}%",
+    "enactmentScore": "Enactment Score",
+    "paradigmLevel": "Paradigm Level",
+    "eachOrientation": "EACH Orientation",
+    "explainerHeading": "Methodology Explainer",
+    "explainerSub": "Understand how the matrix processes language architecture",
+    "explainer": {
+      "s1": {
+        "heading": "1. AI Scores & Code Weights",
+        "text": "The AI acts as an objective reader assigning a 0–4 score to each dimension based on linguistic signals in the text. Once these scores are assigned, the application logic applies the mathematical weights to calculate the overall score. This separation prevents the AI from directly hallucinating or biasing the final score."
+      },
+      "s2": {
+        "heading": "2. Why Weights Shift per Genre",
+        "text": "Weights shift because narrative expectations change. An institutional report is expected to focus heavily on systemic framing (D2), so D2 is weighted higher. Conversely, a social media post or fundraising copy is rhetorically constrained, so empathy (D3) or agency (D1) are weighted higher to offset structural genre constraints."
+      },
+      "s3": {
+        "heading": "3. Low Weight on Identity (D5)",
+        "text": "Identity Embodiment (D5) is intentionally weighted low at 10%. Language that directly claims a 'changemaker' identity without executing it is discounted. D5 measures self-reflection, learning from failure, and power awareness — critical features that serve as a fine signal rather than the primary engine of the model."
+      },
+      "s4": {
+        "heading": "4. Deriving the EACH Orientation",
+        "text": "The EACH (Everyone a Changemaker) orientation is derived entirely from the dominant pair of dimensions in the profile (both scoring 3 or higher, and being the top dimensions), not from the overall Enactment Score. This flags whether the narrative is structurally oriented toward Lifelong Contribution (D1+D5), Changemaker Networks (D2+D4), or Empathy-based Societies (D3+D1)."
+      }
+    }
+  },
+  "apiErrors": {
+    "common": {
+      "badJson": "Request body is not valid JSON.",
+      "notObject": "Request body must be a JSON object."
+    },
+    "score": {
+      "missingText": "Missing «text» field (must be a string).",
+      "tooShort": "Text is too short: {words, plural, one {# word} other {# words}}. Minimum {min} words required.",
+      "tooLong": "Text is too long: {words} words. Maximum {max} words.",
+      "unavailable": "The analysis service is not available right now.",
+      "callFailed": "Could not complete the analysis. Please try again.",
+      "scorerUnexpected": "The scorer returned an unexpected response."
+    },
+    "feedback": {
+      "missingText": "Missing 'text' field (must be a string).",
+      "missingScores": "Missing 'scores' field (must be an object).",
+      "missingGenre": "Missing 'genre' field (must be a string).",
+      "badVoice": "`subjectVoice` must be 'individual' or 'organization' when provided.",
+      "unavailable": "The feedback service is not available right now.",
+      "parseFailed": "Could not parse feedback response. Please try again.",
+      "failed": "Could not complete the feedback analysis. Please try again."
+    },
+    "entries": {
+      "subjectXor": "Provide exactly one of `subjectId` or `newSubject`.",
+      "newSubjectName": "`newSubject.name` is required.",
+      "newSubjectType": "`newSubject.type` must be 'jj_partner' or 'ngl'.",
+      "nglNeedsParent": "An NGL subject requires a parent JJ Partner (`newSubject.parentOrgId`).",
+      "badEntryDate": "`entryDate` must be a YYYY-MM-DD string.",
+      "badMaterialGenre": "`materialGenre` is not a recognized genre.",
+      "ashokanRequired": "`ashokanName` is required.",
+      "materialTextRequired": "`materialText` is required.",
+      "dimensionsRequired": "`dimensions` is required.",
+      "dimensionInvalid": "`dimensions.{key}` is missing or invalid.",
+      "badEnactment": "`enactmentScore` must be a number in [0, 100].",
+      "eachRequired": "`eachOrientation` is required.",
+      "feedbackRequired": "`feedback` is required — save an entry only after the Deeper Reading feedback exists.",
+      "badGenreTag": "`effectiveGenreTag` is not a recognized genre tag.",
+      "badOverridden": "`genreOverridden` must be a boolean.",
+      "subjectNotFound": "Subject not found.",
+      "dbRejected": "The database rejected this record: {message}",
+      "saveFailed": "Could not save this entry. Please try again."
+    },
+    "subjects": {
+      "nameRequired": "`name` is required.",
+      "badType": "`type` must be 'jj_partner' or 'ngl'.",
+      "nglNeedsParent": "An NGL always belongs to a partner organization — `parentOrgId` is required.",
+      "demoReserved": "\"{flag}\" is reserved for the built-in demo example.",
+      "dbRejected": "The database rejected this subject: {message}",
+      "createFailed": "Could not create the subject. Please try again."
+    },
+    "narrative": {
+      "missingIds": "Both `entryId1` and `entryId2` are required.",
+      "sameEntry": "Provide two different entries to compare.",
+      "notFound": "One or both entries were not found.",
+      "crossSubject": "Cannot compare entries from different subjects.",
+      "unavailable": "The narrative service is not available right now.",
+      "parseFailed": "Could not parse the change narrative response. Please try again.",
+      "failed": "Could not generate the change narrative. Please try again."
+    }
   }
 }

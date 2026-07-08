@@ -92,7 +92,17 @@ function toStringArray(value: unknown): string[] {
 export type ScoreValidationSuccess = { ok: true; result: ScoreResult };
 export type ScoreValidationFailure = {
   ok: false;
-  error: string;
+  /**
+   * Machine-readable failure code — the calling route handler maps it to a
+   * localized message (apiErrors catalog). This module stays pure: no
+   * translator injection, no user-facing strings.
+   * - "scorerUnexpected": unparseable or malformed scorer output.
+   * - "scorerRejected": the scorer's own documented too-short/gibberish
+   *   escape hatch; `detail` carries its verbatim message (untranslatable —
+   *   it comes from the frozen scorer prompt).
+   */
+  errorCode: "scorerUnexpected" | "scorerRejected";
+  detail?: string;
   status: number;
 };
 export type ScoreValidationResult =
@@ -122,11 +132,7 @@ export function validateAndComputeScore(
       "[scoring] Could not parse the scorer's JSON:",
       rawJson.slice(0, 500),
     );
-    return {
-      ok: false,
-      error: "The scorer returned an unexpected response.",
-      status: 502,
-    };
+    return { ok: false, errorCode: "scorerUnexpected", status: 502 };
   }
 
   // --- scorer's documented "too short / gibberish" escape hatch ---
@@ -138,7 +144,8 @@ export function validateAndComputeScore(
   ) {
     return {
       ok: false,
-      error: (parsed as { error: string }).error,
+      errorCode: "scorerRejected",
+      detail: (parsed as { error: string }).error,
       status: 422,
     };
   }
@@ -149,11 +156,7 @@ export function validateAndComputeScore(
       "[scoring] Invalid shape from the scorer:",
       JSON.stringify(parsed).slice(0, 500),
     );
-    return {
-      ok: false,
-      error: "The scorer returned an unexpected response.",
-      status: 502,
-    };
+    return { ok: false, errorCode: "scorerUnexpected", status: 502 };
   }
 
   // --- normalise dimension scores (ints in [0,4]) ---

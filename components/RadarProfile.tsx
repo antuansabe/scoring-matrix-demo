@@ -28,16 +28,19 @@ export function RadarProfile({
   // Recharts' ResponsiveContainer can't measure a parent during SSR/prerender
   // (it logs a width/height warning). Render the chart only after mount.
   const t = useTranslations("radarProfile");
+  const td = useTranslations("dimensions");
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
+  // Labels resolve here, before recharts sees the data array, so the axis
+  // follows the catalog (terms of art stay English in both locales).
   const data = DIMENSIONS.map((d) => ({
-    dimension: d.shortName,
+    dimension: td(`${d.key}.short`),
     score: result.dimensions[d.key].score,
   }));
 
   const ariaLabel = t("aria", {
-    values: DIMENSIONS.map((d) => `${d.shortName} ${result.dimensions[d.key].score}`).join(", "),
+    values: DIMENSIONS.map((d) => `${td(`${d.key}.short`)} ${result.dimensions[d.key].score}`).join(", "),
   });
 
   return (

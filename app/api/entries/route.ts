@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { createSubject, getSubject } from "@/lib/db/subjects";
 import { createEntry, countEntriesBySubject } from "@/lib/db/entries";
 import { saveAnalysis } from "@/lib/db/analyses";
@@ -57,9 +58,13 @@ function describeError(err: unknown): { message: string; code?: string } {
   return { message: String(err) };
 }
 
-function validate(body: unknown): { ok: true; payload: EntryPayload } | { ok: false; error: string } {
+// Validation failures return an apiErrors.entries.* catalog key (+ optional
+// params) — the POST handler localizes them. This keeps validate() pure.
+type ValidationFailure = { ok: false; errorKey: string; params?: Record<string, string> };
+
+function validate(body: unknown): { ok: true; payload: EntryPayload } | ValidationFailure {
   if (typeof body !== "object" || body === null) {
-    return { ok: false, error: "Request body must be a JSON object." };
+    return { ok: false, errorKey: "common.notObject" };
   }
   const b = body as Record<string, unknown>;
 
@@ -68,56 +73,56 @@ function validate(body: unknown): { ok: true; payload: EntryPayload } | { ok: fa
   const hasNewSubject = typeof newSubject === "object" && newSubject !== null;
 
   if (hasSubjectId === hasNewSubject) {
-    return { ok: false, error: "Provide exactly one of `subjectId` or `newSubject`." };
+    return { ok: false, errorKey: "entries.subjectXor" };
   }
 
   if (hasNewSubject) {
     if (typeof newSubject.name !== "string" || newSubject.name.trim().length === 0) {
-      return { ok: false, error: "`newSubject.name` is required." };
+      return { ok: false, errorKey: "entries.newSubjectName" };
     }
     if (!VALID_SUBJECT_TYPES.includes(newSubject.type)) {
-      return { ok: false, error: "`newSubject.type` must be 'jj_partner' or 'ngl'." };
+      return { ok: false, errorKey: "entries.newSubjectType" };
     }
     if (newSubject.type === "ngl" && !newSubject.parentOrgId) {
-      return { ok: false, error: "An NGL subject requires a parent JJ Partner (`newSubject.parentOrgId`)." };
+      return { ok: false, errorKey: "entries.nglNeedsParent" };
     }
   }
 
   if (typeof b.entryDate !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(b.entryDate)) {
-    return { ok: false, error: "`entryDate` must be a YYYY-MM-DD string." };
+    return { ok: false, errorKey: "entries.badEntryDate" };
   }
   if (!VALID_MATERIAL_GENRES.includes(b.materialGenre as MaterialGenre)) {
-    return { ok: false, error: "`materialGenre` is not a recognized genre." };
+    return { ok: false, errorKey: "entries.badMaterialGenre" };
   }
   if (typeof b.ashokanName !== "string" || b.ashokanName.trim().length === 0) {
-    return { ok: false, error: "`ashokanName` is required." };
+    return { ok: false, errorKey: "entries.ashokanRequired" };
   }
   if (typeof b.materialText !== "string" || b.materialText.trim().length === 0) {
-    return { ok: false, error: "`materialText` is required." };
+    return { ok: false, errorKey: "entries.materialTextRequired" };
   }
   if (typeof b.dimensions !== "object" || b.dimensions === null) {
-    return { ok: false, error: "`dimensions` is required." };
+    return { ok: false, errorKey: "entries.dimensionsRequired" };
   }
   const dims = b.dimensions as Record<string, unknown>;
   for (const key of DIMENSION_KEYS) {
     if (!isDimensionScore(dims[key])) {
-      return { ok: false, error: `\`dimensions.${key}\` is missing or invalid.` };
+      return { ok: false, errorKey: "entries.dimensionInvalid", params: { key } };
     }
   }
   if (typeof b.enactmentScore !== "number" || b.enactmentScore < 0 || b.enactmentScore > 100) {
-    return { ok: false, error: "`enactmentScore` must be a number in [0, 100]." };
+    return { ok: false, errorKey: "entries.badEnactment" };
   }
   if (typeof b.eachOrientation !== "string" || b.eachOrientation.trim().length === 0) {
-    return { ok: false, error: "`eachOrientation` is required." };
+    return { ok: false, errorKey: "entries.eachRequired" };
   }
   if (typeof b.feedback !== "object" || b.feedback === null) {
-    return { ok: false, error: "`feedback` is required — save an entry only after the Deeper Reading feedback exists." };
+    return { ok: false, errorKey: "entries.feedbackRequired" };
   }
   if (b.effectiveGenreTag !== undefined && !VALID_GENRE_TAGS.includes(b.effectiveGenreTag as GenreTag)) {
-    return { ok: false, error: "`effectiveGenreTag` is not a recognized genre tag." };
+    return { ok: false, errorKey: "entries.badGenreTag" };
   }
   if (b.genreOverridden !== undefined && typeof b.genreOverridden !== "boolean") {
-    return { ok: false, error: "`genreOverridden` must be a boolean." };
+    return { ok: false, errorKey: "entries.badOverridden" };
   }
 
   return {
@@ -141,16 +146,22 @@ function validate(body: unknown): { ok: true; payload: EntryPayload } | { ok: fa
 }
 
 export async function POST(request: Request): Promise<Response> {
+  // Error messages follow the caller's locale (cw.locale cookie).
+  const t = await getTranslations("apiErrors");
+
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Request body is not valid JSON." }, { status: 400 });
+    return NextResponse.json({ error: t("common.badJson") }, { status: 400 });
   }
 
   const validated = validate(body);
   if (!validated.ok) {
-    return NextResponse.json({ error: validated.error }, { status: 400 });
+    return NextResponse.json(
+      { error: t(validated.errorKey, validated.params) },
+      { status: 400 },
+    );
   }
   const payload = validated.payload;
 
@@ -166,7 +177,7 @@ export async function POST(request: Request): Promise<Response> {
     } else {
       const existing = await getSubject(payload.subjectId as string);
       if (!existing) {
-        return NextResponse.json({ error: "Subject not found." }, { status: 404 });
+        return NextResponse.json({ error: t("entries.subjectNotFound") }, { status: 404 });
       }
       subject = existing;
     }
@@ -233,11 +244,11 @@ export async function POST(request: Request): Promise<Response> {
     if (code === "23514") {
       // Postgres check_violation — most likely ngl_requires_parent.
       return NextResponse.json(
-        { error: `The database rejected this record: ${message}` },
+        { error: t("entries.dbRejected", { message }) },
         { status: 400 },
       );
     }
     console.error("[api/entries] Failed to save entry:", err);
-    return NextResponse.json({ error: "Could not save this entry. Please try again." }, { status: 500 });
+    return NextResponse.json({ error: t("entries.saveFailed") }, { status: 500 });
   }
 }

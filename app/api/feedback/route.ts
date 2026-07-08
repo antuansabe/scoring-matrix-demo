@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { generateFeedback, FeedbackParseError, type SubjectVoice } from "@/lib/feedback";
 import { AnthropicConfigError } from "@/lib/anthropic";
 import type { DimensionKey, DimensionScore, GenreTag } from "@/lib/types";
@@ -7,20 +8,20 @@ export const runtime = "nodejs";
 export const maxDuration = 120;
 
 export async function POST(request: Request): Promise<Response> {
+  // Error messages follow the caller's locale (cw.locale cookie).
+  const t = await getTranslations("apiErrors");
+
   // --- parse body ---
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json(
-      { error: "Request body is not valid JSON." },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: t("common.badJson") }, { status: 400 });
   }
 
   if (typeof body !== "object" || body === null) {
     return NextResponse.json(
-      { error: "Request body must be a JSON object." },
+      { error: t("common.notObject") },
       { status: 400 },
     );
   }
@@ -30,14 +31,14 @@ export async function POST(request: Request): Promise<Response> {
   const text = typeof b.text === "string" ? b.text : undefined;
   if (!text) {
     return NextResponse.json(
-      { error: "Missing 'text' field (must be a string)." },
+      { error: t("feedback.missingText") },
       { status: 400 },
     );
   }
 
   if (typeof b.scores !== "object" || b.scores === null) {
     return NextResponse.json(
-      { error: "Missing 'scores' field (must be an object)." },
+      { error: t("feedback.missingScores") },
       { status: 400 },
     );
   }
@@ -45,7 +46,7 @@ export async function POST(request: Request): Promise<Response> {
   const genre = typeof b.genre === "string" ? (b.genre as GenreTag) : undefined;
   if (!genre) {
     return NextResponse.json(
-      { error: "Missing 'genre' field (must be a string)." },
+      { error: t("feedback.missingGenre") },
       { status: 400 },
     );
   }
@@ -59,7 +60,7 @@ export async function POST(request: Request): Promise<Response> {
     b.subjectVoice !== "organization"
   ) {
     return NextResponse.json(
-      { error: "`subjectVoice` must be 'individual' or 'organization' when provided." },
+      { error: t("feedback.badVoice") },
       { status: 400 },
     );
   }
@@ -79,20 +80,20 @@ export async function POST(request: Request): Promise<Response> {
     if (err instanceof AnthropicConfigError) {
       console.error("[api/feedback] ANTHROPIC_API_KEY is not configured.");
       return NextResponse.json(
-        { error: "The feedback service is not available right now." },
+        { error: t("feedback.unavailable") },
         { status: 500 },
       );
     }
     if (err instanceof FeedbackParseError) {
       console.error("[api/feedback] Parse error:", (err as Error).message);
       return NextResponse.json(
-        { error: "Could not parse feedback response. Please try again." },
+        { error: t("feedback.parseFailed") },
         { status: 502 },
       );
     }
     console.error("[api/feedback] Unexpected error:", err);
     return NextResponse.json(
-      { error: "Could not complete the feedback analysis. Please try again." },
+      { error: t("feedback.failed") },
       { status: 502 },
     );
   }

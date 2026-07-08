@@ -24,25 +24,24 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 import { NextIntlClientProvider } from "next-intl";
-import { getLocale, getMessages } from "next-intl/server";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { Walkthrough } from "@/components/Walkthrough";
 
-const SITE_TITLE = "Changemaker Worldview Scoring Matrix — Demo";
-const SITE_DESCRIPTION =
-  "An interactive demo of Ashoka's Changemaker Worldview Scoring Matrix — reading the architecture of a text across five dimensions.";
-
-export const metadata: Metadata = {
-  title: SITE_TITLE,
-  description: SITE_DESCRIPTION,
-  openGraph: {
-    title: SITE_TITLE,
-    description: SITE_DESCRIPTION,
-    type: "website",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("metadata");
+  return {
+    title: t("title"),
+    description: t("description"),
+    openGraph: {
+      title: t("title"),
+      description: t("description"),
+      type: "website",
+    },
+  };
+}
 
 export default async function RootLayout({
   children,

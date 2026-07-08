@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { SAMPLES } from "@/lib/samples";
 import type { Sample, ScoreResult } from "@/lib/types";
 import { SampleSwitcher } from "@/components/SampleSwitcher";
@@ -10,10 +11,6 @@ import { ScoreCard } from "@/components/ScoreCard";
 import { RadarProfile } from "@/components/RadarProfile";
 import { ScoreBreakdown } from "@/components/ScoreBreakdown";
 import { JustificationQuotes } from "@/components/JustificationQuotes";
-
-const STRINGS = {
-  sectionTitle: "Expert Anchor Samples",
-};
 
 // Adapt a pre-scored Sample to the shared ScoreResult shape the result
 // components consume. The big Enactment Score shown is the expert pre-score
@@ -33,6 +30,7 @@ function sampleToScoreResult(sample: Sample): ScoreResult {
 }
 
 export function SampleShowcase() {
+  const t = useTranslations("samples");
   const [selectedId, setSelectedId] = useState<string>(SAMPLES[0].id);
   // The Enactment Score counts up on first paint, but not when the user
   // switches between samples afterward — those just cross-fade.
@@ -47,7 +45,7 @@ export function SampleShowcase() {
 
   return (
     <section className="mt-6">
-      <h2 className="sr-only">{STRINGS.sectionTitle}</h2>
+      <h2 className="sr-only">{t("sectionTitle")}</h2>
       <Reveal variant="rise-sm">
         <SampleSwitcher
           samples={SAMPLES}

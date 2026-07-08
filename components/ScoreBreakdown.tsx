@@ -26,6 +26,8 @@ export function ScoreBreakdown({
   accentColor?: string;
 }) {
   const t = useTranslations("breakdown");
+  const td = useTranslations("dimensions");
+  const tg = useTranslations("genreTags");
   const weights = GENRE_WEIGHTS[result.genreTag];
   const formulaScore = Math.round(
     DIMENSIONS.reduce(
@@ -37,7 +39,7 @@ export function ScoreBreakdown({
   return (
     <div className="border border-border bg-surface p-5 sm:p-6 lg:p-8">
       <p className="mb-5 font-mono text-xs uppercase tracking-widest text-muted">
-        {t("title", { genre: result.genreTag })}
+        {t("title", { genre: tg(result.genreTag) })}
       </p>
       <ul className="space-y-5">
         {DIMENSIONS.map((d, i) => {
@@ -50,7 +52,7 @@ export function ScoreBreakdown({
               <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
                 <span className="font-mono text-xs uppercase tracking-widest text-ink">
                   <Term k={d.key.toLowerCase() as GlossaryKey}>
-                    {d.key} · {d.fullName}
+                    {d.key} · {td(`${d.key}.full`)}
                   </Term>
                 </span>
                 <span className="shrink-0 font-mono text-xs text-muted">

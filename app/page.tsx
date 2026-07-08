@@ -9,6 +9,7 @@ import Link from "next/link";
 
 export default function Home() {
   const t = useTranslations("home");
+  const td = useTranslations("dimensions");
   return (
     <main className="mx-auto max-w-6xl px-6 pb-16">
       <Hero />
@@ -55,11 +56,11 @@ export default function Home() {
                       {d.key}
                     </span>
                     <h3 className="font-display text-lg font-semibold leading-snug text-ink sm:text-xl">
-                      {d.fullName}
+                      {td(`${d.key}.full`)}
                     </h3>
                   </div>
                   <p className="font-sans text-sm leading-relaxed text-muted line-clamp-4">
-                    {d.oneLineDescription}
+                    {td(`${d.key}.blurb`)}
                   </p>
                 </div>
               </div>

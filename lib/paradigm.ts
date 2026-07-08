@@ -1,6 +1,12 @@
 /**
  * Paradigm constants and scoring math (docs/SCORING_MODEL.md,
  * docs/SYSTEM_PROMPT.md). Pure functions only — no I/O, no React.
+ *
+ * i18n note: the display strings here (fullName/shortName/oneLineDescription,
+ * paradigm descriptors) are canonical English for logic and prompt building.
+ * UI components must NOT render them directly — they read the `dimensions.*`
+ * and `paradigmDescriptors.*` catalog namespaces (messages/{en,es}.json)
+ * instead, where terms of art stay English in both locales by convention.
  */
 import type {
   DimensionKey,

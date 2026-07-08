@@ -216,10 +216,16 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   // --- validate and compute the score ---
+  // This route serves only the hidden /batch surface — errors stay English
+  // (no apiErrors catalog mapping here by design).
   const validated = validateAndComputeScore(scoringCallResult.text, words);
   if (!validated.ok) {
+    const message =
+      validated.errorCode === "scorerRejected" && validated.detail
+        ? validated.detail
+        : "The scorer returned an unexpected response.";
     return NextResponse.json(
-      { error: validated.error },
+      { error: message },
       { status: validated.status },
     );
   }
