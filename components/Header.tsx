@@ -7,6 +7,7 @@ import { Menu, X } from "lucide-react";
 import { OPEN_TOUR_EVENT } from "@/components/Walkthrough";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslations } from "next-intl";
+import { FEATURES } from "@/lib/flags";
 
 export function Header() {
   const t = useTranslations("header");
@@ -18,8 +19,8 @@ export function Header() {
     { href: "/about", label: t("about"), exact: false },
     { href: "/tool", label: t("tool"), exact: false },
     { href: "/subjects", label: t("subjects"), exact: false },
-    { href: "/batch", label: t("batch"), exact: false },
-    { href: "/badge", label: t("badge"), exact: false },
+    ...(FEATURES.batch ? [{ href: "/batch", label: t("batch"), exact: false }] : []),
+    ...(FEATURES.badge ? [{ href: "/badge", label: t("badge"), exact: false }] : []),
   ];
 
   return (

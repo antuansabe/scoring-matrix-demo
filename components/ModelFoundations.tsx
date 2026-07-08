@@ -1,4 +1,5 @@
 import { Reveal } from "@/components/Reveal";
+import { FEATURES } from "@/lib/flags";
 
 /**
  * "Model Foundations" — long-form documentation of the instrument for the
@@ -57,7 +58,7 @@ const LENSES = [
   {
     name: "Cross-Genre Coherence Flag",
     desc: "Tracks whether deeper structural patterns — the attribution of agency, the framing of problems, the positioning of self and other — hold across genre adaptations or collapse under them.",
-    badge: "Batch Analysis only",
+    badge: FEATURES.batch ? "Batch Analysis only" : null,
   },
 ];
 

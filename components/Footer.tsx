@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { FEATURES } from "@/lib/flags";
 
 /** Global Footer. Server component; copy from the message catalogs. */
 export function Footer() {
@@ -10,8 +11,8 @@ export function Footer() {
     { href: "/about", label: t("header.about") },
     { href: "/tool", label: t("header.tool") },
     { href: "/subjects", label: t("header.subjects") },
-    { href: "/batch", label: t("header.batch") },
-    { href: "/badge", label: t("header.badge") },
+    ...(FEATURES.batch ? [{ href: "/batch", label: t("header.batch") }] : []),
+    ...(FEATURES.badge ? [{ href: "/badge", label: t("header.badge") }] : []),
   ];
 
   return (
