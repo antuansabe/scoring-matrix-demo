@@ -41,6 +41,13 @@
   --font-mono: var(--font-plex-mono);
 }
 
+/* Phase 9 readability floor: the document base stays a true 16px so body
+   copy (font-sans text-base) never renders below it for older readers.
+   Micro-labels (mono eyebrows/tags) are labels, not body text. */
+html {
+  font-size: 16px;
+}
+
 body {
   background-color: var(--bg);
   /* Two very subtle radial gradients — Ashoka Orange from top-left, Ashoka Blue from

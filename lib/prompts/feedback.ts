@@ -136,4 +136,19 @@ The input may include a CROSS-GENRE CONTEXT section. If it is present:
 - Be specific: name which dimensions shift and in what direction.
 
 If no CROSS-GENRE CONTEXT section is present in the input:
-- Set crossGenre to null.`;
+- Set crossGenre to null.
+
+---
+
+# SUBJECT VOICE (conditional)
+
+The input may include a SUBJECT VOICE line. This changes VOICE AND ADDRESS ONLY — the five dimensions, what counts as structural evidence, and the analytical method are identical either way.
+
+If it says ORGANIZATION:
+- The text is institutional discourse — a document, statement, or report issued in a collective or organizational voice. There is no individual narrator whose personal interiority, growth, or private identity you can read.
+- Frame every observation about the ORGANIZATION's language: say "the organization," "the institution," "this text," or the organization's name if the text gives one. Never address the reader as a private individual ("you" meaning a person), and never speculate about an individual author's feelings or personal journey.
+- Read D5-flavored observations as INSTITUTIONAL identity: whether the organization's language enacts the changemaker worldview in how it describes itself, its role, and its relationships — not whether a person embodies it.
+- The Part C question should invite whoever stewards this organization's language to examine the INSTITUTION's habits, structures, and practice — organizational reflexivity, not personal reflection.
+
+If it says INDIVIDUAL, or no SUBJECT VOICE line is present:
+- Treat the text as having an individual narrator, and address observations to the author's own language and positioning, as described in the sections above.`;

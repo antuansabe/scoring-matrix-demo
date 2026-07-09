@@ -1,6 +1,8 @@
-import { PARADIGM_NAMES, getGenreWeightExplanation, GENRE_WEIGHTS } from "@/lib/paradigm";
+import { getGenreWeightExplanation, GENRE_WEIGHTS } from "@/lib/paradigm";
 import type { ScoreResult, GenreTag } from "@/lib/types";
 import { CountUpNumber } from "@/components/CountUpNumber";
+import { Term } from "@/components/Term";
+import { useTranslations, useLocale } from "next-intl";
 
 /**
  * Headline of a result: Enactment Score (large, Fraunces), paradigm name and
@@ -19,7 +21,10 @@ export function ScoreCard({
   animateScore?: boolean;
   onGenreChange?: (genre: GenreTag) => void;
 }) {
-  const paradigm = PARADIGM_NAMES.find((p) => p.name === result.paradigmName);
+  const t = useTranslations("scorecard");
+  const tg = useTranslations("genreTags");
+  const tp = useTranslations("paradigmDescriptors");
+  const locale = useLocale();
   const hasFlags =
     result.wordCountWarnings.length > 0 || result.confidenceFlags.length > 0;
 
@@ -35,23 +40,23 @@ export function ScoreCard({
         {onGenreChange ? (
           <div className="flex flex-wrap items-center gap-3">
             <span className="font-mono text-xs uppercase tracking-widest text-muted">
-              Genre Tag:
+              <Term k="lensA">{t("genreTag")}</Term>:
             </span>
             <select
               value={activeGenre}
               onChange={(e) => onGenreChange(e.target.value as GenreTag)}
               className="border border-border bg-bg px-2 py-1 font-mono text-xs uppercase tracking-wider text-ink focus:outline-none"
             >
-              {Object.keys(GENRE_WEIGHTS).map((g) => (
+              {(Object.keys(GENRE_WEIGHTS) as GenreTag[]).map((g) => (
                 <option key={g} value={g}>
-                  {g}
+                  {tg(g)}
                 </option>
               ))}
             </select>
           </div>
         ) : (
           <span className="font-mono text-xs uppercase tracking-widest text-muted">
-            Genre · {result.genreTag}
+            {t("genreTag")} · {tg(result.genreTag)}
           </span>
         )}
 
@@ -59,22 +64,22 @@ export function ScoreCard({
           {result.genreOverridden ? (
             <>
               <span className="line-through text-muted/60 font-mono text-xs uppercase tracking-widest">
-                Detected: {result.detectedGenreTag}
+                {t("detected", { genre: result.detectedGenreTag ? tg(result.detectedGenreTag) : "" })}
               </span>
               <span className="font-mono text-[0.65rem] uppercase tracking-widest bg-accent-light text-accent border border-accent-2/60 px-2.5 py-0.5 font-medium rounded-full">
-                Genre adjusted by user
+                {t("adjusted")}
               </span>
             </>
           ) : (
             <span className="font-mono text-xs uppercase tracking-widest text-muted/60">
-              Detected: {result.detectedGenreTag || result.genreTag}
+              {t("detected", { genre: tg(result.detectedGenreTag || result.genreTag) })}
             </span>
           )}
         </div>
       </div>
 
       <p className="font-sans text-xs text-muted italic -mt-2 mb-4">
-        {getGenreWeightExplanation(activeGenre, "en")}
+        {getGenreWeightExplanation(activeGenre, locale === "es" ? "es" : "en")}
       </p>
 
       <div className="mt-2 flex items-baseline gap-2">
@@ -86,21 +91,19 @@ export function ScoreCard({
         <span className="font-mono text-sm text-muted">/ 100</span>
       </div>
       <p className="mt-1 font-mono text-xs uppercase tracking-widest text-muted">
-        Enactment Score
+        <Term k="enactmentScore">Enactment Score</Term>
       </p>
 
       <p className="mt-3 font-display text-2xl font-normal leading-tight text-ink sm:text-3xl">
         {result.paradigmName}
       </p>
-      {paradigm && (
-        <p className="mt-1 max-w-prose font-sans text-sm italic leading-relaxed text-muted">
-          {paradigm.descriptor}
-        </p>
-      )}
+      <p className="mt-1 max-w-prose font-sans text-sm italic leading-relaxed text-muted">
+        {tp(result.paradigmName)}
+      </p>
 
       <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-border pt-4">
         <span className="font-mono text-xs uppercase tracking-widest text-muted">
-          EACH Orientation
+          <Term k="eachOrientation">EACH Orientation</Term>
         </span>
         <span
           className="border px-3 py-1 font-mono text-xs uppercase tracking-widest text-ink"
@@ -113,7 +116,7 @@ export function ScoreCard({
       {hasFlags && (
         <div className="mt-4 space-y-1.5 border-t border-border pt-4">
           <p className="font-mono text-xs uppercase tracking-widest text-muted">
-            Flags
+            {t("flags")}
           </p>
           {result.wordCountWarnings.length > 0 && (
             <p className="font-mono text-xs uppercase tracking-widest text-ink">
@@ -122,7 +125,7 @@ export function ScoreCard({
                 style={{ backgroundColor: accentColor }}
                 aria-hidden="true"
               />
-              Below threshold on: {result.wordCountWarnings.join(", ")}
+              {t("belowThreshold", { dims: result.wordCountWarnings.join(", ") })}
             </p>
           )}
           {result.confidenceFlags.map((flag, i) => (

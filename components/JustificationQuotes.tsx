@@ -1,4 +1,5 @@
 import { DIMENSIONS } from "@/lib/paradigm";
+import { useTranslations } from "next-intl";
 import type { ScoreResult } from "@/lib/types";
 
 /**
@@ -13,10 +14,12 @@ export function JustificationQuotes({
   result: ScoreResult;
   accentColor?: string;
 }) {
+  const t = useTranslations("justifications");
+  const td = useTranslations("dimensions");
   return (
     <div className="border border-border bg-surface p-5 sm:p-6 lg:p-8">
       <p className="mb-6 font-mono text-xs uppercase tracking-widest text-muted">
-        Per-dimension reading
+        {t("title")}
       </p>
       <div className="grid gap-x-10 gap-y-8 lg:grid-cols-2">
         {DIMENSIONS.map((d) => {
@@ -24,7 +27,7 @@ export function JustificationQuotes({
           return (
             <div key={d.key}>
               <p className="font-mono text-xs uppercase tracking-widest text-ink">
-                {d.key} · {d.fullName} · Score {score}/4
+                {t("scoreLine", { key: d.key, name: td(`${d.key}.full`), score })}
               </p>
               <p className="mt-2 font-sans text-sm leading-relaxed text-ink">
                 {justification}
@@ -32,7 +35,7 @@ export function JustificationQuotes({
               {quotes.length > 0 && (
                 <>
                   <p className="mt-3 font-mono text-[0.7rem] uppercase tracking-widest text-muted">
-                    Quoted from the text
+                    {t("quoted")}
                   </p>
                   <ul className="mt-1.5 space-y-2">
                     {quotes.map((quote, i) => (

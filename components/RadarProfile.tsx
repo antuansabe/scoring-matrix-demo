@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { DIMENSIONS } from "@/lib/paradigm";
+import { useTranslations } from "next-intl";
 import type { ScoreResult } from "@/lib/types";
 
 /**
@@ -26,22 +27,26 @@ export function RadarProfile({
 }) {
   // Recharts' ResponsiveContainer can't measure a parent during SSR/prerender
   // (it logs a width/height warning). Render the chart only after mount.
+  const t = useTranslations("radarProfile");
+  const td = useTranslations("dimensions");
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
+  // Labels resolve here, before recharts sees the data array, so the axis
+  // follows the catalog (terms of art stay English in both locales).
   const data = DIMENSIONS.map((d) => ({
-    dimension: d.shortName,
+    dimension: td(`${d.key}.short`),
     score: result.dimensions[d.key].score,
   }));
 
-  const ariaLabel = `Radar profile of the five dimensions (scale 0 to 4): ${DIMENSIONS.map(
-    (d) => `${d.shortName} ${result.dimensions[d.key].score}`,
-  ).join(", ")}.`;
+  const ariaLabel = t("aria", {
+    values: DIMENSIONS.map((d) => `${td(`${d.key}.short`)} ${result.dimensions[d.key].score}`).join(", "),
+  });
 
   return (
     <div className="border border-border bg-surface p-4 sm:p-6 lg:p-8">
       <p className="mb-2 font-mono text-xs uppercase tracking-widest text-muted">
-        Radar Profile · D1–D5 · 0–4
+        {t("title")}
       </p>
       <div
         role="img"

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import type {
   DimensionKey,
   DimensionScore,
@@ -10,13 +11,6 @@ import type {
 
 const TEAL = "#2A4F4F";
 const TERRACOTTA = "#C44536";
-
-const LOADING_MESSAGES = [
-  "Reading the structure of your text...",
-  "Mapping who acts and who doesn't...",
-  "Identifying what the language does...",
-  "Drafting your feedback...",
-];
 
 type FeedbackStatus = "idle" | "loading" | "done" | "error";
 
@@ -68,6 +62,7 @@ export function FeedbackCard({
   genre,
   initialState = "idle",
   data,
+  onLoaded,
 }: {
   text?: string;
   scores?: Record<DimensionKey, DimensionScore>;
@@ -76,7 +71,11 @@ export function FeedbackCard({
   initialState?: "idle" | "loaded";
   /** Required when initialState is "loaded". */
   data?: FeedbackResult;
+  /** Called once a live fetch (not the "loaded" prop path) succeeds. */
+  onLoaded?: (result: FeedbackResult) => void;
 }) {
+  const t = useTranslations("feedback");
+  const loadingMessages = [t("loading1"), t("loading2"), t("loading3"), t("loading4")];
   const [status, setStatus] = useState<FeedbackStatus>(
     initialState === "loaded" && data ? "done" : "idle",
   );
@@ -85,13 +84,17 @@ export function FeedbackCard({
   );
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [msgIdx, setMsgIdx] = useState(0);
+  // Whose discourse the text is (Decision #5 / Phase 6). Chosen here because
+  // the Deeper Reading runs before any subject is picked in the intake form,
+  // so subject.type is not yet known. Individual = original behavior.
+  const [subjectVoice, setSubjectVoice] = useState<"individual" | "organization">("individual");
 
   // Cycle through loading messages every 5 s while the Sonnet call is running.
   useEffect(() => {
     if (status !== "loading") return;
     setMsgIdx(0);
     const id = setInterval(
-      () => setMsgIdx((i) => (i + 1) % LOADING_MESSAGES.length),
+      () => setMsgIdx((i) => (i + 1) % loadingMessages.length),
       5000,
     );
     return () => clearInterval(id);
@@ -107,7 +110,14 @@ export function FeedbackCard({
       const res = await fetch("/api/feedback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text, scores, genre }),
+        // subjectVoice only sent for organizations, keeping the individual
+        // request shape identical to pre-Phase-6.
+        body: JSON.stringify({
+          text,
+          scores,
+          genre,
+          ...(subjectVoice === "organization" ? { subjectVoice } : {}),
+        }),
       });
       const data: unknown = await res.json().catch(() => null);
 
@@ -118,16 +128,18 @@ export function FeedbackCard({
           "error" in data &&
           typeof (data as { error: unknown }).error === "string"
             ? (data as { error: string }).error
-            : "An unexpected error occurred while generating feedback.";
+            : t("errorUnexpected");
         setErrorMsg(msg);
         setStatus("error");
         return;
       }
 
-      setFeedbackResult(data as FeedbackResult);
+      const result = data as FeedbackResult;
+      setFeedbackResult(result);
       setStatus("done");
+      onLoaded?.(result);
     } catch {
-      setErrorMsg("Could not connect to the feedback service.");
+      setErrorMsg(t("errorConnect"));
       setStatus("error");
     }
   }
@@ -143,26 +155,52 @@ export function FeedbackCard({
           className="font-mono text-xs uppercase tracking-widest"
           style={{ color: TEAL }}
         >
-          Deeper Reading
+          {t("eyebrow")}
         </p>
         <h2 className="mt-3 font-display text-xl font-normal leading-snug text-ink sm:text-2xl">
-          Get a{" "}
+          {t("idleTitlePart1")}
           <span className="font-light italic" style={{ color: TERRACOTTA }}>
-            closer look
-          </span>{" "}
-          at your text
+            {t("idleTitlePart2")}
+          </span>
+          {t("idleTitlePart3")}
         </h2>
-        <p className="mt-2 max-w-[55ch] font-sans text-sm leading-relaxed text-muted">
-          A structured reading of what your text says and does, with specific
-          guidance to strengthen it.
+        <p className="mt-2 max-w-[55ch] font-sans text-base leading-relaxed text-muted">
+          {t("idleBody")}
         </p>
+
+        <div className="mt-5">
+          <p className="font-mono text-xs uppercase tracking-widest text-muted">
+            {t("voiceLegend")}
+          </p>
+          <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2">
+            <label className="flex items-center gap-2 font-sans text-base text-ink">
+              <input
+                type="radio"
+                name="subject-voice"
+                checked={subjectVoice === "individual"}
+                onChange={() => setSubjectVoice("individual")}
+              />
+              {t("voiceIndividual")}
+            </label>
+            <label className="flex items-center gap-2 font-sans text-base text-ink">
+              <input
+                type="radio"
+                name="subject-voice"
+                checked={subjectVoice === "organization"}
+                onChange={() => setSubjectVoice("organization")}
+              />
+              {t("voiceOrganization")}
+            </label>
+          </div>
+        </div>
+
         <button
           type="button"
           onClick={requestFeedback}
           className="mt-6 px-6 py-3 font-mono text-sm uppercase tracking-widest text-white rounded-md transition-opacity hover:opacity-80"
           style={{ backgroundColor: TERRACOTTA }}
         >
-          Get a closer look at your text
+          {t("cta")}
         </button>
       </div>
     );
@@ -179,7 +217,7 @@ export function FeedbackCard({
           className="font-mono text-xs uppercase tracking-widest"
           style={{ color: TEAL }}
         >
-          Deeper Reading
+          {t("eyebrow")}
         </p>
         <div className="mt-6 flex items-start gap-4">
           <div
@@ -188,13 +226,13 @@ export function FeedbackCard({
           />
           <div>
             <p
-              className="font-sans text-sm leading-relaxed text-ink"
+              className="font-sans text-base leading-relaxed text-ink"
               aria-live="polite"
             >
-              {LOADING_MESSAGES[msgIdx]}
+              {loadingMessages[msgIdx]}
             </p>
             <p className="mt-1 font-mono text-xs uppercase tracking-widest text-muted">
-              This usually takes 10–30 seconds.
+              {t("loadingTime")}
             </p>
           </div>
         </div>
@@ -214,17 +252,17 @@ export function FeedbackCard({
           className="font-mono text-xs uppercase tracking-widest"
           style={{ color: TERRACOTTA }}
         >
-          Feedback Unavailable
+          {t("unavailable")}
         </p>
-        <p className="mt-2 font-sans text-sm leading-relaxed text-ink">
-          {errorMsg ?? "Something went wrong. Please try again."}
+        <p className="mt-2 font-sans text-base leading-relaxed text-ink">
+          {errorMsg ?? t("errorFallback")}
         </p>
         <button
           type="button"
           onClick={requestFeedback}
           className="mt-4 px-5 py-2 font-mono text-xs uppercase tracking-widest border border-border rounded-md text-muted transition-colors hover:text-ink hover:border-ink"
         >
-          ↻ Retry
+          {t("retry")}
         </button>
       </div>
     );
@@ -234,10 +272,10 @@ export function FeedbackCard({
   if (!feedbackResult) return null;
 
   const summaryFields = [
-    { label: "Key Messages", value: feedbackResult.summary.keyMessages },
-    { label: "Who Acts & Who Doesn't", value: feedbackResult.summary.whoActs },
-    { label: "The Problem", value: feedbackResult.summary.theProblem },
-    { label: "The Solution", value: feedbackResult.summary.theSolution },
+    { label: t("keyMessages"), value: feedbackResult.summary.keyMessages },
+    { label: t("whoActs"), value: feedbackResult.summary.whoActs },
+    { label: t("theProblem"), value: feedbackResult.summary.theProblem },
+    { label: t("theSolution"), value: feedbackResult.summary.theSolution },
   ];
 
   return (
@@ -251,12 +289,12 @@ export function FeedbackCard({
           className="font-mono text-xs uppercase tracking-widest"
           style={{ color: TEAL }}
         >
-          Deeper Reading
+          {t("eyebrow")}
         </p>
         <h2 className="mt-2 font-display text-xl font-normal leading-snug text-ink sm:text-2xl">
-          Your Text:{" "}
+          {t("doneTitlePart1")}
           <span className="font-light italic" style={{ color: TERRACOTTA }}>
-            A Closer Look
+            {t("doneTitlePart2")}
           </span>
         </h2>
       </div>
@@ -264,12 +302,12 @@ export function FeedbackCard({
       <div className="space-y-12 px-5 py-6 sm:px-6 lg:px-8">
         {/* ── SUMMARY ── */}
         <section>
-          <SectionLabel>Summary</SectionLabel>
+          <SectionLabel>{t("summary")}</SectionLabel>
           <div className="space-y-6">
             {summaryFields.map(({ label, value }) => (
               <div key={label}>
                 <FieldLabel>{label}</FieldLabel>
-                <p className="font-sans text-sm leading-relaxed text-ink">
+                <p className="font-sans text-base leading-relaxed text-ink">
                   {value}
                 </p>
               </div>
@@ -279,21 +317,21 @@ export function FeedbackCard({
 
         {/* ── FEEDBACK ── */}
         <section>
-          <SectionLabel>Feedback</SectionLabel>
+          <SectionLabel>{t("sectionFeedback")}</SectionLabel>
 
           {/* What Works Well */}
           {feedbackResult.feedback.whatWorksWell.length > 0 && (
             <div className="mb-8">
-              <FieldLabel>What Works Well</FieldLabel>
+              <FieldLabel>{t("worksWell")}</FieldLabel>
               <ul className="space-y-5">
                 {feedbackResult.feedback.whatWorksWell.map((item, i) => (
                   <li key={i}>
-                    <p className="font-sans text-sm leading-relaxed text-ink">
+                    <p className="font-sans text-base leading-relaxed text-ink">
                       {item.observation}
                     </p>
                     {item.textAnchor && (
                       <p
-                        className="mt-2 border-l-2 pl-4 font-sans text-sm italic leading-relaxed text-muted"
+                        className="mt-2 border-l-2 pl-4 font-sans text-base italic leading-relaxed text-muted"
                         style={{ borderColor: TEAL }}
                       >
                         &ldquo;{item.textAnchor}&rdquo;
@@ -308,18 +346,18 @@ export function FeedbackCard({
           {/* How to Strengthen It */}
           {feedbackResult.feedback.howToStrengthen.length > 0 && (
             <div>
-              <FieldLabel>How to Strengthen It</FieldLabel>
+              <FieldLabel>{t("strengthen")}</FieldLabel>
               <ul className="space-y-6">
                 {feedbackResult.feedback.howToStrengthen.map((item, i) => (
                   <li key={i} className="space-y-2">
-                    <p className="font-sans text-sm font-semibold leading-snug text-ink">
+                    <p className="font-sans text-base font-semibold leading-snug text-ink">
                       {item.gap}
                     </p>
-                    <p className="font-sans text-sm leading-relaxed text-muted">
+                    <p className="font-sans text-base leading-relaxed text-muted">
                       {item.whyItMatters}
                     </p>
                     <div
-                      className="rounded-sm border px-4 py-3 font-sans text-sm leading-relaxed text-ink"
+                      className="rounded-sm border px-4 py-3 font-sans text-base leading-relaxed text-ink"
                       style={{
                         backgroundColor: `${TERRACOTTA}0A`,
                         borderColor: `${TERRACOTTA}28`,
@@ -329,7 +367,7 @@ export function FeedbackCard({
                         className="mb-1 block font-mono text-[0.65rem] uppercase tracking-widest"
                         style={{ color: TERRACOTTA }}
                       >
-                        Reframe
+                        {t("reframe")}
                       </span>
                       {item.reframe}
                     </div>
@@ -353,7 +391,7 @@ export function FeedbackCard({
               className="mb-3 font-mono text-[0.65rem] uppercase tracking-widest"
               style={{ color: TEAL }}
             >
-              A Question to Sit With
+              {t("question")}
             </p>
             <p className="font-display text-lg font-normal leading-relaxed text-ink sm:text-xl">
               {feedbackResult.question}
