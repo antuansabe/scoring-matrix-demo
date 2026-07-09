@@ -2,6 +2,13 @@
  * Monthly aggregation math. Pure functions only — no I/O, no React —
  * mirrors lib/compare.ts.
  *
+ * ⚠️  PROVISIONAL — aggregation method (simple mean) awaits Giselle's
+ * validation. See docs/PREGUNTAS_METODOLOGIA_GISELLE.md questions #2
+ * and #6. The mechanism is wired and the math is correct for its chosen
+ * method, but the METHOD ITSELF is an open framework decision, not a
+ * settled one. Do not present aggregates to leadership as final until
+ * Giselle confirms or adjusts. This note must stay until she does.
+ *
  * Groups a subject's analyses by the MONTH of entry_date (the MATERIAL
  * date, not created_at — §1b resolved semantics), so a JJ Partner is read
  * at each moment through ALL of that month's materials — website, reports,
