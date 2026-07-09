@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { getSubject } from "@/lib/db/subjects";
 import { listAnalysesBySubject } from "@/lib/db/analyses";
 import { resolveParadigmName } from "@/lib/paradigm";
-import { groupAnalysesByMonth, formatMonthLabel, UNKNOWN_MONTH } from "@/lib/aggregate";
+import { groupAnalysesByMonth, aggregateOverall, formatMonthLabel, monthKeyOf, UNKNOWN_MONTH } from "@/lib/aggregate";
 import { Reveal } from "@/components/Reveal";
 import { DemoBanner } from "@/components/DemoBanner";
 import { isDemoSubject } from "@/lib/demo";
@@ -32,6 +32,7 @@ export default async function SubjectDetailPage({
   // the material date), so the subject is read moment by moment through its
   // whole corpus, not a single text.
   const months = groupAnalysesByMonth(analyses);
+  const overall = aggregateOverall(analyses);
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-14 sm:py-20">
@@ -119,7 +120,61 @@ export default async function SubjectDetailPage({
             )}
           </div>
         ) : (
-          months.map((m) => (
+          <>
+            {overall && (
+              /* Subject summary — the overall reading across the whole corpus */
+              <section className="mt-6 border border-border bg-surface px-5 py-4 sm:px-6">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3">
+                  <div>
+                    <p className="font-mono text-xs uppercase tracking-widest text-muted">
+                      {t("subjectDetail.summaryLabel")}
+                      {" · "}
+                      {t("subjectDetail.summaryTextCount", { count: overall.entryCount })}
+                    </p>
+                    <p className="mt-2 font-display text-3xl text-ink sm:text-4xl">
+                      {overall.meanEnactment}{" "}
+                      <span className="font-sans text-sm text-muted">
+                        {t("subjectDetail.summaryOutOf100", { paradigm: overall.paradigm })}
+                      </span>
+                    </p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {overall.genreCounts.map(({ genre, count }) => (
+                        <span
+                          key={genre}
+                          className="border border-border px-2 py-0.5 font-mono text-[0.7rem] uppercase tracking-widest text-muted"
+                        >
+                          {t(`genreCounts.${genre}`, { count })}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="sm:text-right">
+                    <p className="font-mono text-xs uppercase tracking-widest text-muted">
+                      {t("subjectDetail.monthAvgDims")}
+                    </p>
+                    <p className="mt-1 font-mono text-xs uppercase tracking-widest text-accent">
+                      D1 {overall.meanDimensions.D1} · D2 {overall.meanDimensions.D2} · D3 {overall.meanDimensions.D3} · D4 {overall.meanDimensions.D4} · D5 {overall.meanDimensions.D5}
+                    </p>
+                    {overall.earliestDate && overall.latestDate && (
+                      <p className="mt-1 font-mono text-[0.7rem] uppercase tracking-widest text-muted">
+                        {formatMonthLabel(monthKeyOf(overall.earliestDate) ?? overall.earliestDate, locale)}
+                        {" → "}
+                        {formatMonthLabel(monthKeyOf(overall.latestDate) ?? overall.latestDate, locale)}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                {overall.mixedModelVersions && (
+                  <p className="mt-3 border-t border-border pt-3 font-sans text-sm text-ink">
+                    {t("subjectDetail.summaryMixedModels", { versions: overall.modelVersions.join(", ") })}
+                  </p>
+                )}
+                <p className="mt-3 border-t border-border pt-3 font-sans text-xs italic text-muted">
+                  {t("subjectDetail.summaryProvisional")}
+                </p>
+              </section>
+            )}
+            {months.map((m) => (
             <section key={m.month} className="mt-8">
               {/* Month band — the aggregate reading across the month's materials */}
               <div className="border border-border bg-surface px-5 py-4 sm:px-6">
@@ -191,7 +246,8 @@ export default async function SubjectDetailPage({
                 ))}
               </ol>
             </section>
-          ))
+            ))}
+          </>
         )}
       </div>
     </main>

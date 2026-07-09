@@ -271,6 +271,14 @@
     "social": "Redes sociales",
     "other": "Otro"
   },
+  "genreCounts": {
+    "interview": "{count, plural, one {# entrevista} other {# entrevistas}}",
+    "article": "{count, plural, one {# artículo} other {# artículos}}",
+    "website": "{count, plural, one {# sitio web} other {# sitios web}}",
+    "report": "{count, plural, one {# informe} other {# informes}}",
+    "social": "{count, plural, one {# publicación en redes} other {# publicaciones en redes}}",
+    "other": "{count, plural, one {# otro} other {# otros}}"
+  },
   "subjectTypes": {
     "jj_partner": "JJ Partner",
     "ngl": "NGL",
@@ -335,7 +343,12 @@
     "entryMeta": "{date} · {genre} · registrada por {name}",
     "outOf100": "/ 100 — {paradigm}",
     "viewCard": "Ver Feedback Card →",
-    "noEntries": "Aún no hay entradas registradas para este sujeto."
+    "noEntries": "Aún no hay entradas registradas para este sujeto.",
+    "summaryLabel": "Resumen del sujeto",
+    "summaryTextCount": "{count, plural, one {# texto analizado} other {# textos analizados}}",
+    "summaryOutOf100": "/ 100 promedio general — {paradigm}",
+    "summaryMixedModels": "Estas entradas se puntuaron con versiones distintas del modelo ({versions}). El promedio general mezcla modelos de puntuación — léelo con cautela.",
+    "summaryProvisional": "El método de agregación (promedio simple) es provisional a la espera de la validación metodológica — lee este promedio como orientativo, no como definitivo."
   },
   "addBatch": {
     "eyebrow": "Ingreso por lote",

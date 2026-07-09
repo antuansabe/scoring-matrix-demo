@@ -72,6 +72,63 @@ function round1(n: number): number {
   return Math.round(n * 10) / 10;
 }
 
+/** Shared aggregate fields — one math, whatever the grouping window. */
+interface AggregateCore {
+  entryCount: number;
+  /** Mean enactment score, rounded to the nearest integer. */
+  meanEnactment: number;
+  /** Band of the ROUNDED mean — rounding happens BEFORE band resolution. */
+  paradigm: ParadigmName;
+  /** Mean of each dimension (0–4), rounded to one decimal. */
+  meanDimensions: Record<DimensionKey, number>;
+  /** Unique material genres, in order of first appearance. */
+  genres: MaterialGenre[];
+  /** Unique model versions, in order of first appearance. */
+  modelVersions: string[];
+  /** Guardrail (Decision #3): true when the set mixes model versions. */
+  mixedModelVersions: boolean;
+}
+
+/**
+ * The single source of the aggregate math (mean → round → band, dimension
+ * means at one decimal) shared by the monthly bands and the overall subject
+ * summary. Precondition: rows is non-empty.
+ */
+function aggregateCore(rows: AnalysisWithEntry[]): AggregateCore {
+  const n = rows.length;
+
+  const meanEnactment = Math.round(
+    rows.reduce((sum, a) => sum + a.enactment_score, 0) / n,
+  );
+
+  const meanDimensions = {} as Record<DimensionKey, number>;
+  for (const key of DIMENSION_KEYS) {
+    const field = key.toLowerCase() as "d1" | "d2" | "d3" | "d4" | "d5";
+    meanDimensions[key] = round1(
+      rows.reduce((sum, a) => sum + a[field], 0) / n,
+    );
+  }
+
+  const genres: MaterialGenre[] = [];
+  const modelVersions: string[] = [];
+  for (const a of rows) {
+    if (!genres.includes(a.entry.genre)) genres.push(a.entry.genre);
+    if (!modelVersions.includes(a.model_version)) {
+      modelVersions.push(a.model_version);
+    }
+  }
+
+  return {
+    entryCount: n,
+    meanEnactment,
+    paradigm: resolveParadigmName(meanEnactment),
+    meanDimensions,
+    genres,
+    modelVersions,
+    mixedModelVersions: modelVersions.length > 1,
+  };
+}
+
 /**
  * Groups analyses into monthly aggregates, sorted ascending by month
  * (lexicographic equals chronological for YYYY-MM keys), with the
@@ -101,41 +158,55 @@ export function groupAnalysesByMonth(
 
   return keys.map((month) => {
     const rows = buckets.get(month) as AnalysisWithEntry[];
-    const n = rows.length;
-
-    const meanEnactment = Math.round(
-      rows.reduce((sum, a) => sum + a.enactment_score, 0) / n,
-    );
-
-    const meanDimensions = {} as Record<DimensionKey, number>;
-    for (const key of DIMENSION_KEYS) {
-      const field = key.toLowerCase() as "d1" | "d2" | "d3" | "d4" | "d5";
-      meanDimensions[key] = round1(
-        rows.reduce((sum, a) => sum + a[field], 0) / n,
-      );
-    }
-
-    const genres: MaterialGenre[] = [];
-    const modelVersions: string[] = [];
-    for (const a of rows) {
-      if (!genres.includes(a.entry.genre)) genres.push(a.entry.genre);
-      if (!modelVersions.includes(a.model_version)) {
-        modelVersions.push(a.model_version);
-      }
-    }
-
-    return {
-      month,
-      entryCount: n,
-      meanEnactment,
-      paradigm: resolveParadigmName(meanEnactment),
-      meanDimensions,
-      genres,
-      modelVersions,
-      mixedModelVersions: modelVersions.length > 1,
-      analyses: rows,
-    };
+    return { month, ...aggregateCore(rows), analyses: rows };
   });
+}
+
+/**
+ * Overall reading across ALL of a subject's analyses — same PROVISIONAL
+ * simple-mean method as the monthly bands (see the note at the top of this
+ * file; it applies here in full).
+ */
+export interface OverallAggregate extends AggregateCore {
+  /** Count per genre, in order of first appearance. */
+  genreCounts: { genre: MaterialGenre; count: number }[];
+  /** Earliest valid entry_date (YYYY-MM-DD), or null when none is valid. */
+  earliestDate: string | null;
+  /** Latest valid entry_date (YYYY-MM-DD), or null when none is valid. */
+  latestDate: string | null;
+}
+
+/**
+ * Aggregates a subject's full corpus into one overall reading. Shares
+ * aggregateCore with groupAnalysesByMonth — identical mean/round/band rules.
+ * Malformed entry_dates still count toward entryCount and genreCounts but
+ * never extend the date range (validity gate: monthKeyOf). Empty input → null.
+ */
+export function aggregateOverall(
+  analyses: AnalysisWithEntry[],
+): OverallAggregate | null {
+  if (analyses.length === 0) return null;
+
+  const genreCounts: { genre: MaterialGenre; count: number }[] = [];
+  let earliestDate: string | null = null;
+  let latestDate: string | null = null;
+
+  for (const a of analyses) {
+    const existing = genreCounts.find((g) => g.genre === a.entry.genre);
+    if (existing) {
+      existing.count += 1;
+    } else {
+      genreCounts.push({ genre: a.entry.genre, count: 1 });
+    }
+
+    if (monthKeyOf(a.entry.entry_date) !== null) {
+      const date = a.entry.entry_date.slice(0, 10);
+      if (earliestDate === null || date < earliestDate) earliestDate = date;
+      if (latestDate === null || date > latestDate) latestDate = date;
+    }
+  }
+
+  return { ...aggregateCore(analyses), genreCounts, earliestDate, latestDate };
 }
 
 /**

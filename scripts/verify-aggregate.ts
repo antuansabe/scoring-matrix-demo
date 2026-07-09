@@ -9,6 +9,7 @@
  */
 import {
   groupAnalysesByMonth,
+  aggregateOverall,
   formatMonthLabel,
   monthKeyOf,
   UNKNOWN_MONTH,
@@ -178,6 +179,118 @@ assert(monthKeyOf("07/01/2026") === null, "monthKeyOf rejects non-ISO dates");
   assert(en === "July 2026", `formatMonthLabel en → "${en}"`);
   assert(es.includes("julio") && es.includes("2026"), `formatMonthLabel es → "${es}"`);
   assert(formatMonthLabel(UNKNOWN_MONTH, "en") === UNKNOWN_MONTH, "unknown month label passes through");
+}
+
+// 10. aggregateOverall: empty input
+assert(aggregateOverall([]) === null, "aggregateOverall empty input → null");
+
+// 11. aggregateOverall: demo-subject fixture (Fundación Delta shape)
+{
+  const o = aggregateOverall([
+    mk("2026-02-10", 30, { genre: "report", dims: [1, 1, 1, 2, 1] }),
+    mk("2026-04-22", 48, { genre: "website", dims: [2, 2, 2, 2, 1] }),
+    mk("2026-06-30", 66, { genre: "interview", dims: [3, 3, 2, 3, 2] }),
+  ])!;
+  assert(
+    o.entryCount === 3 && o.meanEnactment === 48 && o.paradigm === "Contributor",
+    "overall demo fixture → 3 texts, mean 48, Contributor",
+  );
+  assert(
+    o.meanDimensions.D1 === 2 &&
+      o.meanDimensions.D2 === 2 &&
+      o.meanDimensions.D3 === 1.7 &&
+      o.meanDimensions.D4 === 2.3 &&
+      o.meanDimensions.D5 === 1.3,
+    "overall dimension means at one decimal (2 / 2 / 1.7 / 2.3 / 1.3)",
+  );
+  assert(
+    o.earliestDate === "2026-02-10" && o.latestDate === "2026-06-30",
+    "overall date range earliest → latest (2026-02-10 → 2026-06-30)",
+  );
+  assert(
+    !o.mixedModelVersions &&
+      o.genreCounts.length === 3 &&
+      o.genreCounts[0].genre === "report" && o.genreCounts[0].count === 1 &&
+      o.genreCounts[1].genre === "website" && o.genreCounts[1].count === 1 &&
+      o.genreCounts[2].genre === "interview" && o.genreCounts[2].count === 1,
+    "overall genre counts in first-appearance order, no mixed flag",
+  );
+}
+
+// 12. aggregateOverall: round-before-band across months (same rule as monthly)
+{
+  const o = aggregateOverall([mk("2026-07-01", 19), mk("2026-08-01", 20)])!;
+  assert(
+    o.meanEnactment === 20 && o.paradigm === "Sympathizer",
+    "overall 19 & 20 across months → mean 19.5 → rounds to 20 → Sympathizer",
+  );
+}
+
+// 13. aggregateOverall: genre counts accumulate in first-appearance order
+{
+  const o = aggregateOverall([
+    mk("2026-07-01", 50, { genre: "website" }),
+    mk("2026-07-05", 50, { genre: "report" }),
+    mk("2026-07-09", 50, { genre: "website" }),
+  ])!;
+  assert(
+    o.genreCounts.length === 2 &&
+      o.genreCounts[0].genre === "website" && o.genreCounts[0].count === 2 &&
+      o.genreCounts[1].genre === "report" && o.genreCounts[1].count === 1,
+    "overall genre counts (website 2, report 1), first-appearance order",
+  );
+}
+
+// 14. aggregateOverall: mixed model versions flag (guardrail)
+{
+  const o = aggregateOverall([
+    mk("2026-07-01", 40, { modelVersion: "v1" }),
+    mk("2026-08-15", 60, { modelVersion: "v2" }),
+  ])!;
+  assert(
+    o.mixedModelVersions &&
+      o.modelVersions.length === 2 &&
+      o.modelVersions[0] === "v1" &&
+      o.modelVersions[1] === "v2",
+    "overall mixed model versions → flag raised, versions listed",
+  );
+}
+
+// 15. aggregateOverall: malformed dates count but never extend the range
+{
+  const o = aggregateOverall([mk("garbage", 10), mk("2026-07-15", 50)])!;
+  assert(
+    o.entryCount === 2 &&
+      o.meanEnactment === 30 &&
+      o.earliestDate === "2026-07-15" &&
+      o.latestDate === "2026-07-15",
+    "overall malformed date counts toward mean, range from valid dates only",
+  );
+  const allBad = aggregateOverall([mk("garbage", 10)])!;
+  assert(
+    allBad !== null && allBad.earliestDate === null && allBad.latestDate === null,
+    "overall all-malformed dates → aggregate exists, range null/null",
+  );
+}
+
+// 16. aggregateOverall and groupAnalysesByMonth share the same core math
+{
+  const rows = [
+    mk("2026-07-01", 33, { dims: [1, 2, 3, 4, 0] }),
+    mk("2026-07-20", 48, { dims: [2, 2, 2, 1, 3] }),
+  ];
+  const o = aggregateOverall(rows)!;
+  const [m] = groupAnalysesByMonth(rows);
+  assert(
+    o.meanEnactment === m.meanEnactment &&
+      o.paradigm === m.paradigm &&
+      o.meanDimensions.D1 === m.meanDimensions.D1 &&
+      o.meanDimensions.D2 === m.meanDimensions.D2 &&
+      o.meanDimensions.D3 === m.meanDimensions.D3 &&
+      o.meanDimensions.D4 === m.meanDimensions.D4 &&
+      o.meanDimensions.D5 === m.meanDimensions.D5,
+    "single-month input → overall matches the monthly aggregate (shared core)",
+  );
 }
 
 console.log("\nAll aggregate checks passed.");

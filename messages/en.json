@@ -271,6 +271,14 @@
     "social": "Social Media",
     "other": "Other"
   },
+  "genreCounts": {
+    "interview": "{count, plural, one {# interview} other {# interviews}}",
+    "article": "{count, plural, one {# article} other {# articles}}",
+    "website": "{count, plural, one {# website} other {# websites}}",
+    "report": "{count, plural, one {# report} other {# reports}}",
+    "social": "{count, plural, one {# social media post} other {# social media posts}}",
+    "other": "{count, plural, one {# other} other {# other}}"
+  },
   "subjectTypes": {
     "jj_partner": "JJ Partner",
     "ngl": "NGL",
@@ -335,7 +343,12 @@
     "monthOutOf100": "/ 100 avg — {paradigm}",
     "monthAvgDims": "Avg dimensions",
     "monthMixedModels": "Entries this month were scored with different model versions ({versions}). The monthly average mixes scoring models — read it with caution.",
-    "monthUnknown": "Undated"
+    "monthUnknown": "Undated",
+    "summaryLabel": "Subject summary",
+    "summaryTextCount": "{count, plural, one {# text analyzed} other {# texts analyzed}}",
+    "summaryOutOf100": "/ 100 overall avg — {paradigm}",
+    "summaryMixedModels": "These entries were scored with different model versions ({versions}). The overall average mixes scoring models — read it with caution.",
+    "summaryProvisional": "Aggregation method (simple mean) is provisional pending methodology validation — read this average as directional, not final."
   },
   "addBatch": {
     "eyebrow": "Batch Intake",
